@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
-
 	log "github.com/sirupsen/logrus"
 
 	"Logger.Fitness/backend/db"
@@ -40,10 +39,5 @@ func main() {
 		log.Fatalf("Error connecting to the db: %s", err)
 	}
 
-	srvParams := &server.ContextParams{
-		DbClient: *dbClient,
-		Port:     conf.HttpPort,
-	}
-
-	server.Run(srvParams)
+	server.Run(dbClient, conf.HttpPort)
 }
