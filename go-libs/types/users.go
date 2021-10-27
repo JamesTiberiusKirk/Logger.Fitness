@@ -4,12 +4,6 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// UserLoginForm is the input from user on login.
-type UserLoginForm struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=7,max=255"`
-}
-
 // User is a direct representation of the mongo document.
 type User struct {
 	ID       string   `json:"id" bson:"_id"`
@@ -23,6 +17,12 @@ type User struct {
 func (u User) IsValid() error {
 	validate := validator.New()
 	return validate.Struct(u)
+}
+
+// UserLoginForm is the input from user on login.
+type UserLoginForm struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=7,max=255"`
 }
 
 // IsValid checks if instance of UserLoginForm is valid using the validator.
