@@ -1,4 +1,4 @@
-package models
+package types
 
 // LoginResponseDto struct that is getting returned to the user at login
 type LoginResponseDto struct {

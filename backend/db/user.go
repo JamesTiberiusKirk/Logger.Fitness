@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	"Logger.Fitness/go-libs/models"
+	models "Logger.Fitness/go-libs/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

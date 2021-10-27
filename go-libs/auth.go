@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"Logger.Fitness/go-libs/models"
+	"Logger.Fitness/go-libs/types"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -38,7 +38,7 @@ func getJwtSecretFromEnv() string {
 }
 
 // GenerateJWT function to generate JWT token.
-func GenerateJWT(user models.User) (signedToken string, err error) {
+func GenerateJWT(user types.User) (signedToken string, err error) {
 	claims := &JwtClaim{
 		ID:       user.ID,
 		Username: user.Username,

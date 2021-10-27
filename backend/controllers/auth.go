@@ -9,8 +9,8 @@ import (
 
 	"Logger.Fitness/backend/db"
 	lib "Logger.Fitness/go-libs"
-	"Logger.Fitness/go-libs/models"
 	res "Logger.Fitness/go-libs/responses"
+	"Logger.Fitness/go-libs/types"
 )
 
 // Register controller to user registration.
@@ -18,7 +18,7 @@ func Register(c echo.Context) error {
 	db := c.Get("db").(*db.Client)
 
 	// Struct binding
-	var nUser models.User
+	var nUser types.User
 	if bindErr := c.Bind(&nUser); bindErr != nil {
 		log.Info(bindErr)
 		return c.JSON(http.StatusBadRequest, res.BAD_PAYLOAD)
@@ -65,7 +65,7 @@ func Login(c echo.Context) error {
 	db := c.Get("db").(*db.Client)
 
 	// Struct binding
-	var userLogin models.UserLoginForm
+	var userLogin types.UserLoginForm
 	if bindErr := c.Bind(&userLogin); bindErr != nil {
 		log.Info(bindErr.Error())
 		return c.JSON(http.StatusBadRequest, res.BAD_PAYLOAD)
@@ -99,7 +99,7 @@ func Login(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, res.JWT_ERR)
 	}
 
-	resp := models.LoginResponseDto{
+	resp := types.LoginResponseDto{
 		Jwt:     userJwt,
 		Message: res.LOGGED_IN,
 	}
@@ -109,7 +109,7 @@ func Login(c echo.Context) error {
 
 // VerifyMe controller to verify the jwt tokens.
 func VerifyMe(c echo.Context) error {
-	var userJwt models.JwtDto
+	var userJwt types.JwtDto
 	if bindErr := c.Bind(&userJwt); bindErr != nil {
 		log.Info(bindErr)
 		return c.JSON(http.StatusBadRequest, bindErr.Error())
