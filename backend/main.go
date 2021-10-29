@@ -29,12 +29,13 @@ func main() {
 	log.Info(conf)
 
 	dbClient, err := db.Connect(db.DbConfigOpts{
-		Url:  conf.DbUrl,
-		User: conf.DbUser,
-		Pass: conf.DbPass,
-		Port: conf.DbPort,
-		Name: conf.DbName,
+		Url:    conf.DbUrl,
+		User:   conf.DbUser,
+		Pass:   conf.DbPass,
+		Port:   conf.DbPort,
+		DbName: conf.DbName,
 	})
+
 	if err != nil {
 		log.Fatalf("Error connecting to the db: %s", err)
 	}

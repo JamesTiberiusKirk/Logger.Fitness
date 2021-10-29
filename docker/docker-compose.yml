@@ -48,6 +48,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 27017:27017
+    command: [--auth]
+
 
   mongo-express:
     image: mongo-express

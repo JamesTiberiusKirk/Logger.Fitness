@@ -34,9 +34,9 @@ func Register(c echo.Context) error {
 	}
 
 	//Check for user
-	existingUser, dbErr := db.CheckUser(nUser.Email)
+	existingUser, dbErr := db.CheckUserBasedOnEmail(nUser.Email)
 	if dbErr != nil {
-		log.Fatal(dbErr)
+		log.Warn(dbErr)
 		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
 	}
 	if existingUser {
@@ -46,14 +46,14 @@ func Register(c echo.Context) error {
 	// Hash the password
 	hashedPass, hashErr := lib.Hash(nUser.Password)
 	if hashErr != nil {
-		log.Fatal(hashErr)
+		log.Warn(hashErr)
 		return c.String(http.StatusInternalServerError, res.INTERNAL_SERVER_ERR)
 	}
 	nUser.Password = hashedPass
 
 	// Database insertion
 	if dbErr := db.AddUser(nUser); dbErr != nil {
-		log.Fatal(dbErr)
+		log.Warn(dbErr)
 		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
 	}
 
@@ -83,7 +83,7 @@ func Login(c echo.Context) error {
 		return c.String(http.StatusUnauthorized, res.UNAUTHORIZED)
 	}
 	if dbErr != nil {
-		log.Fatal(dbErr)
+		log.Warn(dbErr)
 		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
 	}
 

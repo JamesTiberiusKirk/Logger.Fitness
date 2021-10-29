@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	DB_NAME         = "fl-auth"
+	DB_NAME         = "logger_fitness_db"
 	USER_COLLECTION = "users"
 )
 
 // CheckUser function for checking if user exists based on email.
-func (db *Client) CheckUser(lookupEmail string) (bool, error) {
+func (db *Client) CheckUserBasedOnEmail(lookupEmail string) (bool, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
