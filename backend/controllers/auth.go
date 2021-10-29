@@ -18,23 +18,24 @@ func Register(c echo.Context) error {
 	db := c.Get("db").(*db.Client)
 
 	// Struct binding
-	var nUser types.User
-	if bindErr := c.Bind(&nUser); bindErr != nil {
+	var newUser types.User
+	if bindErr := c.Bind(&newUser); bindErr != nil {
 		log.Info(bindErr)
 		return c.JSON(http.StatusBadRequest, res.BAD_PAYLOAD)
 	}
 	defaultRoles := make([]string, 1)
 	defaultRoles[0] = "user"
-	nUser.Roles = defaultRoles
+	newUser.Roles = defaultRoles
+	newUser.Active = false
 
-	// Input validatin
-	if validationErr := nUser.IsValid(); validationErr != nil {
+	// Input validation
+	if validationErr := newUser.IsValid(); validationErr != nil {
 		log.Info(validationErr)
 		return c.JSON(http.StatusBadRequest, validationErr.Error())
 	}
 
 	//Check for user
-	existingUser, dbErr := db.CheckUserBasedOnEmail(nUser.Email)
+	existingUser, dbErr := db.CheckUserBasedOnEmail(newUser.Email)
 	if dbErr != nil {
 		log.Warn(dbErr)
 		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
@@ -44,15 +45,15 @@ func Register(c echo.Context) error {
 	}
 
 	// Hash the password
-	hashedPass, hashErr := lib.Hash(nUser.Password)
+	hashedPass, hashErr := lib.Hash(newUser.Password)
 	if hashErr != nil {
 		log.Warn(hashErr)
 		return c.String(http.StatusInternalServerError, res.INTERNAL_SERVER_ERR)
 	}
-	nUser.Password = hashedPass
+	newUser.Password = hashedPass
 
 	// Database insertion
-	if dbErr := db.AddUser(nUser); dbErr != nil {
+	if dbErr := db.AddUser(newUser); dbErr != nil {
 		log.Warn(dbErr)
 		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
 	}
