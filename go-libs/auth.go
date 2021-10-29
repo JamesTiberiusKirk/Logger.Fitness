@@ -26,7 +26,6 @@ const (
 
 // JwtClaim adds ID, username, email and roles as a claim to the token.
 type JwtClaim struct {
-	ID       string   `json:"id"`
 	Username string   `json:"username"`
 	Email    string   `json:"email"`
 	Roles    []string `json:"roles"`
@@ -40,7 +39,6 @@ func getJwtSecretFromEnv() string {
 // GenerateJWT function to generate JWT token.
 func GenerateJWT(user types.User) (signedToken string, err error) {
 	claims := &JwtClaim{
-		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Roles:    user.Roles,
