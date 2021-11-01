@@ -4,7 +4,6 @@ import (
 	"context"
 
 	models "Logger.Fitness/go-libs/types"
-	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -43,16 +42,8 @@ func (db *Client) AddUser(user models.User) error {
 		return inputErr
 	}
 
-	// Inserting manually because I need mongo to autogenerate the ID
-	// insert := bson.M{
-	// 	"email":    user.Email,
-	// 	"username": user.Username,
-	// 	"password": user.Password,
-	// 	"roles":    user.Roles,
-	// }
-
+	// Manually generating an _id
 	user.ID = primitive.NewObjectID()
-	log.Info(user)
 
 	_, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
