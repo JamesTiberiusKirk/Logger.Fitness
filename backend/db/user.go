@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	DB_NAME         = "logger_fitness_db"
 	USER_COLLECTION = "users"
 )
 

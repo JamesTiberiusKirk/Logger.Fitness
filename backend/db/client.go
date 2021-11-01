@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+const DB_NAME = "logger_fitness_db"
+
 // Client contains the mongo connection and custom functions.
 type DbClient struct {
 	Conn *mongo.Client
