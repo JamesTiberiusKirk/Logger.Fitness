@@ -10,7 +10,7 @@ import (
 )
 
 // Client contains the mongo connection and custom functions.
-type Client struct {
+type DbClient struct {
 	Conn *mongo.Client
 }
 
@@ -23,7 +23,7 @@ type DbConfigOpts struct {
 }
 
 // Connect for connecting to the mongo serer.
-func Connect(creds DbConfigOpts) (*Client, error) {
+func Connect(creds DbConfigOpts) (*DbClient, error) {
 	mongoURI := "mongodb://" + creds.Url + ":" + creds.Port + "/"
 	log.Infof("Connecting to %s", mongoURI)
 
@@ -46,5 +46,5 @@ func Connect(creds DbConfigOpts) (*Client, error) {
 	}
 
 	log.Printf("Database connected!")
-	return &Client{Conn: client}, nil
+	return &DbClient{Conn: client}, nil
 }

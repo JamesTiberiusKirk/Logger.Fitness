@@ -9,10 +9,10 @@ import (
 )
 
 type ContextParams struct {
-	DbClient *db.Client
+	DbClient *db.DbClient
 }
 
-func Run(dbClient *db.Client, port string) {
+func Run(dbClient *db.DbClient, port string) {
 	contextParams := ContextParams{DbClient: dbClient}
 
 	e := echo.New()

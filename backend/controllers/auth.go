@@ -15,7 +15,7 @@ import (
 
 // Register controller to user registration.
 func Register(c echo.Context) error {
-	db := c.Get("db").(*db.Client)
+	db := c.Get("db").(*db.DbClient)
 
 	// Struct binding
 	var newUser types.User
@@ -63,7 +63,7 @@ func Register(c echo.Context) error {
 
 // Login controller to log in the user and return JWT token.
 func Login(c echo.Context) error {
-	db := c.Get("db").(*db.Client)
+	db := c.Get("db").(*db.DbClient)
 
 	// Struct binding
 	var userLogin types.UserLoginForm

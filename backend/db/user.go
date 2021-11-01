@@ -15,7 +15,7 @@ const (
 )
 
 // CheckUser function for checking if user exists based on email.
-func (db *Client) CheckUserBasedOnEmail(lookupEmail string) (bool, error) {
+func (db *DbClient) CheckUserBasedOnEmail(lookupEmail string) (bool, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
@@ -32,8 +32,8 @@ func (db *Client) CheckUserBasedOnEmail(lookupEmail string) (bool, error) {
 	return false, nil
 }
 
-// AddUser function to add user for the client class.
-func (db *Client) AddUser(user models.User) error {
+// AddUser function to add user for the DbClient class.
+func (db *DbClient) AddUser(user models.User) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
@@ -53,8 +53,8 @@ func (db *Client) AddUser(user models.User) error {
 	return nil
 }
 
-// GetUsersAll function to get all of the users for the client class.
-func (db *Client) GetUsersAll() ([]models.User, error) {
+// GetUsersAll function to get all of the users for the DbClient class.
+func (db *DbClient) GetUsersAll() ([]models.User, error) {
 	dbc := db.Conn
 	var users []models.User
 
@@ -74,7 +74,7 @@ func (db *Client) GetUsersAll() ([]models.User, error) {
 }
 
 // GetUserByEmail function to get a document by the email.
-func (db *Client) GetUserByEmail(lookupEmail string) (models.User, error) {
+func (db *DbClient) GetUserByEmail(lookupEmail string) (models.User, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
