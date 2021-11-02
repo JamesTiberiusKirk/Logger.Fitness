@@ -26,7 +26,6 @@ func Auth(role string) echo.MiddlewareFunc {
 			if err != nil {
 				return false, err
 			}
-
 			if _, found := claims.Roles[role]; !found {
 				return false, err
 			}
