@@ -26,9 +26,9 @@ const (
 
 // JwtClaim adds ID, username, email and roles as a claim to the token.
 type JwtClaim struct {
-	Username string   `json:"username"`
-	Email    string   `json:"email"`
-	Roles    []string `json:"roles"`
+	Username string            `json:"username"`
+	Email    string            `json:"email"`
+	Roles    map[string]string `json:"roles"`
 	jwt.StandardClaims
 }
 

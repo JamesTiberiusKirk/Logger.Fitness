@@ -23,8 +23,8 @@ func Register(c echo.Context) error {
 		log.Info(bindErr)
 		return c.JSON(http.StatusBadRequest, res.BAD_PAYLOAD)
 	}
-	defaultRoles := make([]string, 1)
-	defaultRoles[0] = "user"
+	defaultRoles := make(map[string]string)
+	defaultRoles["user"] = "user"
 	newUser.Roles = defaultRoles
 	newUser.Active = false
 

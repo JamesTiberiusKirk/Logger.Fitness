@@ -12,7 +12,7 @@ type User struct {
 	Username string             `json:"username" bson:"username" validate:"required,min=3,max=100"`
 	Password string             `json:"password" bson:"password" validate:"required,min=7,max=255"`
 	Active   bool               `bson:"active"`
-	Roles    []string           `json:"roles" bson:"roles"`
+	Roles    map[string]string  `json:"roles" bson:"roles"`
 }
 
 // IsValid checks if instance of User is valid using the validator.

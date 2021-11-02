@@ -6,6 +6,7 @@ import (
 
 	"Logger.Fitness/backend/controllers"
 	"Logger.Fitness/backend/db"
+	lfMiddleware "Logger.Fitness/go-libs/middleware"
 )
 
 type ContextParams struct {
@@ -23,10 +24,6 @@ func Run(dbClient *db.DbClient, port string) {
 		middleware.CORS(),
 	)
 
-	// e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-	// 	Format: "${method} ${status} ${uri} ${user_agent}\n",
-	// }))
-
 	e = initRoutes(e)
 
 	e.Logger.Fatal(e.Start(port))
@@ -37,6 +34,8 @@ func initRoutes(e *echo.Echo) *echo.Echo {
 	e.POST("/auth/verify_me", controllers.VerifyMe)
 	e.POST("/auth/register", controllers.Register)
 	e.POST("/auth/login", controllers.Login)
+
+	e.GET("/helloworld", controllers.HelloWorld, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
 
 	return e
 }
