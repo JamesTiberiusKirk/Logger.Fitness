@@ -30,6 +30,7 @@ func Auth(role string) echo.MiddlewareFunc {
 				return false, err
 			}
 
+			c.Set("user", claims)
 			return true, err
 		},
 	})

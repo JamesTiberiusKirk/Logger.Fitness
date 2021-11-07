@@ -36,6 +36,7 @@ func initRoutes(e *echo.Echo) *echo.Echo {
 	e.POST("/auth/login", controllers.Login)
 
 	e.GET("/helloworld", controllers.HelloWorld, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
+	e.POST("/extp", controllers.NewExerciseType, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
 
 	return e
 }

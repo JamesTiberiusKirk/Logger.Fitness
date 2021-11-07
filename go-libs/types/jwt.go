@@ -1,6 +1,19 @@
 package types
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// JwtClaim adds ID, username, email and roles as a claim to the token.
+type JwtClaim struct {
+	Id       primitive.ObjectID
+	Username string            `json:"username"`
+	Email    string            `json:"email"`
+	Roles    map[string]string `json:"roles"`
+	jwt.StandardClaims
+}
 
 // JwtDto DTO for the jwt alone
 type JwtDto struct {

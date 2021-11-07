@@ -14,7 +14,7 @@ const (
 
 type ExerciseType struct {
 	Id          primitive.ObjectID `bson:"_id"`
-	UserId      string             `json:"userId" bson:"userId"`
+	UserId      primitive.ObjectID `bson:"userId"`
 	Name        string             `json:"name" bson:"name" validate:""`
 	Description string             `json:"description" bson:"description"`
 	DataType    DataType           `json:"data_type" bson:"data_type"`

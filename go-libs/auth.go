@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"Logger.Fitness/go-libs/types"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 )
 
 // ErrClaimParse is an error of parsing the claim
@@ -19,18 +19,10 @@ var ErrJwtExpired = errors.New("JWT has expired")
 var ErrJwtInvalid = errors.New("JWT invalid")
 
 const (
-	SERVICE_NAME         = "fl-auth"
+	ISSUER               = "Logger.Fitness"
 	JWT_SECRET_ENV       = "JWT_SECRET"
 	JWT_EXPIRATION_HOURS = 24
 )
-
-// JwtClaim adds ID, username, email and roles as a claim to the token.
-type JwtClaim struct {
-	Username string            `json:"username"`
-	Email    string            `json:"email"`
-	Roles    map[string]string `json:"roles"`
-	jwt.StandardClaims
-}
 
 func getJwtSecretFromEnv() string {
 	return os.Getenv(JWT_SECRET_ENV)
@@ -38,13 +30,14 @@ func getJwtSecretFromEnv() string {
 
 // GenerateJWT function to generate JWT token.
 func GenerateJWT(user types.User) (signedToken string, err error) {
-	claims := &JwtClaim{
+	claims := &types.JwtClaim{
+		Id:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Roles:    user.Roles,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(JWT_EXPIRATION_HOURS)).Unix(),
-			Issuer:    SERVICE_NAME,
+			Issuer:    ISSUER,
 		},
 	}
 
@@ -59,10 +52,10 @@ func GenerateJWT(user types.User) (signedToken string, err error) {
 }
 
 // ValidateToken function to validate the JWT token and return the custom claims.
-func ValidateJwtToken(userToken string) (claims *JwtClaim, err error) {
+func ValidateJwtToken(userToken string) (claims *types.JwtClaim, err error) {
 	token, err := jwt.ParseWithClaims(
 		userToken,
-		&JwtClaim{},
+		&types.JwtClaim{},
 		func(token *jwt.Token) (interface{}, error) {
 			return []byte(getJwtSecretFromEnv()), nil
 		},
@@ -72,7 +65,7 @@ func ValidateJwtToken(userToken string) (claims *JwtClaim, err error) {
 		return
 	}
 
-	claims, ok := token.Claims.(*JwtClaim)
+	claims, ok := token.Claims.(*types.JwtClaim)
 	if !ok {
 		err = ErrClaimParse
 		return
