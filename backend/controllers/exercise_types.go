@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// NewExerciseType creates a new exerciseTypes
+// NewExerciseType creates a new exercise types
 func NewExerciseType(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -20,7 +20,7 @@ func NewExerciseType(c echo.Context) error {
 		log.Info(err)
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	newExerciseType.UserId = userClaim.ID
+	newExerciseType.UserID = userClaim.ID
 
 	if err := db.InsertNewExerciseType(newExerciseType); err != nil {
 		log.Info(err)
@@ -30,6 +30,7 @@ func NewExerciseType(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// GetExerciseTypes gets all exercise types belonging to the user that made the request
 func GetExerciseTypes(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -43,6 +44,10 @@ func GetExerciseTypes(c echo.Context) error {
 }
 
 func EditExerciseTypes(c echo.Context) error {
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
+
+	// db.UpdateExerciseType()
 	return nil
 }
 

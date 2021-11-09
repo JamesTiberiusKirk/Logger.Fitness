@@ -15,15 +15,16 @@ const (
 	SingleValue DataType = "single-value"
 )
 
-// ExerciseType is for vustom types of exercises
+// ExerciseType is for custom types of exercises
 type ExerciseType struct {
-	Id          primitive.ObjectID `bson:"_id"`
-	UserId      primitive.ObjectID `bson:"userId"`
-	Name        string             `json:"name" bson:"name" validate:""`
+	ID          primitive.ObjectID `json:"exercise_type_id" bson:"_id"`
+	UserID      primitive.ObjectID `json:"user_id" bson:"user_id"`
+	Name        string             `json:"name" bson:"name" validate:"required"`
 	Description string             `json:"description" bson:"description"`
 	DataType    DataType           `json:"data_type" bson:"data_type"`
 }
 
+// IsValid validates the struct
 func (exerciseType ExerciseType) IsValid() error {
 	validate := validator.New()
 	return validate.Struct(exerciseType)

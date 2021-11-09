@@ -9,8 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// EXERCISE_TYPE_COLLECTION name of collection
 const EXERCISE_TYPE_COLLECTION = "exercise_types"
 
+// InsertNewExerciseType for inserting new type
 func (db *DbClient) InsertNewExerciseType(exerciseType types.ExerciseType) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
@@ -20,7 +22,7 @@ func (db *DbClient) InsertNewExerciseType(exerciseType types.ExerciseType) error
 		return err
 	}
 
-	exerciseType.Id = primitive.NewObjectID()
+	exerciseType.ID = primitive.NewObjectID()
 
 	_, err = collection.InsertOne(context.TODO(), exerciseType)
 	if err != nil {
@@ -30,11 +32,13 @@ func (db *DbClient) InsertNewExerciseType(exerciseType types.ExerciseType) error
 	return nil
 }
 
-func (db *DbClient) UpdateExerciseType(exerciseType types.ExerciseType) error {
+// UpdateExerciseType is for updating an existing exercise type
+// TODO: add userID also for sec validation
+func (db *DbClient) UpdateExerciseType(userID primitive.ObjectID, exerciseType types.ExerciseType) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
 
-	result, err := collection.UpdateOne(context.Background(), bson.M{"_id": exerciseType.Id}, exerciseType)
+	result, err := collection.UpdateOne(context.Background(), bson.M{"_id": exerciseType.ID, "user_id": userID}, exerciseType)
 	if err != nil {
 		return err
 	}
@@ -42,6 +46,8 @@ func (db *DbClient) UpdateExerciseType(exerciseType types.ExerciseType) error {
 	return nil
 }
 
+// DeleteExerciseTypeById is for deleting an exercise type by ID
+// TODO: add userID also for sec validation
 func (db *DbClient) DeleteExerciseTypeById(id string) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
@@ -54,6 +60,7 @@ func (db *DbClient) DeleteExerciseTypeById(id string) error {
 	return nil
 }
 
+// GetExerciseTypesByUserID getting all exercise types belonging to a user
 func (db *DbClient) GetExerciseTypesByUserID(userid primitive.ObjectID) ([]types.ExerciseType, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
@@ -72,6 +79,8 @@ func (db *DbClient) GetExerciseTypesByUserID(userid primitive.ObjectID) ([]types
 	return exerciseTypes, nil
 }
 
+// GetExerciseTypesById find a specific exercise type
+// TODO: add userID also for sec validation
 func (db *DbClient) GetExerciseTypesById(id string) (types.ExerciseType, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
@@ -85,6 +94,8 @@ func (db *DbClient) GetExerciseTypesById(id string) (types.ExerciseType, error) 
 	return exerciseType, nil
 }
 
+// GetExerciseTypesBySearch search for exercise types
+// TODO: add userID also for sec validation
 func (db *DbClient) GetExerciseTypesBySearch(query string) ([]types.ExerciseType, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
