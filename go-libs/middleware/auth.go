@@ -6,9 +6,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// Available auth roles
 const (
-	ADMIN_ROLE = "admin"
-	USER_ROLE  = "user"
+	AdminRole = "admin"
+	UserRole  = "user"
 )
 
 // Auth returns echo middleware function which validates jwt on time

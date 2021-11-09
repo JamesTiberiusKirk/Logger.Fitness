@@ -22,7 +22,7 @@ func Register(c echo.Context) error {
 	var newUser types.User
 	if bindErr := c.Bind(&newUser); bindErr != nil {
 		log.Info(bindErr)
-		return c.JSON(http.StatusBadRequest, res.BAD_PAYLOAD)
+		return c.JSON(http.StatusBadRequest, res.BadPayload)
 	}
 	defaultRoles := make(map[string]string)
 	defaultRoles["user"] = "user"
@@ -39,27 +39,27 @@ func Register(c echo.Context) error {
 	existingUser, dbErr := db.CheckUserBasedOnEmail(newUser.Email)
 	if dbErr != nil {
 		log.Warn(dbErr)
-		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
+		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 	if existingUser {
-		return c.String(http.StatusBadRequest, res.USER_EXISTS)
+		return c.String(http.StatusBadRequest, res.UserExists)
 	}
 
 	// Hash the password
 	hashedPass, hashErr := lib.Hash(newUser.Password)
 	if hashErr != nil {
 		log.Warn(hashErr)
-		return c.String(http.StatusInternalServerError, res.INTERNAL_SERVER_ERR)
+		return c.NoContent(http.StatusInternalServerError)
 	}
 	newUser.Password = hashedPass
 
 	// Database insertion
 	if dbErr := db.AddUser(newUser); dbErr != nil {
 		log.Warn(dbErr)
-		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
+		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
-	return c.String(http.StatusOK, res.SUCCESSFULLY_REGISTERED)
+	return c.NoContent(http.StatusOK)
 }
 
 // Login controller to log in the user and return JWT token.
@@ -70,7 +70,7 @@ func Login(c echo.Context) error {
 	var userLogin types.UserLoginForm
 	if bindErr := c.Bind(&userLogin); bindErr != nil {
 		log.Info(bindErr.Error())
-		return c.JSON(http.StatusBadRequest, res.BAD_PAYLOAD)
+		return c.JSON(http.StatusBadRequest, res.BadPayload)
 	}
 
 	// Input validation
@@ -82,28 +82,28 @@ func Login(c echo.Context) error {
 	// Query hashed db pass
 	dbUser, dbErr := db.GetUserByEmail(userLogin.Email)
 	if dbErr == mongo.ErrNoDocuments {
-		return c.String(http.StatusUnauthorized, res.UNAUTHORIZED)
+		return c.NoContent(http.StatusUnauthorized)
 	}
 	if dbErr != nil {
 		log.Warn(dbErr)
-		return c.String(http.StatusInternalServerError, res.DATABASE_ERR)
+		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
 	// Compare hash and plaintext
 	if !lib.VerifyHash(dbUser.Password, userLogin.Password) {
-		return c.String(http.StatusUnauthorized, res.UNAUTHORIZED)
+		return c.NoContent(http.StatusUnauthorized)
 	}
 
 	// Create JWT
 	userJwt, jwtErr := lib.GenerateJWT(dbUser)
 	if jwtErr != nil {
 		log.Info(jwtErr.Error())
-		return c.String(http.StatusInternalServerError, res.JWT_ERR)
+		return c.String(http.StatusInternalServerError, res.JwtError)
 	}
 
 	resp := types.LoginResponseDto{
 		Jwt:     userJwt,
-		Message: res.LOGGED_IN,
+		Message: res.LoggedIn,
 	}
 
 	return c.JSON(http.StatusOK, resp)
@@ -126,8 +126,8 @@ func VerifyMe(c echo.Context) error {
 	// Validate JTW token
 	_, jwtErr := lib.ValidateJwtToken(userJwt.Jwt)
 	if jwtErr != nil {
-		return c.String(http.StatusUnauthorized, res.JWT_INVALID)
+		return c.String(http.StatusUnauthorized, res.JwtInvalid)
 	}
 
-	return c.String(http.StatusOK, res.OK)
+	return c.NoContent(http.StatusOK)
 }
