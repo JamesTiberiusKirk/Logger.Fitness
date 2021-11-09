@@ -13,6 +13,7 @@ import (
 	"Logger.Fitness/go-libs/types"
 )
 
+// @title Register
 // Register controller to user registration.
 func Register(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)

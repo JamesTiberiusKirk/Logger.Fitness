@@ -8,7 +8,7 @@ import (
 
 // JwtClaim adds ID, username, email and roles as a claim to the token.
 type JwtClaim struct {
-	Id       primitive.ObjectID
+	ID       primitive.ObjectID
 	Username string            `json:"username"`
 	Email    string            `json:"email"`
 	Roles    map[string]string `json:"roles"`

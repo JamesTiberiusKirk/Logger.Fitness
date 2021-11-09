@@ -54,7 +54,7 @@ func (db *DbClient) DeleteExerciseTypeById(id string) error {
 	return nil
 }
 
-func (db *DbClient) GetExerciseTypes() ([]types.ExerciseType, error) {
+func (db *DbClient) GetExerciseTypesByUserID(userid primitive.ObjectID) ([]types.ExerciseType, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
 	var exerciseTypes []types.ExerciseType

@@ -5,13 +5,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// DataType is the data type of the exercise type
 type DataType string
 
 const (
-	Sets        DataType = "sets"
+	// Sets is for sets
+	Sets DataType = "sets"
+	// SingleValue is for just single values
 	SingleValue DataType = "single-value"
 )
 
+// ExerciseType is for vustom types of exercises
 type ExerciseType struct {
 	Id          primitive.ObjectID `bson:"_id"`
 	UserId      primitive.ObjectID `bson:"userId"`

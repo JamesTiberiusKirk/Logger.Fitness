@@ -1,18 +1,24 @@
 package server
 
 import (
+	"strings"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "github.com/swaggo/echo-swagger/example/docs"
 
 	"Logger.Fitness/backend/controllers"
 	"Logger.Fitness/backend/db"
 	lfMiddleware "Logger.Fitness/go-libs/middleware"
 )
 
+// ContextParams is for the context passed to the controllers
 type ContextParams struct {
 	DbClient *db.DbClient
 }
 
+// Run runs the http server
 func Run(dbClient *db.DbClient, port string) {
 	contextParams := ContextParams{DbClient: dbClient}
 
@@ -20,11 +26,19 @@ func Run(dbClient *db.DbClient, port string) {
 	e.Use(
 		createContext(contextParams),
 		middleware.Logger(),
-		middleware.Gzip(),
 		middleware.CORS(),
+		middleware.GzipWithConfig(middleware.GzipConfig{
+			Skipper: func(c echo.Context) bool {
+				if strings.Contains(c.Request().URL.Path, "swagger") {
+					return true
+				}
+				return false
+			},
+		}),
 	)
 
 	e = initRoutes(e)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.Logger.Fatal(e.Start(port))
 }
@@ -36,7 +50,9 @@ func initRoutes(e *echo.Echo) *echo.Echo {
 	e.POST("/auth/login", controllers.Login)
 
 	e.GET("/helloworld", controllers.HelloWorld, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
+
 	e.POST("/extp", controllers.NewExerciseType, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
+	e.GET("/extp", controllers.GetExerciseTypes, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
 
 	return e
 }

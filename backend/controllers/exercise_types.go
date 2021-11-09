@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// TODO: ERROR: the userID gets set as 000..
+// NewExerciseType creates a new exerciseTypes
 func NewExerciseType(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -20,7 +20,7 @@ func NewExerciseType(c echo.Context) error {
 		log.Info(err)
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	newExerciseType.UserId = userClaim.Id
+	newExerciseType.UserId = userClaim.ID
 
 	if err := db.InsertNewExerciseType(newExerciseType); err != nil {
 		log.Info(err)
@@ -32,8 +32,9 @@ func NewExerciseType(c echo.Context) error {
 
 func GetExerciseTypes(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
+	userClaim := c.Get("user").(*types.JwtClaim)
 
-	exerciseTypes, err := db.GetExerciseTypes()
+	exerciseTypes, err := db.GetExerciseTypesByUserID(userClaim.ID)
 	if err != nil {
 		return err
 	}
