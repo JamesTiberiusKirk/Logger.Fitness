@@ -10,7 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// NewExerciseType creates a new exercise types
+// NewExerciseType POST endpoint.
+// Creates a new exercise types
 func NewExerciseType(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -24,13 +25,14 @@ func NewExerciseType(c echo.Context) error {
 
 	if err := db.InsertNewExerciseType(newExerciseType); err != nil {
 		log.Info(err)
-		return c.JSON(http.StatusInternalServerError, res.DATABASE_ERR)
+		return c.JSON(http.StatusInternalServerError, res.DatabseError)
 	}
 
 	return c.NoContent(http.StatusOK)
 }
 
-// GetExerciseTypes gets all exercise types belonging to the user that made the request
+// GetExerciseTypes GET endpoint.
+// Gets all exercise types belonging to the user that made the request
 func GetExerciseTypes(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -39,15 +41,30 @@ func GetExerciseTypes(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-
 	return c.JSON(http.StatusOK, exerciseTypes)
 }
 
+// EditExerciseTypes PUT endpoint
+// Edit an existing record
 func EditExerciseTypes(c echo.Context) error {
-	// db := c.Get("db").(*db.DbClient)
-	// userClaim := c.Get("user").(*types.JwtClaim)
+	db := c.Get("db").(*db.DbClient)
+	userClaim := c.Get("user").(*types.JwtClaim)
 
-	// db.UpdateExerciseType()
+	var userUpdate types.ExerciseType
+	if err := c.Bind(&userUpdate); err != nil {
+		log.Info(err)
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	// if userUpdate.StringID == nil {
+	// return c.String(http.StatusBadRequest, res.MissingID)
+	// }
+
+	err := db.UpdateExerciseType(userClaim.ID, userUpdate)
+	if err != nil {
+		log.Info(err)
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
 	return nil
 }
 

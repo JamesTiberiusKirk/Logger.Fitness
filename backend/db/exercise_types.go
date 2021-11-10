@@ -38,7 +38,10 @@ func (db *DbClient) UpdateExerciseType(userID primitive.ObjectID, exerciseType t
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(EXERCISE_TYPE_COLLECTION)
 
-	result, err := collection.UpdateOne(context.Background(), bson.M{"_id": exerciseType.ID, "user_id": userID}, exerciseType)
+	filter := bson.M{"_id": exerciseType.ID, "user_id": userID}
+	update := bson.M{"$set": exerciseType}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return err
 	}

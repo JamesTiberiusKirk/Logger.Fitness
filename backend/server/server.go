@@ -49,10 +49,11 @@ func initRoutes(e *echo.Echo) *echo.Echo {
 	e.POST("/auth/register", controllers.Register)
 	e.POST("/auth/login", controllers.Login)
 
-	e.GET("/helloworld", controllers.HelloWorld, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
+	e.GET("/helloworld", controllers.HelloWorld, lfMiddleware.Auth(lfMiddleware.UserRole))
 
-	e.POST("/extp", controllers.NewExerciseType, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
-	e.GET("/extp", controllers.GetExerciseTypes, lfMiddleware.Auth(lfMiddleware.USER_ROLE))
+	e.POST("/extp", controllers.NewExerciseType, lfMiddleware.Auth(lfMiddleware.UserRole))
+	e.GET("/extp", controllers.GetExerciseTypes, lfMiddleware.Auth(lfMiddleware.UserRole))
+	e.PUT("/extp", controllers.EditExerciseTypes, lfMiddleware.Auth(lfMiddleware.UserRole))
 
 	return e
 }
