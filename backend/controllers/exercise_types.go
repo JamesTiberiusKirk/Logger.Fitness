@@ -8,6 +8,7 @@ import (
 	"Logger.Fitness/go-libs/types"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // NewExerciseType POST endpoint.
@@ -46,6 +47,7 @@ func GetExerciseTypes(c echo.Context) error {
 
 // EditExerciseTypes PUT endpoint
 // Edit an existing record
+// NOTE: TODO:? Need to check for the fields that havent been set and not update them to empty....maybe do that from the client side and always PUT all of the data unless the user wants to wipe it???...
 func EditExerciseTypes(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -56,9 +58,10 @@ func EditExerciseTypes(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	// if userUpdate.StringID == nil {
-	// return c.String(http.StatusBadRequest, res.MissingID)
-	// }
+	userUpdate.UserID = userClaim.ID
+	if userUpdate.ID.IsZero() {
+		return c.String(http.StatusBadRequest, res.MissingID)
+	}
 
 	err := db.UpdateExerciseType(userClaim.ID, userUpdate)
 	if err != nil {
@@ -68,6 +71,29 @@ func EditExerciseTypes(c echo.Context) error {
 	return nil
 }
 
+// DeleteExerciseType DELETE endpoint
+// params exercise_type_id
+// Deleted an exercise type
+// TODO: Needs implementation
 func DeleteExerciseType(c echo.Context) error {
+	db := c.Get("db").(*db.DbClient)
+	userClaim := c.Get("user").(*types.JwtClaim)
+
+	exerciseTypesID := c.QueryParam("exercise_type_id")
+
+	if exerciseTypesID == "" {
+		// TODO: error return if no id
+	}
+
+	exerciseTypesObjID, err := primitive.ObjectIDFromHex(exerciseTypesID)
+	if err != nil {
+		// TODO: error in objID
+	}
+
+	err = db.DeleteExerciseTypeByID(exerciseTypesObjID, userClaim.ID)
+	if err != nil {
+		//
+
+	}
 	return nil
 }

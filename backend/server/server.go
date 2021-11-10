@@ -19,6 +19,11 @@ type ContextParams struct {
 }
 
 // Run runs the http server
+// @title Logger.Fitness API
+// @version 0.0
+// @description This is a sample server Petstore server.
+// @host petstore.swagger.io
+// @BasePath /
 func Run(dbClient *db.DbClient, port string) {
 	contextParams := ContextParams{DbClient: dbClient}
 
