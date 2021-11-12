@@ -46,8 +46,10 @@ func GetExerciseTypes(c echo.Context) error {
 }
 
 // EditExerciseTypes PUT endpoint
+// @body types.ExerciseType
 // Edit an existing record
-// NOTE: TODO:? Need to check for the fields that havent been set and not update them to empty....maybe do that from the client side and always PUT all of the data unless the user wants to wipe it???...
+// NOTE: ANY UNSENT DATA WILL WIPE THE FIELD ON THE
+// NOTE: TODO:? Need to check for the fields that haven't been set and not update them to empty....maybe do that from the client side and always PUT all of the data unless the user wants to wipe it???...
 func EditExerciseTypes(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -72,9 +74,8 @@ func EditExerciseTypes(c echo.Context) error {
 }
 
 // DeleteExerciseType DELETE endpoint
-// params exercise_type_id
-// Deleted an exercise type
-// TODO: Needs implementation
+// Delete an exercise type
+// @params exercise_type_id
 func DeleteExerciseType(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -82,18 +83,18 @@ func DeleteExerciseType(c echo.Context) error {
 	exerciseTypesID := c.QueryParam("exercise_type_id")
 
 	if exerciseTypesID == "" {
-		// TODO: error return if no id
+		return c.String(http.StatusBadRequest, res.MissingID)
 	}
 
 	exerciseTypesObjID, err := primitive.ObjectIDFromHex(exerciseTypesID)
 	if err != nil {
-		// TODO: error in objID
+		return c.String(http.StatusBadRequest, res.InternalServerError)
 	}
 
 	err = db.DeleteExerciseTypeByID(exerciseTypesObjID, userClaim.ID)
 	if err != nil {
-		//
+		return c.String(http.StatusBadRequest, res.DatabseError)
 
 	}
-	return nil
+	return c.NoContent(http.StatusOK)
 }
