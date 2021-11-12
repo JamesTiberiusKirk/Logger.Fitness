@@ -6,13 +6,13 @@ import (
 )
 
 // DataType is the data type of the exercise type
-type DataType string
+type DataTypeLabel string
 
 const (
-	// Sets is for sets
-	Sets DataType = "sets"
-	// SingleValue is for just single values
-	SingleValue DataType = "single-value"
+	// SetLabel is for sets
+	SetLabel DataTypeLabel = "sets"
+	// SingleValueLabel is for just single values
+	SingleValueLabel DataTypeLabel = "single-value"
 )
 
 // ExerciseType is for custom types of exercises
@@ -21,7 +21,7 @@ type ExerciseType struct {
 	UserID      primitive.ObjectID `json:"user_id" bson:"user_id"`
 	Name        string             `json:"name" bson:"name" validate:"required"`
 	Description string             `json:"description" bson:"description"`
-	DataType    DataType           `json:"data_type" bson:"data_type"`
+	DataType    DataTypeLabel      `json:"data_type" bson:"data_type"`
 }
 
 // IsValid validates the struct
