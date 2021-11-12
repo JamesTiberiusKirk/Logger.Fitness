@@ -3,14 +3,11 @@ package server
 import (
 	"strings"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	echoSwagger "github.com/swaggo/echo-swagger"
-	_ "github.com/swaggo/echo-swagger/example/docs"
-
 	"Logger.Fitness/backend/controllers"
 	"Logger.Fitness/backend/db"
 	lfMiddleware "Logger.Fitness/go-libs/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 // ContextParams is for the context passed to the controllers
@@ -19,11 +16,6 @@ type ContextParams struct {
 }
 
 // Run runs the http server
-// @title Logger.Fitness API
-// @version 0.0
-// @description This is a sample server Petstore server.
-// @host petstore.swagger.io
-// @BasePath /
 func Run(dbClient *db.DbClient, port string) {
 	contextParams := ContextParams{DbClient: dbClient}
 
@@ -43,7 +35,6 @@ func Run(dbClient *db.DbClient, port string) {
 	)
 
 	e = initRoutes(e)
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.Logger.Fatal(e.Start(port))
 }
