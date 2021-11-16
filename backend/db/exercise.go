@@ -7,7 +7,7 @@ import (
 )
 
 // ExercisesCollection const for the mongodb collection
-const ExerciseCollection = "workouts"
+const ExerciseCollection = "exercises"
 
 // InsertNewExercise mongodb insert operation
 func (db *DbClient) InsertNewExercise(newExercise types.Exercise) error {
