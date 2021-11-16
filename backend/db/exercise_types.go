@@ -90,12 +90,12 @@ func (db *DbClient) GetExerciseTypesByUserID(userID primitive.ObjectID) ([]types
 
 // GetExerciseTypesById find a specific exercise type
 // TODO: add userID also for sec validation
-func (db *DbClient) GetExerciseTypesByID(id string) (types.ExerciseType, error) {
+func (db *DbClient) GetExerciseTypesByID(exerciseTypeID string) (types.ExerciseType, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(ExerciseTypeCollection)
 	var exerciseType types.ExerciseType
 
-	err := collection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&exerciseType)
+	err := collection.FindOne(context.TODO(), bson.M{"_id": exerciseTypeID}).Decode(&exerciseType)
 	if err != nil {
 		return exerciseType, err
 	}
@@ -104,25 +104,25 @@ func (db *DbClient) GetExerciseTypesByID(id string) (types.ExerciseType, error) 
 }
 
 // GetExerciseTypesBySearch search for exercise types
-// TODO: add userID also for sec validation
-func (db *DbClient) GetExerciseTypesBySearch(query string) ([]types.ExerciseType, error) {
-	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(ExerciseTypeCollection)
-	var exerciseTypes []types.ExerciseType
+// TODO: Need to implement, add userID also for sec validation
+// func (db *DbClient) GetExerciseTypesBySearch(query string) ([]types.ExerciseType, error) {
+// dbc := db.Conn
+// collection := dbc.Database(DB_NAME).Collection(ExerciseTypeCollection)
+// var exerciseTypes []types.ExerciseType
 
-	filter := bson.M{"name": query, "description": query}
-	cur, err := collection.Find(context.Background(), filter)
-	if err != nil {
-		return exerciseTypes, err
-	}
+// filter := bson.M{"name": query, "description": query}
+// cur, err := collection.Find(context.Background(), filter)
+// if err != nil {
+// return exerciseTypes, err
+// }
 
-	for cur.Next(context.TODO()) {
-		var exerciseType types.ExerciseType
-		if err := cur.Decode(exerciseType); err != nil {
-			return exerciseTypes, err
-		}
-		exerciseTypes = append(exerciseTypes, exerciseType)
-	}
+// for cur.Next(context.TODO()) {
+// var exerciseType types.ExerciseType
+// if err := cur.Decode(exerciseType); err != nil {
+// return exerciseTypes, err
+// }
+// exerciseTypes = append(exerciseTypes, exerciseType)
+// }
 
-	return exerciseTypes, nil
-}
+// return exerciseTypes, nil
+// }
