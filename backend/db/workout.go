@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"Logger.Fitness/go-libs/types"
 	log "github.com/sirupsen/logrus"
@@ -70,7 +70,7 @@ func (db *DbClient) GetUserWorkout(userID primitive.ObjectID) ([]types.Workout, 
 	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
 
 	if userID.Hex() == "" {
-		return nil, fmt.Errorf("need to provide a userID")
+		return nil, errors.New("need to provide a userID")
 	}
 
 	var result []types.Workout
@@ -89,20 +89,40 @@ func (db *DbClient) GetUserWorkoutByID(workoutID, userID primitive.ObjectID) (ty
 	var result types.Workout
 
 	if userID.Hex() == "" {
-		return result, fmt.Errorf("need to provide a userID")
+		return result, errors.New("need to provide a userID")
 	}
 
 	if workoutID.Hex() == "" {
-		return result, fmt.Errorf("need to provide a workoutID")
+		return result, errors.New("need to provide a workoutID")
 	}
 
 	filter := bson.M{"_id": workoutID, "user_id": userID}
+
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		return result, err
 	}
 	return result, nil
 }
+
+// GetUserWorkoutByQuery get operation
+// TODO: Need to implement
+// func (db *DbClient) GetUserWorkoutByDateRange(begin, end string, userID primitive.ObjectID) (types.Workout, error) {
+// dbc := db.Conn
+// collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+// var result types.Workout
+
+// if userID.Hex() == "" {
+// return result, fmt.Errorf("need to provide a userID")
+// }
+
+// filter := bson.M{"user_id": userID}
+// err := collection.FindOne(context.TODO(), filter).Decode(&result)
+// if err != nil {
+// return result, err
+// }
+// return result, nil
+// }
 
 // GetUserWorkoutByQuery get operation
 // TODO: Need to implement
