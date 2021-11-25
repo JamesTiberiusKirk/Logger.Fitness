@@ -48,8 +48,7 @@ func GetExerciseTypes(c echo.Context) error {
 // EditExerciseTypes PUT endpoint
 // @body types.ExerciseType
 // Edit an existing record
-// NOTE: ANY UNSENT DATA WILL WIPE THE FIELD ON THE
-// NOTE: TODO:? Need to check for the fields that haven't been set and not update them to empty....maybe do that from the client side and always PUT all of the data unless the user wants to wipe it???...
+// NOTE: ANY UNSENT DATA WILL WIPE THE FIELD ON THE DATABASE
 func EditExerciseTypes(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)

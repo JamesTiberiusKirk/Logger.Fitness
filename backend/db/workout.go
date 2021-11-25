@@ -82,6 +82,27 @@ func (db *DbClient) GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout,
 	return nil, nil
 }
 
+// GetUserAcitveWorkouts get operation
+func (db *DbClient) GetUserAcitveWorkouts(userID primitive.ObjectID) ([]types.Workout, error) {
+	dbc := db.Conn
+	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+
+	if userID.Hex() == "" {
+		return nil, errors.New("need to provide a userID")
+	}
+
+	var result []types.Workout
+	filter := bson.M{
+		"user_id":  userID,
+		"end_time": nil,
+	}
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
 // GetUserWorkoutByID get operation
 func (db *DbClient) GetUserWorkoutByID(workoutID, userID primitive.ObjectID) (types.Workout, error) {
 	dbc := db.Conn
