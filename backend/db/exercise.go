@@ -11,7 +11,11 @@ const ExerciseCollection = "exercises"
 
 // InsertNewExercise mongodb insert operation
 func (db *DbClient) InsertNewExercise(newExercise types.Exercise) error {
+	// dbc := db.Conn
+	// collection := dbc.Database(DB_NAME).Collection(ExerciseCollection)
+
 	log.Info("Test ")
+
 	return nil
 }
 
