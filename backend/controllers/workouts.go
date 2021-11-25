@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"Logger.Fitness/backend/db"
-	"Logger.Fitness/go-libs/types"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,8 +9,8 @@ import (
 // GetWorkouts GET endpoint..
 // Gets all user workouts.
 func GetWorkouts(c *echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
 
 	return nil
 }
@@ -20,8 +18,8 @@ func GetWorkouts(c *echo.Context) error {
 // GetActiveWorkout GET endpoint.
 // Gets the one active workout a user has
 func GetActiveWorkout(c *echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
 	return nil
 }
 
@@ -29,8 +27,8 @@ func GetActiveWorkout(c *echo.Context) error {
 // Starts a new workout if there are no other
 // 	workouts active.
 func StartNewWorkout(c *echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
 	return nil
 }
 
@@ -38,16 +36,16 @@ func StartNewWorkout(c *echo.Context) error {
 // Stops the active workout.
 // This also leaves an end time time stamp.
 func StopWorkout(c *echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
 	return nil
 }
 
 // DeleteWorkout DELETE endpoint.
 // Deletes a workout
 func DeleteWorkout(c *echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
 	return nil
 }
 
@@ -55,7 +53,7 @@ func DeleteWorkout(c *echo.Context) error {
 // Re-writes a workout.
 // NOTE: This will even re-write blank fields.
 func EditWorkout(c *echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
+	// db := c.Get("db").(*db.DbClient)
+	// userClaim := c.Get("user").(*types.JwtClaim)
 	return nil
 }
