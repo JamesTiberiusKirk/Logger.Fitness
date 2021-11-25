@@ -64,8 +64,8 @@ func (db *DbClient) DeleteWorkout(workoutID, userID primitive.ObjectID) error {
 	return nil
 }
 
-// GetUserWorkout get operation
-func (db *DbClient) GetUserWorkout(userID primitive.ObjectID) ([]types.Workout, error) {
+// GetUserWorkouts get operation
+func (db *DbClient) GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
 
