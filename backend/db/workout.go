@@ -83,7 +83,7 @@ func (db *DbClient) GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout,
 }
 
 // GetUserAcitveWorkouts get operation
-func (db *DbClient) GetUserAcitveWorkouts(userID primitive.ObjectID) ([]types.Workout, error) {
+func (db *DbClient) GetUserAcitveWorkout(userID primitive.ObjectID) (*types.Workout, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
 
@@ -91,7 +91,7 @@ func (db *DbClient) GetUserAcitveWorkouts(userID primitive.ObjectID) ([]types.Wo
 		return nil, errors.New("need to provide a userID")
 	}
 
-	var result []types.Workout
+	var result *types.Workout
 	filter := bson.M{
 		"user_id":  userID,
 		"end_time": nil,
@@ -100,7 +100,7 @@ func (db *DbClient) GetUserAcitveWorkouts(userID primitive.ObjectID) ([]types.Wo
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return result, nil
 }
 
 // GetUserWorkoutByID get operation
