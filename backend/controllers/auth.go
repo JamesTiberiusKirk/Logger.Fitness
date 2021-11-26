@@ -13,7 +13,6 @@ import (
 	"Logger.Fitness/go-libs/types"
 )
 
-// @title Register
 // Register controller to user registration.
 func Register(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
@@ -21,7 +20,7 @@ func Register(c echo.Context) error {
 	// Struct binding
 	var newUser types.User
 	if bindErr := c.Bind(&newUser); bindErr != nil {
-		log.Info(bindErr)
+		log.Warn(bindErr)
 		return c.JSON(http.StatusBadRequest, res.BadPayload)
 	}
 	defaultRoles := make(map[string]string)
