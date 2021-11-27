@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"Logger.Fitness/backend/db"
@@ -12,8 +13,6 @@ import (
 )
 
 /* Workouts */
-
-// TODO: test
 
 // GetWorkouts GET endpoint..
 // Gets all user workouts.
@@ -69,9 +68,12 @@ func StartNewWorkout(c echo.Context) error {
 	newWorkout.ID = primitive.NewObjectID()
 	newWorkout.EndTime = nil
 
-	var startTime int64
-	// TODO: Bind a single value from the body of the request into startTime
-	newWorkout.StartTime = time.Unix(startTime, 0)
+	startTime := c.QueryParam("start_time")
+	startTimeInt, err := strconv.ParseInt(startTime, 10, 64)
+	if err != nil {
+		return c.String(http.StatusBadRequest, res.CannotParseString)
+	}
+	newWorkout.StartTime = time.Unix(startTimeInt, 0)
 
 	err = db.InsertNewWorkout(newWorkout)
 

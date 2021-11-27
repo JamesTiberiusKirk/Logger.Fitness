@@ -10,4 +10,5 @@ const (
 	InternalServerError = "Internal server error"
 	BadPayload          = "Badly formatted payload"
 	MissingID           = "Missing ID"
+	CannotParseString   = "Cannot parse string"
 )
