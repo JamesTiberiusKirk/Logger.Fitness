@@ -16,7 +16,7 @@ func main() {
 
 	endless.DefaultHammerTime = 10 * time.Second
 	endless.DefaultReadTimeOut = 295 * time.Second
-	if err := endless.ListenAndServe(":5000", e); err != nil {
+	if err := endless.ListenAndServe(":8080", e); err != nil {
 		log.Infof("Server stopped: %s", err)
 	}
 }
