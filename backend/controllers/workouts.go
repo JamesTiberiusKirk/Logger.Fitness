@@ -83,7 +83,7 @@ func StartNewWorkout(c echo.Context) error {
 // StopWorkout GET endpoint.
 // Stops the active workout.
 // This also leaves an end time time stamp.
-// @param end_time - RFC3339 timestamp
+// @param end_time - Unix timestamp
 func StopWorkout(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
