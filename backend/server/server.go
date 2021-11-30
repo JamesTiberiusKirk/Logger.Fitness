@@ -34,25 +34,25 @@ func Run(dbClient *db.DbClient, port string) {
 		}),
 	)
 
-	e = initRoutes(e)
+	e = initRoutes("/api", e)
 
 	e.Logger.Fatal(e.Start(port))
 }
 
-func initRoutes(e *echo.Echo) *echo.Echo {
+func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 	userAuth := lfMiddleware.Auth(lfMiddleware.UserRole)
 
-	e.POST("/auth/verify_me", controllers.VerifyMe)
-	e.POST("/auth/register", controllers.Register)
-	e.POST("/auth/login", controllers.Login)
+	e.POST(prefix+"/auth/verify_me", controllers.VerifyMe)
+	e.POST(prefix+"/auth/register", controllers.Register)
+	e.POST(prefix+"/auth/login", controllers.Login)
 
-	e.POST("/extp", controllers.NewExerciseType, userAuth)
-	e.GET("/extp", controllers.GetExerciseTypes, userAuth)
-	e.PUT("/extp", controllers.EditExerciseTypes, userAuth)
-	e.DELETE("/extp", controllers.DeleteExerciseType, userAuth)
+	e.POST(prefix+"/exercise_types", controllers.NewExerciseType, userAuth)
+	e.GET(prefix+"/exercise_types", controllers.GetExerciseTypes, userAuth)
+	e.PUT(prefix+"/exercise_types", controllers.EditExerciseTypes, userAuth)
+	e.DELETE(prefix+"/exercise_types", controllers.DeleteExerciseType, userAuth)
 
-	e.POST("/workouts/start", controllers.StartNewWorkout, userAuth)
-	e.POST("/workouts/stop", controllers.StopWorkout, userAuth)
+	e.POST(prefix+"/workouts/start", controllers.StartNewWorkout, userAuth)
+	e.POST(prefix+"/workouts/stop", controllers.StopWorkout, userAuth)
 
 	return e
 }
