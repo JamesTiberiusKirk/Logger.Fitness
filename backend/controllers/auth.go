@@ -94,15 +94,22 @@ func Login(c echo.Context) error {
 	}
 
 	// Create JWT
-	userJwt, jwtErr := lib.GenerateJWT(dbUser)
+	userJwt, jwtErr := lib.GenerateJWTFromDbUser(dbUser)
 	if jwtErr != nil {
 		log.Info(jwtErr.Error())
 		return c.String(http.StatusInternalServerError, res.JwtError)
 	}
 
+	// Get user claim and return it
+	jwtClaim, err := lib.ValidateJwtToken(userJwt)
+	if err != nil {
+		log.Info(err.Error())
+		return c.String(http.StatusInternalServerError, res.JwtError)
+	}
+
 	resp := types.LoginResponseDto{
-		Jwt:     userJwt,
-		Message: res.LoggedIn,
+		Jwt:   userJwt,
+		Claim: *jwtClaim,
 	}
 
 	return c.JSON(http.StatusOK, resp)

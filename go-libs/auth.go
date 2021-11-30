@@ -18,6 +18,7 @@ var ErrJwtExpired = errors.New("JWT has expired")
 // ErrJwtInvalid is an error of JWT being invalid
 var ErrJwtInvalid = errors.New("JWT invalid")
 
+// TODO: Refactor these
 const (
 	ISSUER               = "Logger.Fitness"
 	JWT_SECRET_ENV       = "JWT_SECRET"
@@ -28,8 +29,8 @@ func getJwtSecretFromEnv() string {
 	return os.Getenv(JWT_SECRET_ENV)
 }
 
-// GenerateJWT function to generate JWT token.
-func GenerateJWT(user types.User) (signedToken string, err error) {
+// GenerateJWTFromDbUser function wrapper around GenerateJWTFromClaim.
+func GenerateJWTFromDbUser(user types.User) (string, error) {
 	claims := &types.JwtClaim{
 		ID:       user.ID,
 		Username: user.Username,
@@ -41,14 +42,22 @@ func GenerateJWT(user types.User) (signedToken string, err error) {
 		},
 	}
 
+	signedToken, err := GenerateJWTFromClaim(*claims)
+	return signedToken, err
+}
+
+// GenerateJWTFromClaim function to generate JWT token from a previous claim.
+func GenerateJWTFromClaim(claims types.JwtClaim) (string, error) {
+	claims.StandardClaims.ExpiresAt = time.Now().Local().Add(time.Hour * time.Duration(JWT_EXPIRATION_HOURS)).Unix()
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err = token.SignedString([]byte(getJwtSecretFromEnv()))
+	signedToken, err := token.SignedString([]byte(getJwtSecretFromEnv()))
 	if err != nil {
-		return
+		return signedToken, err
 	}
 
-	return
+	return signedToken, err
 }
 
 // ValidateToken function to validate the JWT token and return the custom claims.

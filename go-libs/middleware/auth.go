@@ -14,6 +14,7 @@ const (
 
 // Auth returns echo middleware function which validates jwt on time
 //	and role specified
+// TODO: need to revalidate the jwt token and reinsert it into header
 func Auth(role string) echo.MiddlewareFunc {
 	return middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
 		KeyLookup: "header:jwt-token",
@@ -31,7 +32,12 @@ func Auth(role string) echo.MiddlewareFunc {
 				return false, err
 			}
 
-			c.Set("user", claims)
+			newClaims, err := lib.GenerateJWTFromClaim(*claims)
+			if err != nil {
+				return false, err
+			}
+
+			c.Set("user", newClaims)
 			return true, err
 		},
 	})
