@@ -1,8 +1,6 @@
 package server
 
 import (
-	"strings"
-
 	"Logger.Fitness/backend/controllers"
 	"Logger.Fitness/backend/db"
 	lfMiddleware "Logger.Fitness/go-libs/middleware"
@@ -24,14 +22,14 @@ func Run(dbClient *db.DbClient, port string) {
 		createContext(contextParams),
 		middleware.Logger(),
 		middleware.CORS(),
-		middleware.GzipWithConfig(middleware.GzipConfig{
-			Skipper: func(c echo.Context) bool {
-				if strings.Contains(c.Request().URL.Path, "swagger") {
-					return true
-				}
-				return false
-			},
-		}),
+		//middleware.GzipWithConfig(middleware.GzipConfig{
+		//Skipper: func(c echo.Context) bool {
+		//if strings.Contains(c.Request().URL.Path, "swagger") {
+		//return true
+		//}
+		//return false
+		//},
+		//}),
 	)
 
 	e = initRoutes("/api", e)
@@ -41,6 +39,8 @@ func Run(dbClient *db.DbClient, port string) {
 
 func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 	userAuth := lfMiddleware.Auth(lfMiddleware.UserRole)
+
+	e.GET(prefix+"/hw", controllers.HelloWorld)
 
 	e.POST(prefix+"/auth/verify_me", controllers.VerifyMe)
 	e.POST(prefix+"/auth/register", controllers.Register)

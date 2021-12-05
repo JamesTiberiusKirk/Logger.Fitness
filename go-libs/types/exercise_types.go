@@ -5,7 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// DataType is the data type of the exercise type
+// DataTypeLabel is the data type of the exercise type
 type DataTypeLabel string
 
 const (
