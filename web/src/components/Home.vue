@@ -7,13 +7,11 @@
 </template>
 
 <script>
-// import ExerciseTypesService from "../services/exercise-types.service";
-
 export default {
   name: "Home",
   data() {
     return {
-      content: "",
+      content: "Public home page",
     };
   },
   mounted() {

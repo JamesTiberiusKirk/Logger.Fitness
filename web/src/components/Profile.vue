@@ -24,17 +24,21 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'Profile',
   computed: {
     currentUser() {
-      return this.$store.state.auth.user;
+      let user = this.$store.state.auth.user
+      console.log(user)
+      // let roleArray = Array.from(user.claim.roles.values())
+      // user.claim.roles = roleArray
+      return user
     }
   },
   mounted() {
     if (!this.currentUser) {
-      this.$router.push('/login');
+      this.$router.push('/login')
     }
   }
 };
