@@ -101,7 +101,7 @@ func Login(c echo.Context) error {
 	}
 
 	// Get user claim and return it
-	jwtClaim, err := lib.ValidateJwtToken(userJwt)
+	jwtClaim, err := lib.ValidateJWTToken(userJwt)
 	if err != nil {
 		log.Info(err.Error())
 		return c.String(http.StatusInternalServerError, res.JwtError)
@@ -130,7 +130,7 @@ func VerifyMe(c echo.Context) error {
 	}
 
 	// Validate JTW token
-	_, jwtErr := lib.ValidateJwtToken(userJwt.Jwt)
+	_, jwtErr := lib.ValidateJWTToken(userJwt.Jwt)
 	if jwtErr != nil {
 		return c.String(http.StatusUnauthorized, res.JwtInvalid)
 	}

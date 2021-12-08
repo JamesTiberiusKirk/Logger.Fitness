@@ -42,6 +42,12 @@ func GetExerciseTypes(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// TODO: Find a way to omit user_id from the response json
+	//for i := 0; i < len(exerciseTypes); i++ {
+	//exerciseTypes[i].UserID = primitive.NilObjectID
+	//}
+
 	return c.JSON(http.StatusOK, exerciseTypes)
 }
 

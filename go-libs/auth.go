@@ -20,13 +20,13 @@ var ErrJwtInvalid = errors.New("JWT invalid")
 
 // TODO: Refactor these
 const (
-	ISSUER               = "Logger.Fitness"
-	JWT_SECRET_ENV       = "JWT_SECRET"
-	JWT_EXPIRATION_HOURS = 24
+	Issuer             = "Logger.Fitness"
+	JWTSecretEnv       = "JWT_SECRET"
+	JWTExpirationHours = 24
 )
 
 func getJwtSecretFromEnv() string {
-	return os.Getenv(JWT_SECRET_ENV)
+	return os.Getenv(JWTSecretEnv)
 }
 
 // GenerateJWTFromDbUser function wrapper around GenerateJWTFromClaim.
@@ -37,8 +37,8 @@ func GenerateJWTFromDbUser(user types.User) (string, error) {
 		Email:    user.Email,
 		Roles:    user.Roles,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(JWT_EXPIRATION_HOURS)).Unix(),
-			Issuer:    ISSUER,
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(JWTExpirationHours)).Unix(),
+			Issuer:    Issuer,
 		},
 	}
 
@@ -48,7 +48,7 @@ func GenerateJWTFromDbUser(user types.User) (string, error) {
 
 // GenerateJWTFromClaim function to generate JWT token from a previous claim.
 func GenerateJWTFromClaim(claims types.JwtClaim) (string, error) {
-	claims.StandardClaims.ExpiresAt = time.Now().Local().Add(time.Hour * time.Duration(JWT_EXPIRATION_HOURS)).Unix()
+	claims.StandardClaims.ExpiresAt = time.Now().Local().Add(time.Hour * time.Duration(JWTExpirationHours)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
@@ -60,8 +60,8 @@ func GenerateJWTFromClaim(claims types.JwtClaim) (string, error) {
 	return signedToken, err
 }
 
-// ValidateToken function to validate the JWT token and return the custom claims.
-func ValidateJwtToken(userToken string) (claims *types.JwtClaim, err error) {
+// ValidateJWTToken function to validate the JWT token and return the custom claims.
+func ValidateJWTToken(userToken string) (claims *types.JwtClaim, err error) {
 	token, err := jwt.ParseWithClaims(
 		userToken,
 		&types.JwtClaim{},

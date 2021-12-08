@@ -17,11 +17,11 @@ const (
 
 // ExerciseType is for custom types of exercises
 type ExerciseType struct {
-	ID          primitive.ObjectID `json:"exercise_type_id" bson:"_id"`
-	UserID      primitive.ObjectID `json:"user_id" bson:"user_id"`
-	Name        string             `json:"name" bson:"name" validate:"required"`
-	Description string             `json:"description" bson:"description"`
-	DataType    DataTypeLabel      `json:"data_type" bson:"data_type"`
+	ID          primitive.ObjectID `json:"exercise_type_id,omitempty" bson:"_id"`
+	UserID      primitive.ObjectID `json:"user_id,omitempty" bson:"user_id"`
+	Name        string             `json:"name,omitempty" bson:"name" validate:"required"`
+	Description string             `json:"description,omitempty" bson:"description"`
+	DataType    DataTypeLabel      `json:"data_type,omitempty" bson:"data_type"`
 }
 
 // IsValid validates the struct
