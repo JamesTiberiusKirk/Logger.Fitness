@@ -16,7 +16,7 @@ const (
 //	and role specified. This also revalidated the jwt token.
 func Auth(role string) echo.MiddlewareFunc {
 	return middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
-		KeyLookup: "header:jwt-token",
+		KeyLookup: "header:x-access-token",
 		Validator: func(jwt string, c echo.Context) (bool, error) {
 			claim, err := lib.ValidateJWTToken(jwt)
 			if err != nil {

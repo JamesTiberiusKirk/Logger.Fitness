@@ -75,7 +75,7 @@ func EditExerciseTypes(c echo.Context) error {
 		log.Info(err)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	return nil
+	return c.NoContent(http.StatusOK)
 }
 
 // DeleteExerciseType DELETE endpoint
@@ -85,7 +85,7 @@ func DeleteExerciseType(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
 
-	exerciseTypesID := c.QueryParam("exercise_type_id")
+	exerciseTypesID := c.QueryParam("id")
 
 	if exerciseTypesID == "" {
 		return c.String(http.StatusBadRequest, res.MissingID)
