@@ -4,6 +4,7 @@ const Home = () => import("./components/Home.vue")
 const Login = () => import("./components/Login.vue")
 const Register = () => import("./components/Register.vue")
 const Profile = () => import("./components/Profile.vue")
+const ExerciseTypeList = () => import("./components/ExerciseTypeList.vue")
 const ExerciseType = () => import("./components/ExerciseType.vue")
 
 const routes = [
@@ -30,10 +31,16 @@ const routes = [
     component: Profile,
   },
   {
+    path: "/exercise_type_list",
+    name: "exercise_type_list",
+    component: ExerciseTypeList,
+  },
+  {
     path: "/exercise_type",
     name: "exercise_type",
     component: ExerciseType,
-  },
+    props: true
+  } ,
 ];
 
 const router = createRouter({

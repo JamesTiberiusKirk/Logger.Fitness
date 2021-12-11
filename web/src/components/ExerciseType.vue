@@ -1,43 +1,124 @@
 <template>
   <div class="container">
     <header class="jumbotron">
-      <h3>Exercise Types</h3>
+      <h3>
+        <span v-if="this.$route.query.id">Edit </span>
+        <span v-if="!this.$route.query.id">New </span>
+        Exercise Type
+      </h3>
     </header>
-  </div>
-  <div v-for="(e, i) in this.exerciseTypes" :key="i" class="card mx-auto exercise">
-    <div class="card-body">
-      <h4 class="card-title">{{ e.name }}</h4>
-      <p class="card-text">{{ e.description }}</p>
-      <a href="#" class="float-right card-btn btn btn-danger">Delete</a>
-      <a href="#" class="float-right card-btn btn btn-primary">Edit</a>
+    <div class="col-md-12">
+      <div class="card card-container">
+        <div class="card-body">
+          <Form @submit="handleSubmit" :validation-schema="schema">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <Field
+                v-model="this.data.name"
+                name="name"
+                type="text"
+                class="form-control"
+              />
+              <ErrorMessage name="name" class="error-feedback" />
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <Field
+                v-model="this.data.description"
+                name="description"
+                class="form-control"
+              >
+                <textarea
+                  class="form-control"
+                  v-model="this.data.description"
+                ></textarea>
+              </Field>
+              <ErrorMessage name="description" class="error-feedback" />
+            </div>
+
+            <div class="form-group">
+              <button class="btn btn-primary btn-block" :disabled="loading">
+                <span
+                  v-show="loading"
+                  class="spinner-border spinner-border-sm"
+                ></span>
+                <span v-if="this.$route.query.id">Update</span>
+                <span v-if="!this.$route.query.id">Add</span>
+              </button>
+            </div>
+
+            <div class="form-group">
+              <div v-if="message" class="alert alert-danger" role="alert">
+                {{ message }}
+              </div>
+            </div>
+          </Form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
-
 <script>
-import ExerciseTypesService from "../services/exercise-types.service";
-
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 export default {
   name: "ExerciseType",
+  components: {
+    Form,
+    Field,
+    ErrorMessage,
+  },
   data() {
+    const schema = yup.object().shape({
+      name: "",
+      description: "",
+      dataType: "",
+    });
+
     return {
-      exerciseTypes: null,
+      loading: false,
+      message: "",
+      schema,
+      data: {},
     };
   },
-  async created() {
-    ExerciseTypesService.getExerciseTypes().then((res) => {
-      this.exerciseTypes = res.data
-      console.log(this.exerciseTypes)
-    });
+  mounted() {
+    let id = this.$route.query.id;
+    if (id) {
+      let exerciseType = this.$store.getters["exerciseType/getOneById"](id);
+      this.data = exerciseType;
+    }
+  },
+  methods: {
+    handleSubmit(exerciseType) {
+      this.loading = true;
+      if (this.$route.query.id) {
+        this.data["name"] = exerciseType.name;
+        this.data["description"] = exerciseType.description;
+
+        this.$store.dispatch("exerciseType/updateOne", this.data).then(
+          (res) => {
+            console.log("success ", res);
+            this.loading = false;
+          },
+          (err) => {
+            console.log("error ", err);
+            this.loading = false;
+          }
+        );
+      } else {
+        this.$store.dispatch("exerciseType/sendOne", exerciseType).then(
+          (res) => {
+            console.log("success ", res);
+            this.loading = false;
+          },
+          (err) => {
+            console.log("error ", err);
+            this.loading = false;
+          }
+        );
+      }
+    },
   },
 };
 </script>
-<style>
-.exercise {
-  margin-bottom: 5%;
-  width: 90%;
-}
-.card-btn{
-  margin-left:1%;
-}
-</style>

@@ -1,9 +1,12 @@
 import AuthService from '../services/auth.service'
 
 const user = JSON.parse(localStorage.getItem('user'))
-const initialState = user
-  ? { status: { loggedIn: true }, user }
-  : { status: { loggedIn: false }, user: null }
+const initialState = { 
+  status: { 
+    loggedIn: ( user ) ? true : false 
+  }, 
+  user 
+} 
 
 export const auth = {
   namespaced: true,
@@ -11,12 +14,10 @@ export const auth = {
   actions: {
     login({ commit }, user) {
       return AuthService.login(user)
-      .then(
-        response => {
+      .then(response => {
           commit('loginSuccess', response)
           return Promise.resolve(response)
-        },
-        error => {
+        },error => {
           commit('loginFailure')
           return Promise.reject(error)
         }
@@ -26,6 +27,7 @@ export const auth = {
       AuthService.logout()
       commit('logout')
     },
+    // TODO: this needs testing and possibly rework
     register({ commit }, user) {
       return AuthService.register(user).then(
         response => {
