@@ -34,7 +34,7 @@
             <router-link to="/workouts" class="nav-link">Workouts</router-link>
           </li>
 
-          <div v-if="!currentUser" class="navbar-nav ">
+          <div v-if="!currentUser" class="navbar-nav">
             <li class="nav-item">
               <router-link to="/register" class="nav-link">
                 <font-awesome-icon icon="user-plus" />
@@ -53,7 +53,7 @@
             <li class="nav-item">
               <router-link to="/profile" class="nav-link">
                 <font-awesome-icon icon="user" />
-                {{ currentUser.claim.username}}
+                {{ currentUser.claim.username }}
               </router-link>
             </li>
             <li class="nav-item">
@@ -73,9 +73,22 @@
 </template>
 
 <script>
+import $ from "jquery";
+
 export default {
   data() {
     return { menuShow: false };
+  },
+  mounted() {
+    // closing navbar after interacting with it
+    $(".navbar-nav>li>a").on("click", function () {
+      $(".navbar-collapse").collapse("hide");
+    });
+
+    // closing navbar after clicking off
+    $(".container").on("click", function () {
+      $(".navbar-collapse").collapse("hide");
+    });
   },
   computed: {
     currentUser() {
