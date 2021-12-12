@@ -63,8 +63,13 @@
             </div>
 
             <div class="form-group">
-              <div v-if="message" class="alert alert-danger" role="alert">
-                {{ message }}
+              <div v-if="errorMessage" class="alert alert-danger" role="alert">
+                {{ errorMessage }}
+              </div>
+            </div>
+            <div class="form-group">
+              <div v-if="successMessage" class="alert alert-success" role="alert">
+                {{ successMessage }}
               </div>
             </div>
           </Form>
@@ -92,7 +97,8 @@ export default {
 
     return {
       loading: false,
-      message: "",
+      successMessage: "",
+      errorMessage: "",
       schema,
       data: {
         data_type: "",
@@ -121,10 +127,12 @@ export default {
         this.$store.dispatch("exerciseType/updateOne", this.data).then(
           (res) => {
             console.log("success ", res);
+            this.successMessage = "Success"
             this.loading = false;
           },
           (err) => {
             console.log("error ", err);
+            this.errorMessage = err
             this.loading = false;
           }
         );
