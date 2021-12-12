@@ -5,37 +5,7 @@
     rel="stylesheet"
   />
   <div id="app">
-    <!-- <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <div class="navbar-nav mr-auto">
-        <li class="nav-link nav-item">
-          <i @click="hamburgerMenu" class="fas fa-question material-icons">
-            menu
-          </i>
-        </li>
-      </div>
-
-      <div class="collapse navbar-collapse" v-if="menuShow">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#"
-              >Home <span class="sr-only">(current)</span></a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
-          </li>
-        </ul>
-      </div>
-
-      <div class="navbar-nav mr-auto">
-        
-      </div>
-
-    </nav> -->
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-dark bg-dark fixed-bottom">
       <a class="navbar-brand" href="#">Logger.Fitness</a>
 
       <button
@@ -96,7 +66,6 @@
         </ul>
       </div>
     </nav>
-
     <div class="container">
       <router-view />
     </div>
@@ -143,5 +112,10 @@ export default {
 }
 .dark-teal-text {
   color: #004d40;
+}
+
+.container {
+  margin-top: 20px;
+  margin-bottom: 80px;
 }
 </style>

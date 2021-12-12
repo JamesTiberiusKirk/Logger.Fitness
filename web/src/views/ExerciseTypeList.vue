@@ -12,6 +12,7 @@
     <div class="card-body">
       <h4 class="card-title">{{ e.name }}</h4>
       <p class="card-text">{{ e.description }}</p>
+      <p class="card-text">Data type: {{ e.data_type}}</p>
       <button
         v-on:click="showDeleteModal(e.exercise_type_id)"
         href="#"

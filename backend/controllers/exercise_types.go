@@ -81,6 +81,8 @@ func EditExerciseTypes(c echo.Context) error {
 // DeleteExerciseType DELETE endpoint
 // Delete an exercise type
 // @params exercise_type_id
+// TODO: either disable deletion if type has been used or offer to delete the
+// 	typedata also????
 func DeleteExerciseType(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)

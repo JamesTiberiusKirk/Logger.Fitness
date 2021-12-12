@@ -22,7 +22,7 @@ export default {
 <style scoped>
 .fab-container {
   position: fixed;
-  bottom: 20px;
+  bottom: 80px;
   right: 20px;
   z-index: 900;
   cursor: pointer;

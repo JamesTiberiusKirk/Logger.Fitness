@@ -37,6 +37,21 @@
             </div>
 
             <div class="form-group">
+              <Field name="dataType" v-model="this.data.data_type">
+                <label for="dataTypeSelect"> Chose data type </label>
+                <select
+                  id="dataTypeSelect"
+                  class="form-control"
+                  v-model="this.data.data_type"
+                >
+                  <option value="">Choose</option>
+                  <option value="sets">Sets</option>
+                  <option value="single-value">Single Value</option>
+                </select>
+              </Field>
+              <ErrorMessage name="dataType" class="error-feedback" />
+            </div>
+            <div class="form-group">
               <button class="btn btn-primary btn-block" :disabled="loading">
                 <span
                   v-show="loading"
@@ -70,22 +85,29 @@ export default {
   },
   data() {
     const schema = yup.object().shape({
-      name: "",
-      description: "",
-      dataType: "",
+      name: yup.string().required("Please provide a name"),
+      description: yup.string(),
+      dataType: yup.string().required("Please chose one"),
     });
 
     return {
       loading: false,
       message: "",
       schema,
-      data: {},
+      data: {
+        data_type: "",
+        description: "",
+        exercise_type_id: "",
+        name: "",
+        user_id: "",
+      },
     };
   },
   mounted() {
     let id = this.$route.query.id;
     if (id) {
       let exerciseType = this.$store.getters["exerciseType/getOneById"](id);
+      console.log(exerciseType);
       this.data = exerciseType;
     }
   },
