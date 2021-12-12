@@ -12,7 +12,7 @@
             class="btn btn-primary btn-sm"
             @click="deleteRecord"
           >
-            Yes
+            {{ continueButtonMessage }}
           </button>
           <button
             type="button"
@@ -29,13 +29,18 @@
 
 <script>
 export default {
-  name:"DeleteModal",
+  name: "DeleteModal",
   props: {
     deleteMessage: {
       type: String,
       required: true,
     },
+    continueButtonMessage: {
+      type: String,
+      required: true,
+    },
   },
+  emits: ["closeDeleteModalEvent", "deleteRecordEvent"],
   methods: {
     closeModal() {
       this.$emit("closeDeleteModalEvent");
@@ -50,7 +55,7 @@ export default {
 <style scoped>
 .modal-dialog-container {
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  z-index: 901; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -62,6 +67,7 @@ export default {
 .modal-dialog-content {
   background-color: #fefefe;
   margin: 10% auto;
+  margin-top: 100%;
   padding: 20px;
   border: 1px solid #888;
   border-radius: 0.3rem;

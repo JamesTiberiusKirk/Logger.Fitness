@@ -1,11 +1,11 @@
 import { createWebHistory, createRouter } from "vue-router";
 // lazy-loaded
-const Home = () => import("./components/Home.vue")
-const Login = () => import("./components/Login.vue")
-const Register = () => import("./components/Register.vue")
-const Profile = () => import("./components/Profile.vue")
-const ExerciseTypeList = () => import("./components/ExerciseTypeList.vue")
-const ExerciseType = () => import("./components/ExerciseType.vue")
+const Home = () => import("./views/Home.vue")
+const Login = () => import("./views/Login.vue")
+const Register = () => import("./views/Register.vue")
+const Profile = () => import("./views/Profile.vue")
+const ExerciseTypeList = () => import("./views/ExerciseTypeList.vue")
+const ExerciseType = () => import("./views/ExerciseType.vue")
 
 const routes = [
   {

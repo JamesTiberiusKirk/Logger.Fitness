@@ -1,46 +1,102 @@
 <template>
+  <!-- TODO: this needs to be removed -->
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
   <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <!-- <nav class="navbar navbar-expand navbar-dark bg-dark">
       <div class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <router-link to="/home" class="nav-link">
-            <font-awesome-icon icon="home" /> Logger.Fitness
-          </router-link>
+        <li class="nav-link nav-item">
+          <i @click="hamburgerMenu" class="fas fa-question material-icons">
+            menu
+          </i>
         </li>
       </div>
 
-      <div v-if="!currentUser" class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <router-link to="/register" class="nav-link">
-            <font-awesome-icon icon="user-plus" />
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/login" class="nav-link">
-            <font-awesome-icon icon="sign-in-alt" />
-          </router-link>
-        </li>
+      <div class="collapse navbar-collapse" v-if="menuShow">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Pricing</a>
+          </li>
+        </ul>
       </div>
 
-      <div v-if="currentUser" class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <router-link to="/profile" class="nav-link">
-            <font-awesome-icon icon="user" />
-            {{ currentUser.username }}
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" @click.prevent="logOut">
-            <font-awesome-icon icon="sign-out-alt" />
-          </a>
-        </li>
+      <div class="navbar-nav mr-auto">
+        
+      </div>
+
+    </nav> -->
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Logger.Fitness</a>
+
+      <button
+        class="navbar-toggler toggler-example"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent1"
+        aria-controls="navbarSupportedContent1"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <router-link to="/home" class="nav-link"> Home </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/exercise_type_list" class="nav-link">
+              Exercise Types
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/workouts" class="nav-link">Workouts</router-link>
+          </li>
+
+          <div v-if="!currentUser" class="navbar-nav ">
+            <li class="nav-item">
+              <router-link to="/register" class="nav-link">
+                <font-awesome-icon icon="user-plus" />
+                Register
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/login" class="nav-link">
+                <font-awesome-icon icon="sign-in-alt" />
+                Login
+              </router-link>
+            </li>
+          </div>
+
+          <div v-if="currentUser" class="navbar-nav">
+            <li class="nav-item">
+              <router-link to="/profile" class="nav-link">
+                <font-awesome-icon icon="user" />
+                {{ currentUser.claim.username}}
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" @click.prevent="logOut">
+                <!-- <font-awesome-icon icon="sign-out-alt" /> -->
+                Logout
+              </a>
+            </li>
+          </div>
+        </ul>
       </div>
     </nav>
 
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
     <div class="container">
       <router-view />
     </div>
@@ -49,12 +105,18 @@
 
 <script>
 export default {
+  data() {
+    return { menuShow: false };
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
     },
   },
   methods: {
+    hamburgerMenu() {
+      this.menuShow = !this.menuShow;
+    },
     logOut() {
       this.$store.dispatch("auth/logout");
       this.$router.push("/login");
@@ -63,64 +125,23 @@ export default {
 };
 </script>
 
-
-<style>
-.fab-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999;
+<style scoped>
+.fa-1x {
+  font-size: 1.5rem;
+}
+.navbar-toggler.toggler-example {
   cursor: pointer;
 }
-
-.fab-icon-holder {
-  width: 45px;
-  height: 45px;
-  border-radius: 100%;
-  background: black;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9);
+.dark-blue-text {
+  color: #0a38f5;
 }
-
-.fab-icon-holder:hover {
-  opacity: 0.8;
+.dark-pink-text {
+  color: #ac003a;
 }
-
-.fab-icon-holder i {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 25px;
-  color: #ffffff;
+.dark-amber-text {
+  color: #ff6f00;
 }
-
-.fab {
-  width: 60px;
-  height: 60px;
-  background: var(--primary);
-}
-
-.fab-options {
-  list-style-type: none;
-  margin: 0;
-  position: absolute;
-  bottom: 70px;
-  right: 0px;
-  opacity: 0;
-  transition: all 0.2s ease;
-  transform: scale(0);
-  transform-origin: 70% bottom;
-}
-
-.fab:hover + .fab-options,
-.fab-options:hover {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.fab-options li {
-  display: flex;
-  justify-content: flex-end;
-  padding: 5px;
+.dark-teal-text {
+  color: #004d40;
 }
 </style>

@@ -27,29 +27,27 @@
     </div>
   </div>
 
-  <div class="fab-container">
-    <div class="fab fab-icon-holder">
-      <router-link :to="{ name: 'exercise_type' }" class="nav-link">
-        <i class="fas fa-question material-icons">add</i>
-      </router-link>
-    </div>
-  </div>
-
   <deleteModal
     class="custom-modal"
     v-if="deleteModal"
     :deleteMessage="deleteMessage"
+    :continueButtonMessage="continueButtonMessage"
     @closeDeleteModalEvent="closeDeleteModal"
     @deleteRecordEvent="deleteExercise"
   />
+
+  <fab @fabClickEvent="fabClick" />
 </template>
 
 <script>
-import DeleteModal from "./DeleteModal.vue";
+import DeleteModal from "../components/DeleteModal.vue";
+import Fab from "../components/Fab.vue";
+
 export default {
   name: "ExerciseTypeList",
   components: {
     deleteModal: DeleteModal,
+    fab: Fab,
   },
   data() {
     return {
@@ -57,6 +55,7 @@ export default {
       deleteModal: false,
       deleteExerciseId: "",
       deleteMessage: "Are you sure?",
+      continueButtonMessage:"Yes",
     };
   },
   async created() {
@@ -76,17 +75,20 @@ export default {
       this.deleteModal = false;
     },
     deleteExercise() {
-      this.deleteModal = false
+      this.deleteModal = false;
       this.$store
         .dispatch("exerciseType/deleteOne", this.deleteExerciseId)
         .then(
           (res) => {
-            console.log(res)
+            console.log(res);
           },
           (err) => {
-            console.log(err)
+            console.log(err);
           }
         );
+    },
+    fabClick() {
+      this.$router.push("exercise_type");
     },
   },
 };
