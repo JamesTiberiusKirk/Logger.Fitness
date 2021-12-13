@@ -22,14 +22,6 @@ func Run(dbClient *db.DbClient, port string) {
 		createContext(contextParams),
 		middleware.Logger(),
 		middleware.CORS(),
-		//middleware.GzipWithConfig(middleware.GzipConfig{
-		//Skipper: func(c echo.Context) bool {
-		//if strings.Contains(c.Request().URL.Path, "swagger") {
-		//return true
-		//}
-		//return false
-		//},
-		//}),
 	)
 
 	e = initRoutes("/api", e)
@@ -53,6 +45,10 @@ func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 
 	e.POST(prefix+"/workouts/start", controllers.StartNewWorkout, userAuth)
 	e.POST(prefix+"/workouts/stop", controllers.StopWorkout, userAuth)
+	e.GET(prefix+"/workouts/active", controllers.GetActiveWorkout, userAuth)
+	e.GET(prefix+"/workouts", controllers.GetWorkouts, userAuth)
+	e.PUT(prefix+"/workouts", controllers.EditWorkout, userAuth)
+	e.DELETE(prefix+"/workouts", controllers.DeleteWorkout, userAuth)
 
 	return e
 }
