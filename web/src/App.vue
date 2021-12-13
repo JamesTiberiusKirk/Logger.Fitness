@@ -1,5 +1,5 @@
 <template>
-  <!-- TODO: this needs to be removed -->
+  <!-- TODO: this needs to be removed and refactored -->
   <link
     href="https://fonts.googleapis.com/icon?family=Material+Icons"
     rel="stylesheet"

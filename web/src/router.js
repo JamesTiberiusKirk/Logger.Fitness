@@ -41,6 +41,10 @@ const routes = [
     component: ExerciseType,
     props: true
   } ,
+  {
+    path:"/workouts",
+    redirect:"/home",
+  }
 ];
 
 const router = createRouter({

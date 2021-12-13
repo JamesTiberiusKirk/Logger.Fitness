@@ -1,12 +1,18 @@
 module.exports = {
   devServer: {
-    port: 9999
+    port: 9999,
+    proxy: {
+      '/api': {
+          target: 'http://localhost:3000/',
+          changeOrigin: true,
+      },
+  },
   },
   pwa: {
-    workboxPluginMode: 'InjectManifest',
+    workboxPluginMode: "InjectManifest",
     workboxOptions: {
       // swSrc is required in InjectManifest mode.
-      swSrc: 'src/service-worker.js',
+      swSrc: "src/service-worker.js"
     }
   }
-}
+};

@@ -1,11 +1,11 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "http://localhost:3000/api/exercise_type";
-// const API_URL = "http:////192.168.1.110:3000/api/exercise_type";
+const API_URL = "/api/exercise_type";
 
 class ExerciseTypeService {
   // TODO: Need to reroute to login page if 401
+  //  on a second thought, need to implement 401 returns on the backend first
   getExerciseTypes() {
     let options = { headers: authHeader() };
     return axios.get(API_URL, options);
