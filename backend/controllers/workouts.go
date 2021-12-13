@@ -14,38 +14,12 @@ import (
 
 /* Workouts */
 
-// GetWorkouts GET endpoint..
-// Gets all user workouts.
-func GetWorkouts(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
-
-	result, err := db.GetUserWorkouts(userClaim.ID)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, res.DatabseError)
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-// GetActiveWorkout GET endpoint.
-// Gets the one active workout a user has
-func GetActiveWorkout(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
-	userClaim := c.Get("user").(*types.JwtClaim)
-
-	result, err := db.GetUserAcitveWorkout(userClaim.ID)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, res.DatabseError)
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
 // StartNewWorkout POST endpoint.
 // Starts a new workout if there are no other
 // 	workouts active.
-// @body - start_time unix time
+// @body - types.Workout (only send start time and notes, the rest will be
+//	overwritten)
+// returns newly created record
 func StartNewWorkout(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -77,13 +51,14 @@ func StartNewWorkout(c echo.Context) error {
 
 	err = db.InsertNewWorkout(newWorkout)
 
-	return c.NoContent(http.StatusOK)
+	return c.JSON(http.StatusOK, newWorkout)
 }
 
 // StopWorkout GET endpoint.
 // Stops the active workout.
 // This also leaves an end time time stamp.
 // @param end_time - Unix timestamp
+// returns modified record
 func StopWorkout(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
@@ -103,7 +78,35 @@ func StopWorkout(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
-	return c.String(http.StatusOK, "Workout stopped")
+	return c.JSON(http.StatusOK, activeWorkout)
+}
+
+// GetWorkouts GET endpoint..
+// Gets all user workouts.
+func GetWorkouts(c echo.Context) error {
+	db := c.Get("db").(*db.DbClient)
+	userClaim := c.Get("user").(*types.JwtClaim)
+
+	result, err := db.GetUserWorkouts(userClaim.ID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, res.DatabseError)
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+// GetActiveWorkout GET endpoint.
+// Gets the one active workout a user has
+func GetActiveWorkout(c echo.Context) error {
+	db := c.Get("db").(*db.DbClient)
+	userClaim := c.Get("user").(*types.JwtClaim)
+
+	result, err := db.GetUserAcitveWorkout(userClaim.ID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, res.DatabseError)
+	}
+
+	return c.JSON(http.StatusOK, result)
 }
 
 // DeleteWorkout DELETE endpoint.
