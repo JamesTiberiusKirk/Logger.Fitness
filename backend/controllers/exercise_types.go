@@ -19,13 +19,13 @@ func NewExerciseType(c echo.Context) error {
 
 	var newExerciseType types.ExerciseType
 	if err := c.Bind(&newExerciseType); err != nil {
-		log.Info(err)
+		log.Error(err)
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	newExerciseType.UserID = userClaim.ID
 
 	if err := db.InsertNewExerciseType(newExerciseType); err != nil {
-		log.Info(err)
+		log.Error(err)
 		return c.JSON(http.StatusInternalServerError, res.DatabseError)
 	}
 
@@ -61,7 +61,7 @@ func EditExerciseTypes(c echo.Context) error {
 
 	var userUpdate types.ExerciseType
 	if err := c.Bind(&userUpdate); err != nil {
-		log.Info(err)
+		log.Error(err)
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
@@ -72,7 +72,7 @@ func EditExerciseTypes(c echo.Context) error {
 
 	err := db.UpdateExerciseType(userClaim.ID, userUpdate)
 	if err != nil {
-		log.Info(err)
+		log.Error(err)
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	return c.NoContent(http.StatusOK)

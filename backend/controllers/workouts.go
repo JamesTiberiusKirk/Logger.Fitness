@@ -2,30 +2,30 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"Logger.Fitness/backend/db"
 	res "Logger.Fitness/go-libs/responses"
 	"Logger.Fitness/go-libs/types"
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-/* Workouts */
 
 // StartNewWorkout POST endpoint.
 // Starts a new workout if there are no other
 // 	workouts active.
-// @body - types.Workout (only send start time and notes, the rest will be
-//	overwritten)
+// @body - types.Workout (only send start time, title and notes, the rest will
+//	be overwritten)
 // returns newly created record
 func StartNewWorkout(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	activeWorkout, err := db.GetUserAcitveWorkout(userClaim.ID)
-	if err != nil {
+	isResultEmpty := err.Error() == "mongo: no documents in result"
+	if err != nil && !isResultEmpty {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 	if activeWorkout != nil {
@@ -35,19 +35,14 @@ func StartNewWorkout(c echo.Context) error {
 	var newWorkout types.Workout
 	err = c.Bind(&newWorkout)
 	if err != nil {
+		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
 	}
 
 	newWorkout.UserID = userClaim.ID
 	newWorkout.ID = primitive.NewObjectID()
-	newWorkout.EndTime = nil
-
-	startTime := c.QueryParam("start_time")
-	startTimeInt, err := strconv.ParseInt(startTime, 10, 64)
-	if err != nil {
-		return c.String(http.StatusBadRequest, res.CannotParseString)
-	}
-	newWorkout.StartTime = time.Unix(startTimeInt, 0)
+	var emptyTime types.Timestamp
+	newWorkout.EndTime = emptyTime
 
 	err = db.InsertNewWorkout(newWorkout)
 
@@ -72,7 +67,7 @@ func StopWorkout(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
-	activeWorkout.EndTime = &endTimeStamp
+	activeWorkout.EndTime = types.NewTimestamp(endTimeStamp)
 	err = db.EditWorkout(*activeWorkout)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, res.DatabseError)
@@ -88,8 +83,15 @@ func GetWorkouts(c echo.Context) error {
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	result, err := db.GetUserWorkouts(userClaim.ID)
-	if err != nil {
+
+	isResultEmpty := err.Error() == "mongo: no documents in result"
+	if err != nil && !isResultEmpty {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
+	}
+
+	if result == nil {
+		result = []types.Workout{}
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -103,6 +105,7 @@ func GetActiveWorkout(c echo.Context) error {
 
 	result, err := db.GetUserAcitveWorkout(userClaim.ID)
 	if err != nil {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
@@ -117,11 +120,13 @@ func DeleteWorkout(c echo.Context) error {
 	userClaim := c.Get("user").(*types.JwtClaim)
 	workoutID, err := primitive.ObjectIDFromHex(c.QueryParam("workout_id"))
 	if err != nil {
+		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
 	}
 
 	err = db.DeleteWorkout(workoutID, userClaim.ID)
 	if err != nil {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
@@ -130,7 +135,6 @@ func DeleteWorkout(c echo.Context) error {
 
 // EditWorkout PUT endpoint.
 // Re-writes a workout.
-// NOTE: This will even re-write blank fields.
 // @body update - types.Workout
 func EditWorkout(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
@@ -139,12 +143,14 @@ func EditWorkout(c echo.Context) error {
 	var update types.Workout
 	err := c.Bind(&update)
 	if err != nil {
+		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
 	}
 
 	update.UserID = userClaim.ID
 	err = db.EditWorkout(update)
 	if err != nil {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 

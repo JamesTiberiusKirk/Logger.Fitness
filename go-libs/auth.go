@@ -18,7 +18,6 @@ var ErrJwtExpired = errors.New("JWT has expired")
 // ErrJwtInvalid is an error of JWT being invalid
 var ErrJwtInvalid = errors.New("JWT invalid")
 
-// TODO: Refactor these
 const (
 	Issuer             = "Logger.Fitness"
 	JWTSecretEnv       = "JWT_SECRET"

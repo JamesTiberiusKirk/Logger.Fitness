@@ -36,7 +36,7 @@ func Auth(role string) echo.MiddlewareFunc {
 				return false, err
 			}
 
-			c.Response().Header().Add("jwt-token", newJwt)
+			c.Response().Header().Add("x-access-token", newJwt)
 			c.Set("user", claim)
 			return true, err
 		},

@@ -10,8 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// TODO: Need to validate all id params in here for empty
-
 // ExerciseTypeCollection name of collection
 const ExerciseTypeCollection = "exercise_types"
 
@@ -48,11 +46,10 @@ func (db *DbClient) UpdateExerciseType(userID primitive.ObjectID, exerciseType t
 	filter := bson.M{"_id": exerciseType.ID, "user_id": userID}
 	update := bson.M{"$set": exerciseType}
 
-	result, err := collection.UpdateOne(context.Background(), filter, update)
+	_, err := collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return err
 	}
-	log.Info(result)
 	return nil
 }
 
