@@ -5,9 +5,13 @@ import store from "./store";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "./plugins/font-awesome";
+import setupHttpInterceptors from "./services/interceptors.service";
+
+setupHttpInterceptors()
 
 createApp(App)
   .use(router)
   .use(store)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");
+

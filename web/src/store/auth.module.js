@@ -12,23 +12,23 @@ export const auth = {
   namespaced: true,
   state: initialState,
   actions: {
-    login({ commit }, user) {
-      return AuthService.login(user).then(
-        response => {
-          commit("loginSuccess", response);
-          return Promise.resolve(response);
-        },
-        error => {
+    async login({ commit }, user) {
+      return AuthService.login(user)
+        .then(res => {
+          commit("loginSuccess", res.data);
+          return Promise.resolve(res);
+        })
+        .catch(err => {
           commit("loginFailure");
-          return Promise.reject(error);
-        }
-      );
+          return Promise.reject(err);
+        });
     },
     logout({ commit }) {
       commit("logout");
     },
+
     // TODO: this needs testing and possibly rework
-    register({ commit }, user) {
+    async register({ commit }, user) {
       return AuthService.register(user).then(
         response => {
           commit("registerSuccess");
@@ -42,9 +42,14 @@ export const auth = {
     }
   },
   mutations: {
+    storeJwt(state, jwt) {
+      state.user.jwt = jwt;
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
     loginSuccess(state, user) {
       state.status.loggedIn = true;
       state.user = user;
+      localStorage.setItem("user", JSON.stringify(user));
     },
     loginFailure(state) {
       state.status.loggedIn = false;
