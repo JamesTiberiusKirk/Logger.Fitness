@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"Logger.Fitness/go-libs/types"
-	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -41,11 +40,10 @@ func (db *DbClient) EditWorkout(workout types.Workout) error {
 	filter := bson.M{"_id": workout.ID, "user_id": workout.UserID}
 	update := bson.M{"$set": workout}
 
-	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return err
 	}
-	log.Info(result)
 
 	return nil
 }
@@ -68,37 +66,43 @@ func (db *DbClient) DeleteWorkout(workoutID, userID primitive.ObjectID) error {
 func (db *DbClient) GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	var results []types.Workout
 
 	if userID.Hex() == "" {
-		return nil, errors.New("need to provide a userID")
+		return results, errors.New("need to provide a userID")
 	}
 
-	var result []types.Workout
 	filter := bson.M{"user_id": userID}
-	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
-		return nil, err
+		return results, err
 	}
-	return nil, nil
+
+	err = cursor.All(context.TODO(), &results)
+	if err != nil {
+		return results, err
+	}
+
+	return results, nil
 }
 
-// GetUserAcitveWorkouts get operation
-func (db *DbClient) GetUserAcitveWorkout(userID primitive.ObjectID) (*types.Workout, error) {
+// GetUserAcitveWorkout get operation
+func (db *DbClient) GetUserAcitveWorkout(userID primitive.ObjectID) (types.Workout, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	var result types.Workout
 
 	if userID.Hex() == "" {
-		return nil, errors.New("need to provide a userID")
+		return result, errors.New("need to provide a userID")
 	}
 
-	var result *types.Workout
 	filter := bson.M{
 		"user_id":  userID,
-		"end_time": nil,
+		"end_time": -1,
 	}
 	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 	return result, nil
 }
