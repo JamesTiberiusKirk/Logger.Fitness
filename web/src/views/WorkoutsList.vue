@@ -1,15 +1,14 @@
-
 <template>
   <div class="container">
     <header class="jumbotron">
       <h3>Workouts List</h3>
     </header>
   </div>
-  <div v-for="(e, i) in this.workouts" :key="i" class="card mx-auto exercise">
+  <div v-for="(e, i) in this.workouts.slice().reverse()" :key="i" class="card mx-auto exercise">
     <div class="card-body">
-      <h4 class="card-title">Title: {{ e.title }}</h4>
-      <p class="card-text">ID: {{ e.workout_id }}</p>
+      <h4 class="card-title">{{ e.title }}</h4>
       <p class="card-text">Notes: {{ e.notes }}</p>
+      <p class="card-text" v-if="e.end_time == -1">Still Active</p>
       <button
         v-on:click="showDeleteModal(e.workout_id)"
         href="#"
@@ -21,7 +20,9 @@
         <a href="#" class="float-right card-btn btn btn-primary">Edit</a>
       </router-link>
       <router-link :to="{ name: 'workout', query: { id: e.workout_id } }">
-        <a href="#" class="float-right card-btn btn btn-primary">Go To Workout</a>
+        <a href="#" class="float-right card-btn btn btn-primary"
+          >Go To Workout</a
+        >
       </router-link>
     </div>
   </div>
@@ -41,6 +42,9 @@
 <script>
 import DeleteModal from "../components/DeleteModal.vue";
 import Fab from "../components/Fab.vue";
+
+// TODO: indicate which workout is active
+// TODO: do not display the add fab if there is an active workout
 
 export default {
   name: "WorkoutsList",
@@ -89,7 +93,7 @@ export default {
       );
     },
     fabClick() {
-      this.$router.push("workout");
+      this.$router.push("workout_form");
     },
   },
 };

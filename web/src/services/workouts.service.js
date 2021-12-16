@@ -4,8 +4,6 @@ import authHeader from "./auth-header";
 const API_URL = "/api/workouts";
 
 class WorkoutsService {
-  // TODO: Need to reroute to login page if 401, 403 (missing key)
-  //  on a second thought, need to implement 401 returns on the backend first...might not need to???
   start(workout) {
     let options = { headers: authHeader() };
     return axios.post(API_URL + "/start", workout, options);
@@ -13,7 +11,7 @@ class WorkoutsService {
 
   stop(time) {
     let options = { headers: authHeader() };
-    return axios.post(`${API_URL}?stop_time=${time}` + "/stop", options);
+    return axios.post(`${API_URL}/stop?end_time=${time}`, {}, options);
   }
 
   getAll() {
