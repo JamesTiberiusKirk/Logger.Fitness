@@ -43,7 +43,6 @@
 import DeleteModal from "../components/DeleteModal.vue";
 import Fab from "../components/Fab.vue";
 
-// TODO: indicate which workout is active
 // TODO: do not display the add fab if there is an active workout
 
 export default {
