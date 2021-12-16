@@ -69,17 +69,20 @@ func StopWorkout(c echo.Context) error {
 	userClaim := c.Get("user").(*types.JwtClaim)
 	endTimeStamp, err := strconv.ParseInt(c.QueryParam("end_time"), 10, 64)
 	if err != nil {
+		log.Error(err.Error())
 		return c.NoContent(http.StatusBadRequest)
 	}
 
 	activeWorkout, err := db.GetUserAcitveWorkout(userClaim.ID)
 	if err != nil {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
 	activeWorkout.EndTime = endTimeStamp
 	err = db.EditWorkout(activeWorkout)
 	if err != nil {
+		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
