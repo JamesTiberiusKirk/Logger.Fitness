@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -26,4 +27,10 @@ type Exercise struct {
 	Sets           []Set              `json:"sets" bson:"sets"`
 	SingleValue    SingleValue        `json:"single_value" bson:"single_value"`
 	Notes          string             `json:"notes" bson:"notes"`
+}
+
+// IsValid checks if instance of User is valid using the validator.
+func (e Exercise) IsValid() error {
+	validate := validator.New()
+	return validate.Struct(e)
 }
