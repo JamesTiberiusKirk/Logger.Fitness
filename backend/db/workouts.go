@@ -9,13 +9,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// WorkoutsCollection const for the mongodb collection
-const WorkoutsCollection = "workouts"
+// workoutsCollectionName const for the mongodb collection
+const workoutsCollectionName = "workouts"
+
+// TODO: database logging
 
 // InsertNewWorkout insert operation
 func (db *DbClient) InsertNewWorkout(newWorkout types.Workout) error {
 	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 
 	err := newWorkout.IsValid()
 	if err != nil {
@@ -35,7 +37,7 @@ func (db *DbClient) InsertNewWorkout(newWorkout types.Workout) error {
 // TODO: maybe I need to find something todo with the result?
 func (db *DbClient) EditWorkout(workout types.Workout) error {
 	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 
 	filter := bson.M{"_id": workout.ID, "user_id": workout.UserID}
 	update := bson.M{"$set": workout}
@@ -51,7 +53,7 @@ func (db *DbClient) EditWorkout(workout types.Workout) error {
 // DeleteWorkout delete operation
 func (db *DbClient) DeleteWorkout(workoutID, userID primitive.ObjectID) error {
 	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 
 	filter := bson.M{"_id": workoutID, "user_id": userID}
 	_, err := collection.DeleteOne(context.TODO(), filter)
@@ -65,7 +67,7 @@ func (db *DbClient) DeleteWorkout(workoutID, userID primitive.ObjectID) error {
 // GetUserWorkouts get operation
 func (db *DbClient) GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout, error) {
 	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 	var results []types.Workout
 
 	if userID.Hex() == "" {
@@ -89,7 +91,7 @@ func (db *DbClient) GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout,
 // GetUserAcitveWorkout get operation
 func (db *DbClient) GetUserAcitveWorkout(userID primitive.ObjectID) (types.Workout, error) {
 	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 	var result types.Workout
 
 	if userID.Hex() == "" {
@@ -110,7 +112,7 @@ func (db *DbClient) GetUserAcitveWorkout(userID primitive.ObjectID) (types.Worko
 // GetUserWorkoutByID get operation
 func (db *DbClient) GetUserWorkoutByID(workoutID, userID primitive.ObjectID) (types.Workout, error) {
 	dbc := db.Conn
-	collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+	collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 	var result types.Workout
 
 	if userID.Hex() == "" {
@@ -134,7 +136,7 @@ func (db *DbClient) GetUserWorkoutByID(workoutID, userID primitive.ObjectID) (ty
 // TODO: Need to implement
 // func (db *DbClient) GetUserWorkoutByDateRange(begin, end string, userID primitive.ObjectID) (types.Workout, error) {
 // dbc := db.Conn
-// collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+// collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 // var result types.Workout
 
 // if userID.Hex() == "" {
@@ -153,7 +155,7 @@ func (db *DbClient) GetUserWorkoutByID(workoutID, userID primitive.ObjectID) (ty
 // TODO: Need to implement
 // func (db *DbClient) GetUserWorkoutByQuery(qery string, userID primitive.ObjectID) (types.Workout, error) {
 // dbc := db.Conn
-// collection := dbc.Database(DB_NAME).Collection(WorkoutsCollection)
+// collection := dbc.Database(DB_NAME).Collection(workoutsCollectionName)
 // var result types.Workout
 
 // if userID.Hex() == "" {
