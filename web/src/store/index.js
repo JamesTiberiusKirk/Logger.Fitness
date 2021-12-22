@@ -1,13 +1,15 @@
 import { createStore } from "vuex";
 import { auth } from "./auth.module";
-import { exerciseType } from "./exercise-types.module";
+import { exerciseTypes } from "./exercise-types.module";
 import { workouts } from "./workouts.module";
+import { exercises } from "./exercises.module";
 
 const store = createStore({
   modules: {
     auth,
-    exerciseType,
+    exerciseTypes,
     workouts,
+    exercises,
   },
 });
 

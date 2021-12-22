@@ -5,14 +5,15 @@
     </header>
   </div>
   <div
-    v-for="(e, i) in this.exerciseTypes"
+    v-for="(e, i) in exerciseTypes"
     :key="i"
     class="card mx-auto exercise"
   >
     <div class="card-body">
       <h4 class="card-title">{{ e.name }}</h4>
       <p class="card-text">{{ e.description }}</p>
-      <p class="card-text">Data type: {{ e.data_type}}</p>
+      <p class="card-text">{{ e.data_type }} : {{ e.measurement_type}}</p>
+
       <button
         v-on:click="showDeleteModal(e.exercise_type_id)"
         href="#"
@@ -56,16 +57,16 @@ export default {
       deleteModal: false,
       deleteExerciseId: "",
       deleteMessage: "Are you sure?",
-      continueButtonMessage:"Yes",
+      continueButtonMessage: "Yes",
     };
   },
   async created() {
-    let store = this.$store.getters["exerciseType/getAll"];
-    if (store.empty) {
-      await this.$store.dispatch("exerciseType/fetchAll");
+    try {
+      await this.$store.dispatch("exerciseTypes/fetchAll");
+    } catch (err) {
+      console.log(err);
     }
-
-    this.exerciseTypes = store.data;
+    this.exerciseTypes = this.$store.getters["exerciseTypes/getAll"].data;
   },
   methods: {
     showDeleteModal(id) {
@@ -78,7 +79,7 @@ export default {
     deleteExercise() {
       this.deleteModal = false;
       this.$store
-        .dispatch("exerciseType/deleteOne", this.deleteExerciseId)
+        .dispatch("exerciseTypes/deleteOne", this.deleteExerciseId)
         .then(
           (res) => {
             console.log(res);

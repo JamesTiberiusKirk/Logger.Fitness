@@ -32,13 +32,35 @@ func (db *DbClient) InsertNewExercise(newExercise types.Exercise) (types.Exercis
 	return newExercise, nil
 }
 
-// GetUserExercise mongodb get operation
-func (db *DbClient) GetUserExercise(userID primitive.ObjectID) ([]types.Exercise, error) {
+// GetUserExercises mongodb get operation
+func (db *DbClient) GetUserExercises(userID primitive.ObjectID) ([]types.Exercise, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(exerciseCollectionName)
 	var results []types.Exercise
 
 	filter := bson.M{"user_id": userID}
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Error(err.Error())
+		return results, err
+	}
+
+	err = cursor.All(context.TODO(), &results)
+	if err != nil {
+		log.Error(err.Error())
+		return results, err
+	}
+
+	return results, nil
+}
+
+// GetUserExercisesByWorkout mongodb get operation
+func (db *DbClient) GetUserExercisesByWorkout(userID, workoutID primitive.ObjectID) ([]types.Exercise, error) {
+	dbc := db.Conn
+	collection := dbc.Database(DB_NAME).Collection(exerciseCollectionName)
+	var results []types.Exercise
+
+	filter := bson.M{"user_id": userID, "workout_id": workoutID}
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
 		log.Error(err.Error())
@@ -71,14 +93,30 @@ func (db *DbClient) EditExercise(exercise types.Exercise) error {
 	return nil
 }
 
-// DeleteExercise delete operation
-func (db *DbClient) DeleteExercise(userID, exerciseID primitive.ObjectID) error {
+// DeleteExerciseByID delete operation
+func (db *DbClient) DeleteExerciseByID(userID, exerciseID primitive.ObjectID) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(exerciseCollectionName)
 
 	filter := bson.M{"_id": exerciseID, "user_id": userID}
 
 	_, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		log.Error(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+// DeleteExerciseByWorkoutID delete operation
+func (db *DbClient) DeleteExerciseByWorkoutID(userID, workoutID primitive.ObjectID) error {
+	dbc := db.Conn
+	collection := dbc.Database(DB_NAME).Collection(exerciseCollectionName)
+
+	filter := bson.M{"workout_id": workoutID, "user_id": userID}
+
+	_, err := collection.DeleteMany(context.TODO(), filter)
 	if err != nil {
 		log.Error(err.Error())
 		return err

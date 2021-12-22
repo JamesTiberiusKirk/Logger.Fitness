@@ -12,6 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// WorkoutDTO - workout & their exercises Data Transfer Object
+type WorkoutDTO struct {
+	Workout   types.Workout    `json:"workout"`
+	Exercises []types.Exercise `json:"exercises"`
+}
+
 // StartNewWorkout POST endpoint.
 // Starts a new workout if there are no other
 // 	workouts active.
@@ -91,11 +97,13 @@ func StopWorkout(c echo.Context) error {
 
 // GetWorkouts GET endpoint..
 // Gets all user workouts.
+// Return
+// @body - []WorkoutDTO
 func GetWorkouts(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
 
-	result, err := db.GetUserWorkouts(userClaim.ID)
+	workouts, err := db.GetUserWorkouts(userClaim.ID)
 
 	if err != nil {
 		isResultEmpty := err.Error() == "mongo: no documents in result"
@@ -106,7 +114,22 @@ func GetWorkouts(c echo.Context) error {
 		log.Error(err.Error())
 	}
 
-	return c.JSON(http.StatusOK, result)
+	var results []WorkoutDTO
+	for i := 0; i < len(workouts); i++ {
+		exercises, err := db.GetUserExercisesByWorkout(userClaim.ID, workouts[i].ID)
+		if err != nil {
+			log.Error(err.Error())
+			return c.String(http.StatusInternalServerError, res.DatabseError)
+		}
+
+		item := WorkoutDTO{
+			Workout:   workouts[i],
+			Exercises: exercises,
+		}
+		results = append(results, item)
+	}
+
+	return c.JSON(http.StatusOK, results)
 }
 
 // GetActiveWorkout GET endpoint.
@@ -137,6 +160,12 @@ func DeleteWorkout(c echo.Context) error {
 	}
 
 	err = db.DeleteWorkout(workoutID, userClaim.ID)
+	if err != nil {
+		log.Error(err.Error())
+		return c.String(http.StatusInternalServerError, res.DatabseError)
+	}
+
+	err = db.DeleteExerciseByWorkoutID(userClaim.ID, workoutID)
 	if err != nil {
 		log.Error(err.Error())
 		return c.String(http.StatusInternalServerError, res.DatabseError)

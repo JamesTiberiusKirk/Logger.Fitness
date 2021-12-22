@@ -90,6 +90,7 @@ export default {
       errorMessage: "",
       schema,
       data: {
+        workout_id: "",
         title: "",
         notes: "",
         start_time: "",
@@ -111,8 +112,7 @@ export default {
         this.data["notes"] = workout.notes;
 
         this.$store.dispatch("workouts/updateOne", this.data).then(
-          (res) => {
-            console.log("success ", res);
+          () => {
             this.successMessage = "Success";
             this.loading = false;
           },
@@ -124,19 +124,31 @@ export default {
         );
       } else {
         this.data.start_time = Date.now();
-        this.$store.dispatch("workouts/start", this.data).then(
-          (res) => {
-            console.log("success: ", res);
+        this.$store
+          .dispatch("workouts/start", this.data)
+          // TODO: BUG: so when there is no workout in the list, this whole
+          //  .then does not run for whatever fucking bizarre reason...
+          //  After there is at least one item in the list, the .then runs and 
+          //    the app navigates back to an updated workouts list.
+          .then(() => {
             this.errorMessage = undefined;
             this.successMessage = "Workout started";
             this.loading = false;
-          },
-          (err) => {
+            // TODO: router.push to the new workout
+            // this.$router.push("workout",{id:this.data.workout_id})
+            // pushing back to workout screen for now
+
+            this.$router.back();
+          })
+          .catch((err) => {
             this.successMessage = undefined;
-            this.errorMessage = err.response.data;
+
+            err.response && err.response.data
+              ? (this.errorMessage = err.response.data)
+              : (this.errorMessage = err.response);
+
             this.loading = false;
-          }
-        );
+          });
       }
     },
   },

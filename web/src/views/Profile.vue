@@ -30,7 +30,6 @@ export default {
   computed: {
     currentUser() {
       let user = this.$store.state.auth.user
-      console.log(user)
       // let roleArray = Array.from(user.claim.roles.values())
       // user.claim.roles = roleArray
       return user

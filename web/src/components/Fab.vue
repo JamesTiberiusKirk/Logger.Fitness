@@ -24,7 +24,7 @@ export default {
   position: fixed;
   bottom: 80px;
   right: 20px;
-  z-index: 900;
+  z-index: 901;
   cursor: pointer;
 }
 

@@ -2,8 +2,8 @@
   <div class="container">
     <header class="jumbotron">
       <h3>
-        <span v-if="this.$route.query.id">Edit </span>
-        <span v-if="!this.$route.query.id">New </span>
+        <span v-if="$route.query.id">Edit </span>
+        <span v-if="!$route.query.id">New </span>
         Exercise Type
       </h3>
     </header>
@@ -14,7 +14,7 @@
             <div class="form-group">
               <label for="name">Name</label>
               <Field
-                v-model="this.data.name"
+                v-model="exercise_type.name"
                 name="name"
                 type="text"
                 class="form-control"
@@ -24,41 +24,53 @@
             <div class="form-group">
               <label for="description">Description</label>
               <Field
-                v-model="this.data.description"
+                v-model="exercise_type.description"
                 name="description"
                 class="form-control"
               >
                 <textarea
                   class="form-control"
-                  v-model="this.data.description"
+                  v-model="exercise_type.description"
                 ></textarea>
               </Field>
               <ErrorMessage name="description" class="error-feedback" />
             </div>
 
             <div class="form-group">
-              <Field name="dataType" v-model="this.data.data_type">
+              <Field name="data_type" v-model="exercise_type.data_type">
                 <label for="dataTypeSelect"> Chose data type </label>
                 <select
                   id="dataTypeSelect"
                   class="form-control"
-                  v-model="this.data.data_type"
+                  v-model="exercise_type.data_type"
                 >
                   <option value="">Choose</option>
                   <option value="sets">Sets</option>
                   <option value="single-value">Single Value</option>
                 </select>
               </Field>
-              <ErrorMessage name="dataType" class="error-feedback" />
+              <ErrorMessage name="data_type" class="error-feedback" />
             </div>
+
+            <div class="form-group">
+              <label for="name">Unit of measurement</label>
+              <Field
+                v-model="exercise_type.measurement_type"
+                name="measurement_type"
+                type="text"
+                class="form-control"
+              />
+              <ErrorMessage name="measurement_type" class="error-feedback" />
+            </div>
+
             <div class="form-group">
               <button class="btn btn-primary btn-block" :disabled="loading">
                 <span
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
-                <span v-if="this.$route.query.id">Update</span>
-                <span v-if="!this.$route.query.id">Add</span>
+                <span v-if="$route.query.id">Update</span>
+                <span v-if="!$route.query.id">Add</span>
               </button>
             </div>
 
@@ -68,7 +80,11 @@
               </div>
             </div>
             <div class="form-group">
-              <div v-if="successMessage" class="alert alert-success" role="alert">
+              <div
+                v-if="successMessage"
+                class="alert alert-success"
+                role="alert"
+              >
                 {{ successMessage }}
               </div>
             </div>
@@ -81,6 +97,7 @@
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+
 export default {
   name: "ExerciseType",
   components: {
@@ -92,7 +109,8 @@ export default {
     const schema = yup.object().shape({
       name: yup.string().required("Please provide a name"),
       description: yup.string(),
-      dataType: yup.string().required("Please chose one"),
+      data_type: yup.string().required("Please chose one"),
+      measurement_type: yup.string().required("Please add a measurement unit"),
     });
 
     return {
@@ -100,46 +118,46 @@ export default {
       successMessage: "",
       errorMessage: "",
       schema,
-      data: {
-        data_type: "",
-        description: "",
+      exercise_type: {
         exercise_type_id: "",
-        name: "",
         user_id: "",
+        name: "",
+        description: "",
+        data_type: "",
+        measurement_type: "",
       },
     };
   },
   mounted() {
     let id = this.$route.query.id;
     if (id) {
-      let exerciseType = this.$store.getters["exerciseType/getOneById"](id);
-      console.log(exerciseType);
-      this.data = exerciseType;
+      this.exercise_type = this.$store.getters["exerciseTypes/getOneById"](id);
+      console.log(this.exercise_type)
     }
   },
   methods: {
-    handleSubmit(exerciseType) {
+    handleSubmit(exercise_type) {
       this.loading = true;
       if (this.$route.query.id) {
-        this.data["name"] = exerciseType.name;
-        this.data["description"] = exerciseType.description;
+        this.exercise_type["name"] = exercise_type.name;
+        this.exercise_type["description"] = exercise_type.description;
+        this.exercise_type["measurement_type"] = exercise_type.measurement_type;
 
-        this.$store.dispatch("exerciseType/updateOne", this.data).then(
-          (res) => {
-            console.log("success ", res);
-            this.successMessage = "Success"
+        this.$store.dispatch("exerciseTypes/updateOne", this.exercise_type).then(
+          () => {
+            this.successMessage = "Success";
             this.loading = false;
           },
           (err) => {
             console.log("error ", err);
-            this.errorMessage = err
+            this.errorMessage = err;
             this.loading = false;
           }
         );
       } else {
-        this.$store.dispatch("exerciseType/sendOne", exerciseType).then(
-          (res) => {
-            console.log("success ", res);
+        console.log(exercise_type)
+        this.$store.dispatch("exerciseTypes/sendOne", exercise_type).then(
+          () => {
             this.loading = false;
           },
           (err) => {

@@ -1,18 +1,17 @@
 import ExerciseTypesService from "../services/exercise-types.service";
 
-const EXERCISE_TYPE_STORE = "exercise_types";
-// const all = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE))
-// const all = null
+// const EXERCISE_TYPE_STORE = "exercise_types";
 
 function getDefaultState() {
-  let data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE));
+  // let data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE)) || []
+  let data = [];
   return {
     data,
-    empty: data ? false : true
+    empty: data.length == 0 ? false : true
   };
 }
 
-export const exerciseType = {
+export const exerciseTypes = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
@@ -61,12 +60,12 @@ export const exerciseType = {
     storeAll(state, exerciseTypes) {
       state.data = exerciseTypes;
       state.empty = false;
-      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
     addOne(state, exerciseType) {
       state.data.push(exerciseType);
       state.empty = false;
-      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
     updateOne(state, exerciseType) {
       state.data.forEach((element, index) => {
@@ -74,7 +73,7 @@ export const exerciseType = {
           state.data[index] = exerciseType;
         }
       });
-      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
     deleteOne(state, id) {
       state.data.forEach((element, index) => {
@@ -82,7 +81,7 @@ export const exerciseType = {
           state.data.splice(index, 1);
         }
       });
-      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     }
   },
   getters: {
@@ -95,6 +94,13 @@ export const exerciseType = {
         if (element.exercise_type_id == id) {
           result = element;
         }
+      });
+      return result;
+    },
+    getAllAsMap: state => {
+      let result = new Map();
+      state.data.forEach(element => {
+        result[element.exercise_type_id] = element;
       });
       return result;
     }

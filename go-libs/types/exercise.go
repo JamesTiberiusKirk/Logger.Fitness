@@ -22,10 +22,10 @@ type Set struct {
 type Exercise struct {
 	ID             primitive.ObjectID `json:"exercise_id" bson:"_id"`
 	WorkoutID      primitive.ObjectID `json:"workout_id" bson:"workout_id"`
-	ExerciseTypeID primitive.ObjectID `json:"exercise_type" bson:"exercise_type"`
+	ExerciseTypeID primitive.ObjectID `json:"exercise_type_id" bson:"exercise_type_id"`
 	UserID         primitive.ObjectID `json:"user_id" bson:"user_id"`
-	Sets           []Set              `json:"sets" bson:"sets"`
-	SingleValue    SingleValue        `json:"single_value" bson:"single_value"`
+	Sets           *[]Set             `json:"sets" bson:"sets"`
+	SingleValue    *SingleValue       `json:"single_value" bson:"single_value"`
 	Notes          string             `json:"notes" bson:"notes"`
 }
 

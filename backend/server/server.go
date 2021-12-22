@@ -50,6 +50,11 @@ func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 	e.PUT(prefix+"/workouts", controllers.EditWorkout, userAuth)
 	e.DELETE(prefix+"/workouts", controllers.DeleteWorkout, userAuth)
 
+	e.GET(prefix+"/exercises", controllers.GetExercise, userAuth)
+	e.POST(prefix+"/exercises", controllers.PostExercise, userAuth)
+	e.PUT(prefix+"/exercises", controllers.PutExercise, userAuth)
+	e.DELETE(prefix+"/exercises", controllers.DeleteExercise, userAuth)
+
 	return e
 }
 
