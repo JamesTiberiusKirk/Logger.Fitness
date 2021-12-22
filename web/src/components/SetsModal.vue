@@ -6,9 +6,15 @@
           <h4>Set nr#{{ newSetNumber }}</h4>
         </div>
         <div class="modal-dialog-body">
-          <div class="form-group">
-            <label for="reps">Reps</label>
+
+
+          <div class="form-group input-group input-group mb-3">
+            <div class="input-group-prepend">
+              <span id="reps-label" class="input-group-text">Reps</span>
+            </div>
             <Field
+              aria-label="Small"
+              aria-describedby="reps-label"
               v-model="set.reps"
               name="reps"
               type="number"
@@ -17,15 +23,38 @@
             />
             <ErrorMessage name="reps" class="error-feedback" />
           </div>
-          <div class="form-group">
-            <label for="resistance">{{ exerciseType.measurement_type }}</label>
+
+
+          <div class="form-group input-group input-group mb-3">
+            <div class="input-group-prepend">
+              <span id="resistance-label" class="input-group-text">{{ exerciseType.measurement_type }}</span>
+            </div>
             <Field
+              aria-label="Small"
+              aria-describedby="resistance-label"
               v-model="set.resistance"
               name="resistance"
               type="number"
               class="form-control"
             />
             <ErrorMessage name="resistance" class="error-feedback" />
+          </div>
+
+
+          <div class="form-group input-group input-group mb-3">
+            <div class="input-group-prepend">
+              <span id="is_drop_set-label" class="form-check-label">Drop-set?</span>
+            </div>
+            <Field
+              aria-label="Small"
+              aria-describedby="is_drop_set-label"
+              id="is_drop_set"
+              v-model="set.is_drop_set"
+              name="is_drop_set"
+              type="checkbox"
+              class="form-check-input"
+            />
+            <ErrorMessage name="is_drop_set" class="error-feedback" />
           </div>
         </div>
         <div class="modal-dialog-footer">
@@ -89,13 +118,13 @@ export default {
       set: {
         reps: 0,
         resistance: 0,
+        is_drop_set: false,
       },
       errorMessage: "",
     };
   },
   methods: {
     // TODO: Cleanup the following
-    // TODO: Implement the dropset checkbox
     addSet() {
       let exercise = this.exercise;
       if (!Array.isArray(exercise.sets)) exercise.sets = [];
