@@ -13,6 +13,10 @@ module.exports = {
     workboxOptions: {
       // swSrc is required in InjectManifest mode.
       swSrc: "src/service-worker.js"
+    },
+    appleMobileWebAppCache: "yes",
+    manifestOptions: {
+      background_color: "#42b983"
     }
   }
 };

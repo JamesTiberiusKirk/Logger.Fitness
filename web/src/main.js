@@ -6,6 +6,7 @@ import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FontAwesomeIcon } from "./plugins/font-awesome";
 import setupHttpInterceptors from "./services/interceptors.service";
+import './registerServiceWorker'
 
 setupHttpInterceptors()
 
