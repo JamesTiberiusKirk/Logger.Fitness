@@ -17,13 +17,13 @@
             <i
               v-if="exerciseType.data_type === 'single-value'"
               @click="showAddSingleValueModal(e)"
-              class="fas fa-question material-icons"
+              class="header-button fas fa-question material-icons"
             >
               edit
             </i>
             <i
               @click="deleteExerciseModalShow"
-              class="fas fa-question material-icons"
+              class="header-button fas fa-question material-icons"
               >delete</i
             >
           </small>
@@ -86,7 +86,7 @@
     v-if="deleteModal.show"
     :deleteMessage="deleteModal.message"
     :continueButtonMessage="deleteModal.continueButtonMessage"
-    @closeModal="deleteExerciseModalShow"
+    @closeDeleteModalEvent="deleteExerciseModalClose"
     @deleteRecordEvent="deleteExercise"
   />
 
@@ -213,5 +213,8 @@ export default {
 .set-remove-button {
   margin-top: 10px;
   /* padding-top: 5px; */
+}
+.header-button{
+  margin-left:15px;
 }
 </style>

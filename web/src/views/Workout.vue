@@ -50,7 +50,7 @@
       v-if="stopModal.show"
       :deleteMessage="stopModal.message"
       :continueButtonMessage="stopModal.continueButtonMessage"
-      @closeModal="stopModalToggle"
+      @closeDeleteModalEvent="stopModalToggle"
       @deleteRecordEvent="stopExercise"
     />
   </div>
@@ -188,6 +188,6 @@ export default {
   width: 2%;
 }
 .exercise-list-padding {
-  margin-bottom: 70%;
+  margin-bottom: 40%;
 }
 </style>

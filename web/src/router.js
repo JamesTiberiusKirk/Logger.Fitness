@@ -1,6 +1,5 @@
 import { createWebHistory, createRouter } from "vue-router";
 // lazy-loaded
-const Home = () => import("./views/Home.vue");
 const Login = () => import("./views/Login.vue");
 const Register = () => import("./views/Register.vue");
 const Profile = () => import("./views/Profile.vue");
@@ -13,12 +12,7 @@ const Workout = () => import("./views/Workout.vue");
 const routes = [
   {
     path: "/",
-    redirect: "/home"
-  },
-  {
-    path: "/home",
-    name: "home",
-    component: Home
+    redirect: "/workouts"
   },
   {
     path: "/login",
@@ -67,7 +61,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ["/login", "/register", "/home", "/"];
+  const publicPages = ["/login", "/register", "/"];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 

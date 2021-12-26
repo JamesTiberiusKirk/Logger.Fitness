@@ -23,9 +23,6 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent1">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <router-link to="/home" class="nav-link"> Home </router-link>
-          </li>
-          <li class="nav-item">
             <router-link to="/exercise_type_list" class="nav-link">
               Exercise Types
             </router-link>

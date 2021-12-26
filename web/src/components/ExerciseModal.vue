@@ -140,6 +140,7 @@ export default {
 .button {
   width: 100%;
   text-align: center;
+  height: 50px;
 }
 .btn-wrapper > div {
   width: 3%;
