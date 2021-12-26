@@ -79,4 +79,22 @@ export default {
 .close-btn {
   margin-left: 1em;
 }
+
+.btn-wrapper {
+  padding-top: 15px;
+  width: 100%;
+  /* bottom: 65px; */
+  /* Below code aligns it to the center */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+
+  display: flex;
+  flex-wrap: nowrap;
+}
+.btn-wrapper > button {
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+}
 </style>

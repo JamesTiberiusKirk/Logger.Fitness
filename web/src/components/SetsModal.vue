@@ -6,8 +6,6 @@
           <h4>Set nr#{{ newSetNumber }}</h4>
         </div>
         <div class="modal-dialog-body">
-
-
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
               <span id="reps-label" class="input-group-text">Reps</span>
@@ -24,10 +22,11 @@
             <ErrorMessage name="reps" class="error-feedback" />
           </div>
 
-
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
-              <span id="resistance-label" class="input-group-text">{{ exerciseType.measurement_type }}</span>
+              <span id="resistance-label" class="input-group-text">{{
+                exerciseType.measurement_type
+              }}</span>
             </div>
             <Field
               aria-label="Small"
@@ -40,10 +39,11 @@
             <ErrorMessage name="resistance" class="error-feedback" />
           </div>
 
-
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
-              <span id="is_drop_set-label" class="form-check-label">Drop-set?</span>
+              <span id="is_drop_set-label" class="form-check-label"
+                >Drop-set?</span
+              >
             </div>
             <Field
               aria-label="Small"
@@ -129,11 +129,11 @@ export default {
       let exercise = this.exercise;
       if (!Array.isArray(exercise.sets)) exercise.sets = [];
       exercise.sets.push({
-        rep: parseInt(this.set.reps),
+        reps: parseInt(this.set.reps),
         resistance: parseInt(this.set.resistance),
+        is_drop_set: this.set.is_drop_set === "on",
       });
-      console.log(exercise);
-      console.log(this.exerciseType);
+      console.log(exercise.sets);
       this.$store
         .dispatch("exercises/updateOne", exercise)
         .then(() => {
@@ -141,7 +141,7 @@ export default {
         })
         .catch((err) => {
           this.errorMessage = err;
-          console.log(err);
+          console.error(err);
         });
     },
     closeModal() {

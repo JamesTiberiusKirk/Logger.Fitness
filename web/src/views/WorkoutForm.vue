@@ -3,8 +3,8 @@
   <div class="container">
     <header class="jumbotron">
       <h3>
-        <span v-if="this.$route.query.id">Edit </span>
-        <span v-if="!this.$route.query.id">New </span>
+        <span v-if="$route.query.id">Edit </span>
+        <span v-if="!$route.query.id">New </span>
         Workout
       </h3>
     </header>
@@ -15,7 +15,7 @@
             <div class="form-group">
               <label for="title">Title</label>
               <Field
-                v-model="this.data.title"
+                v-model="workout.title"
                 name="title"
                 type="text"
                 class="form-control"
@@ -24,14 +24,10 @@
             </div>
             <div class="form-group">
               <label for="notes">Notes</label>
-              <Field
-                v-model="this.data.notes"
-                name="notes"
-                class="form-control"
-              >
+              <Field v-model="workout.notes" name="notes" class="form-control">
                 <textarea
                   class="form-control"
-                  v-model="this.data.notes"
+                  v-model="workout.notes"
                 ></textarea>
               </Field>
               <ErrorMessage name="notes" class="error-feedback" />
@@ -43,8 +39,8 @@
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
-                <span v-if="this.$route.query.id">Update</span>
-                <span v-if="!this.$route.query.id">Add</span>
+                <span v-if="$route.query.id">Update</span>
+                <span v-if="!$route.query.id">Add</span>
               </button>
             </div>
 
@@ -89,7 +85,7 @@ export default {
       successMessage: "",
       errorMessage: "",
       schema,
-      data: {
+      workout: {
         workout_id: "",
         title: "",
         notes: "",
@@ -97,38 +93,38 @@ export default {
       },
     };
   },
-  mounted() {
+  created() {
     let id = this.$route.query.id;
     if (id) {
-      let workoutId = this.$store.getters["workouts/getOneById"](id);
-      this.data = workoutId;
+      this.workout = this.$store.getters["workouts/getOneById"](id).workout;
+      console.log(this.workout);
     }
   },
   methods: {
     handleSubmit(workout) {
       this.loading = true;
-      if (this.$route.query.id) {
-        this.data["title"] = workout.title;
-        this.data["notes"] = workout.notes;
+      if (this.$route.query.id) { // For updating a current workout
+        this.workout.title = workout.title;
+        this.workout.notes = workout.notes;
 
-        this.$store.dispatch("workouts/updateOne", this.data).then(
+        this.$store.dispatch("workouts/updateOne", this.workout).then(
           () => {
             this.successMessage = "Success";
             this.loading = false;
           },
           (err) => {
-            console.log("error ", err);
+            console.error(err);
             this.errorMessage = err;
             this.loading = false;
           }
         );
-      } else {
-        this.data.start_time = Date.now();
+      } else { // For new workout
+        this.workout.start_time = Date.now();
         this.$store
-          .dispatch("workouts/start", this.data)
+          .dispatch("workouts/start", this.workout)
           // TODO: BUG: so when there is no workout in the list, this whole
           //  .then does not run for whatever fucking bizarre reason...
-          //  After there is at least one item in the list, the .then runs and 
+          //  After there is at least one item in the list, the .then runs and
           //    the app navigates back to an updated workouts list.
           .then(() => {
             this.errorMessage = undefined;

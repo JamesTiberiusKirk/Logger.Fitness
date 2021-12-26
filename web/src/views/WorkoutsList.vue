@@ -8,7 +8,7 @@
     <div class="card-body">
       <h4 class="card-title">{{ e.workout.title }}</h4>
       <p class="card-text">Notes: {{ e.workout.notes }}</p>
-      <p class="card-text" v-if="e.workout.end_time == -1">Still Active</p>
+      <p class="card-text still-active-text" v-if="e.workout.end_time == -1"><b>Still Active</b></p>
       <button
         v-on:click="showDeleteModalToggle(e.workout.workout_id)"
         href="#"
@@ -89,7 +89,7 @@ export default {
     try {
       await this.$store.dispatch("workouts/fetchAll");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
 
     this.workoutsData = this.getWorkouts;
@@ -122,5 +122,8 @@ export default {
 }
 .card-btn {
   margin-left: 1%;
+}
+.still-active-text {
+  color: red;
 }
 </style>

@@ -73,6 +73,7 @@ func PostExercise(c echo.Context) error {
 
 // PutExercise PUT endpoint.
 // Deletes exercise.
+// TODO: BUG: this will accept either data type ignoring the set type
 func PutExercise(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)

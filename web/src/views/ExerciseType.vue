@@ -132,7 +132,6 @@ export default {
     let id = this.$route.query.id;
     if (id) {
       this.exercise_type = this.$store.getters["exerciseTypes/getOneById"](id);
-      console.log(this.exercise_type)
     }
   },
   methods: {
@@ -149,19 +148,18 @@ export default {
             this.loading = false;
           },
           (err) => {
-            console.log("error ", err);
+            console.error(err);
             this.errorMessage = err;
             this.loading = false;
           }
         );
       } else {
-        console.log(exercise_type)
         this.$store.dispatch("exerciseTypes/sendOne", exercise_type).then(
           () => {
             this.loading = false;
           },
           (err) => {
-            console.log("error ", err);
+            console.error(err);
             this.loading = false;
           }
         );

@@ -64,7 +64,7 @@ export default {
     try {
       await this.$store.dispatch("exerciseTypes/fetchAll");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
     this.exerciseTypes = this.$store.getters["exerciseTypes/getAll"].data;
   },
@@ -81,11 +81,10 @@ export default {
       this.$store
         .dispatch("exerciseTypes/deleteOne", this.deleteExerciseId)
         .then(
-          (res) => {
-            console.log(res);
+          () => {
           },
           (err) => {
-            console.log(err);
+            console.error(err);
           }
         );
     },

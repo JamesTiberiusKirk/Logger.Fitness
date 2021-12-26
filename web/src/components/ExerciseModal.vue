@@ -35,8 +35,11 @@
             class="btn btn-primary btn-sm"
             @click="addExercise"
           >
-            Add exercise
+            Add Exercise
           </button>
+          <div />
+          <button type="button" class="btn btn-primary btn-sm">New Type</button>
+          <div />
           <button
             type="button"
             class="btn btn-secondary btn-sm close-btn"
@@ -45,6 +48,10 @@
             Cancel
           </button>
         </div>
+      </div>
+
+      <div v-if="errorMessage" class="error-message alert alert-danger">
+        {{ errorMessage }}
       </div>
     </div>
   </div>
@@ -58,13 +65,14 @@ export default {
     return {
       selectedExerciseType: {},
       exerciseTypes: [],
+      errorMessage: "",
     };
   },
   async created() {
     try {
       await this.$store.dispatch("exerciseTypes/fetchAll");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
 
     this.exerciseTypes = this.$store.getters["exerciseTypes/getAll"].data;
@@ -74,11 +82,16 @@ export default {
       this.$emit("closeModalEvent");
     },
     addExercise() {
+      console.log(this.selectedExerciseType);
+      if (JSON.stringify(this.selectedExerciseType) == "{}") {
+        this.errorMessage = "Please select an exercise to start";
+        return;
+      }
       this.$emit("addExerciseEvent", this.selectedExerciseType);
       this.$emit("closeModalEvent");
 
       // TODO: BUG: view not refreshing when exercise added
-      this.$router.go()
+      this.$router.go();
     },
     selectHandler(et) {
       this.selectedExerciseType = et;
@@ -110,25 +123,23 @@ export default {
 .modal-dialog-footer {
   text-align: center;
 }
-.close-btn {
-  margin-left: 1em;
-}
 
 .btn-wrapper {
   padding-top: 15px;
   width: 100%;
-  /* bottom: 65px; */
-  /* Below code aligns it to the center */
   left: 0;
   right: 0;
-  margin: 0 auto;
-
   display: flex;
   flex-wrap: nowrap;
 }
 .btn-wrapper > button {
-  padding: 10px;
   width: 100%;
   text-align: center;
+}
+.btn-wrapper > div {
+  width: 3%;
+}
+.error-message {
+  margin-top: 15px;
 }
 </style>
