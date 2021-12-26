@@ -1,6 +1,5 @@
 
 <template>
-  <!-- <div id="snackbar">{{ title }}</div> -->
   <div id="snackbar" class="card card-container custom-toast">
     <div class="card-body">
       <div class="d-flex w-100 justify-content-between">
@@ -25,6 +24,9 @@ export default {
       type: String,
       required: true,
     },
+    time: {
+      type: Number,
+    },
   },
   emits: ["closeToast"],
   mounted() {
@@ -34,20 +36,23 @@ export default {
     // Add the "show" class to DIV
     toast.className = "show";
 
-    // After 3 seconds, remove the show class from DIV
-    setTimeout(() => {
-      toast.className = toast.className.replace("show", "");
-      this.$emit("closeToast");
-    }, 3000);
-  },
-  created() {
-    console.log("title:", this.title);
-    console.log("smallTitle:", this.smallTitle);
-    console.log("message:", this.message);
+    if (this.time) {
+      setTimeout(() => {
+        toast.className = toast.className.replace("show", "hide");
+        setTimeout(() => {
+          this.$emit("closeToast");
+        }, 500);
+      }, this.time);
+    }
   },
   methods: {
     closeClick() {
-      this.$emit("closeToast");
+      var toast = document.getElementById("snackbar");
+      toast.className = toast.className.replace("show", "hide");
+      setTimeout(() => {
+        toast.className = toast.className.replace("hide", "");
+        this.$emit("closeToast");
+      }, 500);
     },
   },
 };
@@ -71,7 +76,7 @@ export default {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9);
   background: white;
   border-radius: 5px;
-  border: 1px white solid ;
+  border: 1px white solid;
 }
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
@@ -79,8 +84,17 @@ export default {
   visibility: visible; /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
   However, delay the fade out process for 2.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  -webkit-animation: fadein 0.5s;
+  animation: fadein 0.5s;
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.hide {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadeout 0.5s;
+  animation: fadeout 0.5s;
 }
 
 /* Animations to fade the snackbar in and out */

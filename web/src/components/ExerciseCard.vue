@@ -54,8 +54,14 @@
           </table>
         </span>
         <span v-if="exerciseType.data_type === 'single-value'">
-          {{ exercise.single_value.value }}
-          {{ exerciseType.measurement_type }}
+          <span v-if="exercise.single_value">
+            Single value:
+            {{ exercise.single_value.value }}
+            {{ exerciseType.measurement_type }}
+          </span>
+          <span v-if="!exercise.single_value">
+            No data yet
+          </span>
         </span>
       </div>
     </div>
@@ -84,7 +90,12 @@
     @deleteRecordEvent="deleteExercise"
   />
 
-  <Toast v-if="toast.show" :title="toast.title" @closeToast="toastHide" />
+  <Toast
+    v-if="toast.show"
+    :title="toast.title"
+    :time="toast.time"
+    @closeToast="toastHide"
+  />
 </template>
 
 <script>
@@ -127,12 +138,12 @@ export default {
       toast: {
         show: false,
         title: "Not yet implemented",
+        time: 2500,
       },
     };
   },
-  created() {
-    console.log("e:", this.exercise);
-    console.log("et:", this.exerciseType);
+  mounted() {
+    console.log(this.exercise);
   },
   methods: {
     deleteExercise() {
@@ -143,7 +154,7 @@ export default {
             console.log(res);
 
             // TODO: BUG: encountered this before, need to find a way to update the displayed data when state changes so forcing a page refresh instead.
-            this.$router.go()
+            this.$router.go();
           },
           (err) => {
             console.error(err);

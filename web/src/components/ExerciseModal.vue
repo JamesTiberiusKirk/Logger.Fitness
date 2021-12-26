@@ -32,17 +32,22 @@
         <div class="btn-wrapper">
           <button
             type="button"
-            class="btn btn-primary btn-sm"
+            class="button btn btn-primary btn-sm"
             @click="addExercise"
           >
             Add Exercise
           </button>
           <div />
-          <button type="button" class="btn btn-primary btn-sm">New Type</button>
+
+          <router-link class="button" :to="{ name: 'exercise_type' }">
+            <button type="button" class="button btn btn-primary btn-sm">
+              New Type
+            </button>
+          </router-link>
           <div />
           <button
             type="button"
-            class="btn btn-secondary btn-sm close-btn"
+            class="button btn btn-secondary btn-sm close-btn"
             @click="closeModal"
           >
             Cancel
@@ -132,7 +137,7 @@ export default {
   display: flex;
   flex-wrap: nowrap;
 }
-.btn-wrapper > button {
+.button {
   width: 100%;
   text-align: center;
 }

@@ -9,7 +9,7 @@
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
               <span id="single_value-label" class="input-group-text"
-                >Value</span
+                >{{exerciseType.measurement_type}}</span
               >
             </div>
             <Field

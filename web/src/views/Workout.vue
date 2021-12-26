@@ -10,12 +10,13 @@
       </p>
     </header>
 
-    <span v-for="(e, i) in workout.exercises" :key="i">
+    <span class="exercise-list" v-for="(e, i) in workout.exercises" :key="i">
       <ExerciseCard
         :exercise="e"
         :exerciseType="exerciseTypes[e.exercise_type_id]"
       />
     </span>
+    <div class="exercise-list-padding"/>
 
     <div class="bottom-pane">
       <button
@@ -185,5 +186,8 @@ export default {
 }
 .bottom-pane > div {
   width: 2%;
+}
+.exercise-list-padding {
+  margin-bottom: 70%;
 }
 </style>
