@@ -40,8 +40,8 @@ services:
     image: mongo
     restart: always
     volumes:
-      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      # - ./docker-data/mongodb-data:/data/db
+      - ./docker/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+       - ./docker/docker-data/mongodb-data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -52,8 +52,8 @@ services:
   mongo-express:
     image: mongo-express
     restart: always
-    ports:
-      - 8081:8081
+    #ports:
+      #- 8081:8081
     depends_on:
       - mongo 
     environment:
