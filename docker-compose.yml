@@ -1,5 +1,5 @@
 
-version: '3.1'
+version: '3.9'
 
 services:
 
@@ -66,3 +66,9 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGOEXPRESS_LOGIN}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGOEXPRESS_PASSWORD}
+
+
+networks:
+  default:
+    external:
+      name: logger_fitness_network
