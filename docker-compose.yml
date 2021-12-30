@@ -11,8 +11,8 @@ services:
       - '81:81'
       - '443:443'
     volumes:
-      - ./docker/rpoxy:/data
-      - ./docker/letsencrypt:/etc/letsencrypt
+      - ./docker/volumes/rproxy:/data
+      - ./docker/volumes/letsencrypt:/etc/letsencrypt
     depends_on:
       - web
       - backend
@@ -41,7 +41,7 @@ services:
     restart: always
     volumes:
       - ./docker/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
-      - ./docker/docker-data/mongodb-data:/data/db
+      - ./docker/volumes/mongodb-data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
