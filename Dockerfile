@@ -15,4 +15,5 @@ WORKDIR /app
 RUN go build -o server ./backend/ 
  
 # Run the server executable
+EXPOSE 3000
 CMD [ "/app/server" ]
