@@ -1,4 +1,5 @@
 *.env
 docker/docker-data
+docker/rproxy
 .vscode/
 
