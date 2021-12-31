@@ -59,9 +59,7 @@
             {{ exercise.single_value.value }}
             {{ exerciseType.measurement_type }}
           </span>
-          <span v-if="!exercise.single_value">
-            No data yet
-          </span>
+          <span v-if="!exercise.single_value"> No data yet </span>
         </span>
       </div>
     </div>
@@ -135,6 +133,7 @@ export default {
         message: "Are you sure you want to delete this exercise?",
         continueButtonMessage: "Yes",
       },
+      // TODO: change the toast to have an undo button for data mutations such as set deletions
       toast: {
         show: false,
         title: "Not yet implemented",
@@ -179,8 +178,19 @@ export default {
     closeAddSingleValueModal() {
       this.singleValueModal.show = false;
     },
-    deleteSetModal() {
+    deleteSetModal(i) {
       this.toast.show = true;
+      let newExercise = this.exercise;
+      newExercise.sets.splice(i, 1);
+      console.log(newExercise);
+      this.$store
+        .dispatch("exercises/updateOne", newExercise)
+        .then(() => {
+          // Success
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     toastHide() {
       this.toast.show = false;
@@ -214,7 +224,7 @@ export default {
   margin-top: 10px;
   /* padding-top: 5px; */
 }
-.header-button{
-  margin-left:15px;
+.header-button {
+  margin-left: 15px;
 }
 </style>
