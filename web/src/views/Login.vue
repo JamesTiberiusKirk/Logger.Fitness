@@ -88,6 +88,9 @@ export default {
           this.loading = false;
           this.successful = false;
           this.message = err.request.responseText || err.data;
+
+          if (err.request.status === 401)
+            this.message = "Wrong password or email";
         }
       );
     },
