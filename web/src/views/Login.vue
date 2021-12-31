@@ -28,10 +28,12 @@
           </button>
         </div>
 
-        <div class="form-group">
-          <div v-if="message" class="alert alert-danger" role="alert">
-            {{ message }}
-          </div>
+        <div
+          v-if="message"
+          class="alert"
+          :class="successful ? 'alert-success' : 'alert-danger'"
+        >
+          {{ message }}
         </div>
       </Form>
     </div>
@@ -58,6 +60,7 @@ export default {
     return {
       loading: false,
       message: "",
+      successful: false,
       schema,
     };
   },
@@ -77,16 +80,14 @@ export default {
 
       this.$store.dispatch("auth/login", user).then(
         () => {
+          this.successful = true;
+          this.message = "Successful";
           this.$router.push("/workouts");
         },
         (err) => {
           this.loading = false;
-          this.message =
-            (err.response &&
-              err.response.data &&
-              err.response.data.message) ||
-            err.message ||
-            err.toString();
+          this.successful = false;
+          this.message = err.request.responseText || err.data;
         }
       );
     },
