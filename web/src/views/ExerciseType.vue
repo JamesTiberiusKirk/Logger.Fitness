@@ -146,6 +146,7 @@ export default {
           () => {
             this.successMessage = "Success";
             this.loading = false;
+            this.$router.back()
           },
           (err) => {
             console.error(err);
@@ -156,7 +157,9 @@ export default {
       } else {
         this.$store.dispatch("exerciseTypes/sendOne", exercise_type).then(
           () => {
+            this.successMessage = "Success";
             this.loading = false;
+            this.$router.back()
           },
           (err) => {
             console.error(err);
