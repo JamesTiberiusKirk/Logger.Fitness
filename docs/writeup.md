@@ -40,5 +40,10 @@ workouts.
 ## Current Progress
 
 ## Next Steps
-
+- need to scrap part of my auth system and implement smth like keyclack or some other oauth provider
+- need to actually design the UI
+- need to re-write the app with Ionic and vuejs
+- need to implement workout templates
+- need to start implementing historical view per exercise types
+  - stuff like 1 rep max or max resistance lifted in general
 
