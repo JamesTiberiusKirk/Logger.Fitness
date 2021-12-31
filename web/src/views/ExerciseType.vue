@@ -163,6 +163,7 @@ export default {
           },
           (err) => {
             console.error(err);
+            this.errorMessage = err.request.requestText
             this.loading = false;
           }
         );

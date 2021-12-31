@@ -3,7 +3,7 @@
     <div class="modal-dialog-content">
       <Form @submit="addSet" :validation-schema="schema">
         <div class="modal-dialog-header">
-          <h4>Set nr#{{ newSetNumber }}</h4>
+          <h4>Set #{{ newSetNumber }}</h4>
         </div>
         <div class="modal-dialog-body">
           <div class="form-group input-group input-group mb-3">
@@ -195,5 +195,10 @@ export default {
   padding: 10px;
   width: 100%;
   text-align: center;
+}
+
+.checkbox {
+  text-align: center;
+  vertical-align: center;
 }
 </style>

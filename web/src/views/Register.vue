@@ -101,10 +101,11 @@ export default {
       this.loading = true;
 
       this.$store.dispatch("auth/register", user).then(
-        (data) => {
-          this.message = data.message;
+        () => {
+          this.message = "Successfully registered";
           this.successful = true;
           this.loading = false;
+          this.$router.push("/login")
         },
         (err) => {
           this.message = err.request.responseText || err.data;
