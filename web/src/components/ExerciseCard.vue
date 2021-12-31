@@ -179,7 +179,7 @@ export default {
       this.singleValueModal.show = false;
     },
     deleteSetModal(i) {
-      this.toast.show = true;
+      // this.toast.show = true;
       let newExercise = this.exercise;
       newExercise.sets.splice(i, 1);
       console.log(newExercise);
