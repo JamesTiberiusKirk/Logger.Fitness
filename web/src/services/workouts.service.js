@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "/api/workouts";
+const API_URL = "/api/v2/workouts";
 
 class WorkoutsService {
   start(workout) {

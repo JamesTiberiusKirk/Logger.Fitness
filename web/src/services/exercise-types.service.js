@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = "/api/exercise_type";
+const API_URL = "/api/v2/exercise_type";
 
 class ExerciseTypeService {
   getExerciseTypes() {
