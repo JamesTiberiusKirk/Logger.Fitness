@@ -24,7 +24,7 @@ func Run(dbClient *db.DbClient, port string) {
 		middleware.CORS(),
 	)
 
-	e = initRoutes("/api", e)
+	e = initRoutes("/api/v2", e)
 
 	e.Logger.Fatal(e.Start(port))
 }
