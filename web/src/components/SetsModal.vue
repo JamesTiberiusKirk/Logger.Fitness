@@ -109,15 +109,23 @@ export default {
     },
   },
   data() {
+    let reps = 0;
+    let resistance = 0;
+    const lastSet = this.exercise.sets[this.exercise.sets.length - 1];
     const schema = yup.object().shape({
       reps: yup.number().required("Repetitions require"),
       resistance: yup.number().required("Resistance require"),
     });
+
+    if (this.exercise.sets.length > 0) {
+      reps = lastSet.reps;
+      resistance = lastSet.resistance;
+    }
     return {
       schema,
       set: {
-        reps: 0,
-        resistance: 0,
+        reps: reps,
+        resistance: resistance,
         is_drop_set: false,
       },
       errorMessage: "",
