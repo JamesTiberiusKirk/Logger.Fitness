@@ -5,8 +5,17 @@
         <h4>Select Exercise</h4>
       </div>
       <div class="modal-dialog-body">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            v-model="searchTerm"
+          />
+        </div>
+
         <ul class="list-group">
-          <span v-for="(et, i) in exerciseTypes" :key="i">
+          <span v-for="(et, i) in exerciseTypesFilter" :key="i">
             <a
               href="#"
               class="
@@ -66,8 +75,25 @@
 export default {
   name: "ExerciseModal",
   emits: ["closeModalEvent", "addExerciseEvent"],
+  computed: {
+    exerciseTypesFilter() {
+      if (!this.searchTerm) {
+        return this.exerciseTypes;
+      }
+      let searchTerm = this.searchTerm.toLowerCase();
+      return this.exerciseTypes.filter((exerciseType) => {
+        if (
+          exerciseType.name.toLowerCase().includes(searchTerm) ||
+          exerciseType.description.toLowerCase().includes(searchTerm)
+        ) {
+          return true;
+        }
+      });
+    },
+  },
   data() {
     return {
+      searchTerm: "",
       selectedExerciseType: {},
       exerciseTypes: [],
       errorMessage: "",
