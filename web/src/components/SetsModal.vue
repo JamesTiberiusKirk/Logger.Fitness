@@ -70,7 +70,7 @@
               v-model="set.is_drop_set"
               name="is_drop_set"
               type="checkbox"
-              value=true
+              value="true"
               class="form-control"
             />
             <ErrorMessage name="is_drop_set" class="error-feedback" />
@@ -128,17 +128,21 @@ export default {
     },
   },
   data() {
-    let reps = 0;
-    let resistance = 0;
-    const lastSet = this.exercise.sets[this.exercise.sets.length - 1];
     const schema = yup.object().shape({
       reps: yup.number().required("Repetitions require"),
       resistance: yup.number().required("Resistance require"),
     });
 
-    if (this.exercise.sets.length > 0) {
-      reps = lastSet.reps;
-      resistance = lastSet.resistance;
+    let reps = 0;
+    let resistance = 0;
+
+    if (this.exercise.sets) {
+      const lastSet = this.exercise.sets[this.exercise.sets.length - 1];
+
+      if (this.exercise.sets.length > 0) {
+        reps = lastSet.reps;
+        resistance = lastSet.resistance;
+      }
     }
     return {
       schema,
@@ -152,43 +156,43 @@ export default {
   },
   methods: {
     removeFromReps() {
-      if (this.set.reps<=0){
-        return
+      if (this.set.reps <= 0) {
+        return;
       }
-      this.set.reps--
+      this.set.reps--;
     },
     addToReps() {
-      if (this.set.reps>=1000){
-        return
+      if (this.set.reps >= 1000) {
+        return;
       }
-      this.set.reps++
+      this.set.reps++;
     },
     removeFromResistance() {
-      if (this.set.resistance<=0){
-        return
+      if (this.set.resistance <= 0) {
+        return;
       }
-      this.set.resistance--
+      this.set.resistance--;
     },
     addToResistance() {
-      if (this.set.resistance>=1000){
-        return
+      if (this.set.resistance >= 1000) {
+        return;
       }
-      this.set.resistance++
+      this.set.resistance++;
     },
     // TODO: Cleanup the following
     addSet() {
       let exercise = this.exercise;
-      let dropSet = false
-      if (this.set.is_drop_set=="true"){
-        dropSet = true
+      let dropSet = false;
+      if (this.set.is_drop_set == "true") {
+        dropSet = true;
       } else {
-        dropSet = false
+        dropSet = false;
       }
       if (!Array.isArray(exercise.sets)) exercise.sets = [];
       exercise.sets.push({
         reps: parseInt(this.set.reps),
         resistance: parseInt(this.set.resistance),
-        is_drop_set: dropSet
+        is_drop_set: dropSet,
       });
       this.$store
         .dispatch("exercises/updateOne", exercise)
