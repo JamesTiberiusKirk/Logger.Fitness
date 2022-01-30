@@ -4,15 +4,39 @@
       <h3>Exercise Types</h3>
     </header>
   </div>
+
+  <div class="input-group mb-3 search-bar">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search"
+      v-model="searchTerm"
+    />
+  </div>
+
+  <dev class="filter">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" @click="selectFilter('All')">
+        <a class="page-link">All</a>
+      </li>
+      <li class="page-item" @click="selectFilter('sets')">
+        <a class="page-link">Sets</a>
+      </li>
+      <li class="page-item" @click="selectFilter('single-value')">
+        <a class="page-link">Single values</a>
+      </li>
+    </ul>
+  </dev>
+
   <div
-    v-for="(e, i) in exerciseTypes"
+    v-for="(e, i) in exerciseTypesFilter"
     :key="i"
     class="card mx-auto exercise"
   >
     <div class="card-body">
       <h4 class="card-title">{{ e.name }}</h4>
       <p class="card-text">{{ e.description }}</p>
-      <p class="card-text">{{ e.data_type }} : {{ e.measurement_type}}</p>
+      <p class="card-text">{{ e.data_type }} : {{ e.measurement_type }}</p>
 
       <button
         v-on:click="showDeleteModal(e.exercise_type_id)"
@@ -53,12 +77,30 @@ export default {
   },
   data() {
     return {
+      searchTerm: "",
+      filter: "All",
       exerciseTypes: [],
       deleteModal: false,
       deleteExerciseId: "",
       deleteMessage: "Are you sure?",
       continueButtonMessage: "Yes",
     };
+  },
+  computed: {
+    exerciseTypesFilter() {
+      let searchTerm = this.searchTerm.toLowerCase();
+      return this.exerciseTypes.filter((exerciseType) => {
+        if (
+          exerciseType.name.toLowerCase().includes(searchTerm) ||
+          exerciseType.description.toLowerCase().includes(searchTerm)
+        ) {
+          if (this.filter !== "All") {
+            return exerciseType.data_type === this.filter;
+          }
+          return true;
+        }
+      });
+    },
   },
   async created() {
     try {
@@ -69,6 +111,9 @@ export default {
     this.exerciseTypes = this.$store.getters["exerciseTypes/getAll"].data;
   },
   methods: {
+    selectFilter(filter) {
+      this.filter = filter;
+    },
     showDeleteModal(id) {
       this.deleteExerciseId = id;
       this.deleteModal = true;
@@ -81,8 +126,7 @@ export default {
       this.$store
         .dispatch("exerciseTypes/deleteOne", this.deleteExerciseId)
         .then(
-          () => {
-          },
+          () => {},
           (err) => {
             console.error(err);
           }
@@ -101,5 +145,8 @@ export default {
 }
 .card-btn {
   margin-left: 1%;
+}
+.search-bar{
+  padding: 1.25rem;
 }
 </style>

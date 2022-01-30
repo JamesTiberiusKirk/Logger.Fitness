@@ -88,7 +88,6 @@ export default {
   emits: ["closeModalEvent", "addExerciseEvent"],
   computed: {
     exerciseTypesFilter() {
-      console.log(this.filter);
       let searchTerm = this.searchTerm.toLowerCase();
       return this.exerciseTypes.filter((exerciseType) => {
         if (
