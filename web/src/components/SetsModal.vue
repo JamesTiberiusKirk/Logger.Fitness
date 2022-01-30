@@ -59,7 +59,7 @@
 
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
-              <span id="is_drop_set-label" class="form-check-label"
+              <span id="is_drop_set-label" class="input-group-text"
                 >Drop-set?</span
               >
             </div>
@@ -70,7 +70,8 @@
               v-model="set.is_drop_set"
               name="is_drop_set"
               type="checkbox"
-              class="form-check-input"
+              value=true
+              class="form-control"
             />
             <ErrorMessage name="is_drop_set" class="error-feedback" />
           </div>
@@ -144,7 +145,7 @@ export default {
       set: {
         reps: reps,
         resistance: resistance,
-        is_drop_set: false,
+        is_drop_set: "off",
       },
       errorMessage: "",
     };
@@ -177,13 +178,18 @@ export default {
     // TODO: Cleanup the following
     addSet() {
       let exercise = this.exercise;
+      let dropSet = false
+      if (this.set.is_drop_set=="true"){
+        dropSet = true
+      } else {
+        dropSet = false
+      }
       if (!Array.isArray(exercise.sets)) exercise.sets = [];
       exercise.sets.push({
         reps: parseInt(this.set.reps),
         resistance: parseInt(this.set.resistance),
-        is_drop_set: this.set.is_drop_set === "on",
+        is_drop_set: dropSet
       });
-      console.log(exercise.sets);
       this.$store
         .dispatch("exercises/updateOne", exercise)
         .then(() => {
