@@ -16,6 +16,15 @@ services:
     depends_on:
       - web
       - backend
+
+  auth:
+    image: quay.io/keycloak/keycloak
+    retart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
   
   web:
     build: ./web
