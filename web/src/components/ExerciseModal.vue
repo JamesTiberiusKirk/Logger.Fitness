@@ -4,6 +4,7 @@
       <div class="modal-dialog-header">
         <h4>Select Exercise</h4>
       </div>
+
       <div class="modal-dialog-body">
         <div class="input-group mb-3">
           <input
@@ -13,6 +14,16 @@
             v-model="searchTerm"
           />
         </div>
+
+        <dev class="filter">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" @click="selectFilter('All')"><a class="page-link">All</a></li>
+            <li class="page-item" @click="selectFilter('sets')"><a class="page-link">Sets</a></li>
+            <li class="page-item" @click="selectFilter('single-value')">
+              <a class="page-link">Single values</a>
+            </li>
+          </ul>
+        </dev>
 
         <ul class="list-group">
           <span v-for="(et, i) in exerciseTypesFilter" :key="i">
@@ -77,15 +88,16 @@ export default {
   emits: ["closeModalEvent", "addExerciseEvent"],
   computed: {
     exerciseTypesFilter() {
-      if (!this.searchTerm) {
-        return this.exerciseTypes;
-      }
+      console.log(this.filter);
       let searchTerm = this.searchTerm.toLowerCase();
       return this.exerciseTypes.filter((exerciseType) => {
         if (
           exerciseType.name.toLowerCase().includes(searchTerm) ||
           exerciseType.description.toLowerCase().includes(searchTerm)
         ) {
+          if (this.filter !== "All"){
+            return exerciseType.data_type === this.filter
+          }
           return true;
         }
       });
@@ -93,6 +105,7 @@ export default {
   },
   data() {
     return {
+      filter: "All",
       searchTerm: "",
       selectedExerciseType: {},
       exerciseTypes: [],
@@ -109,6 +122,9 @@ export default {
     this.exerciseTypes = this.$store.getters["exerciseTypes/getAll"].data;
   },
   methods: {
+    selectFilter(filter) {
+      this.filter = filter;
+    },
     closeModal() {
       this.$emit("closeModalEvent");
     },
