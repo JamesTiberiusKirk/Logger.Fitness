@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "Logger.Fitness",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
