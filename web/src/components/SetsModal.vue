@@ -8,7 +8,13 @@
         <div class="modal-dialog-body">
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
-              <span id="reps-label" class="input-group-text">Reps</span>
+              <span id="reps-label" class="label input-group-text">Reps</span>
+              <i
+                class="input-group-text fas material-icons"
+                @click="removeFromReps"
+              >
+                remove
+              </i>
             </div>
             <Field
               aria-label="Small"
@@ -19,14 +25,23 @@
               class="form-control"
               id="reps"
             />
+            <div class="input-group-append" @click="addToReps">
+              <i class="input-group-text fas material-icons"> add </i>
+            </div>
             <ErrorMessage name="reps" class="error-feedback" />
           </div>
 
           <div class="form-group input-group input-group mb-3">
             <div class="input-group-prepend">
-              <span id="resistance-label" class="input-group-text">{{
+              <span id="resistance-label" class="label input-group-text">{{
                 exerciseType.measurement_type
               }}</span>
+              <i
+                class="input-group-text fas material-icons"
+                @click="removeFromResistance"
+              >
+                remove
+              </i>
             </div>
             <Field
               aria-label="Small"
@@ -36,6 +51,9 @@
               type="number"
               class="form-control"
             />
+            <div class="input-group-append" @click="addToResistance">
+              <i class="input-group-text fas material-icons"> add </i>
+            </div>
             <ErrorMessage name="resistance" class="error-feedback" />
           </div>
 
@@ -132,6 +150,30 @@ export default {
     };
   },
   methods: {
+    removeFromReps() {
+      if (this.set.reps<=0){
+        return
+      }
+      this.set.reps--
+    },
+    addToReps() {
+      if (this.set.reps>=1000){
+        return
+      }
+      this.set.reps++
+    },
+    removeFromResistance() {
+      if (this.set.resistance<=0){
+        return
+      }
+      this.set.resistance--
+    },
+    addToResistance() {
+      if (this.set.resistance>=1000){
+        return
+      }
+      this.set.resistance++
+    },
     // TODO: Cleanup the following
     addSet() {
       let exercise = this.exercise;
@@ -208,5 +250,9 @@ export default {
 .checkbox {
   text-align: center;
   vertical-align: center;
+}
+
+.label {
+  width: 4rem;
 }
 </style>
