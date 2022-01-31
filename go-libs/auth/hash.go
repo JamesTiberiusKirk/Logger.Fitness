@@ -1,8 +1,8 @@
-package lib
+package auth
 
 import "golang.org/x/crypto/bcrypt"
 
-/* Function to hash a plaintext password. */
+// Hash plaintext to bcrypt
 func Hash(plaintText string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(plaintText), bcrypt.MinCost)
 	if err != nil {
@@ -11,7 +11,8 @@ func Hash(plaintText string) (string, error) {
 	return string(hash), nil
 }
 
-/* Function to compare plaintext and hash. */
+// VerifyHash compares plaintext to hash
+// TODO: maybe the err should be handled better?
 func VerifyHash(hash, plainText string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plainText))
 	return err == nil

@@ -1,4 +1,4 @@
-package controllers
+package clibontrollers
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"Logger.Fitness/backend/db"
-	lib "Logger.Fitness/go-libs"
+	"Logger.Fitness/go-libs/auth"
 	res "Logger.Fitness/go-libs/responses"
 	"Logger.Fitness/go-libs/types"
 )
@@ -45,7 +45,7 @@ func Register(c echo.Context) error {
 	}
 
 	// Hash the password
-	hashedPass, hashErr := lib.Hash(newUser.Password)
+	hashedPass, hashErr := auth.Hash(newUser.Password)
 	if hashErr != nil {
 		log.Warn(hashErr)
 		return c.NoContent(http.StatusInternalServerError)
@@ -89,19 +89,19 @@ func Login(c echo.Context) error {
 	}
 
 	// Compare hash and plaintext
-	if !lib.VerifyHash(dbUser.Password, userLogin.Password) {
+	if !auth.VerifyHash(dbUser.Password, userLogin.Password) {
 		return c.NoContent(http.StatusUnauthorized)
 	}
 
 	// Create JWT
-	userJwt, jwtErr := lib.GenerateJWTFromDbUser(dbUser)
+	userJwt, jwtErr := auth.GenerateJWTFromDbUser(dbUser)
 	if jwtErr != nil {
 		log.Info(jwtErr.Error())
 		return c.String(http.StatusInternalServerError, res.JwtError)
 	}
 
 	// Get user claim and return it
-	jwtClaim, err := lib.ValidateJWTToken(userJwt)
+	jwtClaim, err := auth.ValidateJWTToken(userJwt)
 	if err != nil {
 		log.Info(err.Error())
 		return c.String(http.StatusInternalServerError, res.JwtError)
@@ -130,7 +130,7 @@ func VerifyMe(c echo.Context) error {
 	}
 
 	// Validate JTW token
-	_, jwtErr := lib.ValidateJWTToken(userJwt.Jwt)
+	_, jwtErr := auth.ValidateJWTToken(userJwt.Jwt)
 	if jwtErr != nil {
 		return c.String(http.StatusUnauthorized, res.JwtInvalid)
 	}

@@ -1,7 +1,7 @@
 package lfMiddleware
 
 import (
-	lib "Logger.Fitness/go-libs"
+	"Logger.Fitness/go-libs/auth"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -18,7 +18,7 @@ func Auth(role string) echo.MiddlewareFunc {
 	return middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
 		KeyLookup: "header:x-access-token",
 		Validator: func(jwt string, c echo.Context) (bool, error) {
-			claim, err := lib.ValidateJWTToken(jwt)
+			claim, err := auth.ValidateJWTToken(jwt)
 			if err != nil {
 				return false, err
 			}
@@ -31,7 +31,7 @@ func Auth(role string) echo.MiddlewareFunc {
 				return false, err
 			}
 
-			newJwt, err := lib.GenerateJWTFromClaim(*claim)
+			newJwt, err := auth.GenerateJWTFromClaim(*claim)
 			if err != nil {
 				return false, err
 			}
