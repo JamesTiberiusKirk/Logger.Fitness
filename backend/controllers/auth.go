@@ -1,4 +1,4 @@
-package clibontrollers
+package controllers
 
 import (
 	"net/http"
