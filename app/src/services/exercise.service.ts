@@ -1,30 +1,33 @@
-import axios from "axios";
+import { Exercise } from "@/types/exercise";
+import axios, { AxiosResponse } from "axios";
 import authHeader from "./auth-header";
 
 const API_URL = "/api/exercises";
 
 class ExerciseService {
-  getAll() {
+  getAll(): Promise<AxiosResponse<Exercise[], any>> {
     const options = { headers: authHeader() };
     return axios.get(API_URL, options);
   }
 
-  getAllInWorkout(workoutID: string) {
+  getAllInWorkout(workoutID: string): Promise<AxiosResponse<Exercise[], any>> {
     const options = { headers: authHeader() };
     return axios.get(`${API_URL}?workout_id=${workoutID}`, options);
   }
 
-  new(exercise) {
+  new(exercise: Exercise): Promise<AxiosResponse<Exercise[], any>> {
     const options = { headers: authHeader() };
     return axios.post(API_URL, exercise, options);
   }
 
-  edit(exercise) {
+  // If I set the param type as Exercise it might sent the rest of the fields as empty which would wipe them on the server side.
+  // TODO: need to experiment with the above
+  edit(exercise: object): Promise<AxiosResponse<Exercise, any>> {
     const options = { headers: authHeader() };
     return axios.put(API_URL, exercise, options);
   }
 
-  delete(id: string){
+  delete(id: string): Promise<AxiosResponse<void>> {
     const options = { headers: authHeader() };
     return axios.delete(`${API_URL}?exercise_id=${id}`, options);
   }
