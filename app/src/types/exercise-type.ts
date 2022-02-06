@@ -6,3 +6,7 @@ export type ExerciseType = {
     data_type: string,
     measurement_type: string,
 }
+
+export type ExerciseTypeMap = {
+    [id: string]: ExerciseType
+}

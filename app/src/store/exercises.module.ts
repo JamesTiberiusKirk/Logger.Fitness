@@ -1,10 +1,16 @@
+import { Exercise } from "@/types/exercise";
 import ExerciseService from "../services/exercise.service";
 
 // const EXERCISE_STORE = "exercises";
 
+export type ExerciseState = {
+  data: Exercise[],
+  empty: boolean,
+}
+
 function getDefaultState() {
   // let data = JSON.parse(localStorage.getItem(EXERCISE_STORE)) || [];
-  let data = [];
+  const data: Exercise[] = [];
   return {
     data,
     empty: data.length == 0 ? false : true
@@ -15,7 +21,7 @@ export const exercises = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
-    async new({ commit }, exercise) {
+    async new({ commit }: any, exercise: Exercise) {
       return ExerciseService.new(exercise)
         .then(res => {
           commit("storeOne", res.data);
@@ -25,7 +31,7 @@ export const exercises = {
           return Promise.reject(err);
         });
     },
-    async fetchAll({ commit }) {
+    async fetchAll({ commit }: any) {
       return ExerciseService.getAll()
         .then(res => {
           commit("storeAll", res.data);
@@ -35,7 +41,7 @@ export const exercises = {
           return Promise.reject(err);
         });
     },
-    async fetchInWorkout({ commit }, workoutID) {
+    async fetchInWorkout({ commit }: any, workoutID: string) {
       return ExerciseService.getAllInWorkout(workoutID)
         .then(res => {
           commit("storeAll", res.data);
@@ -45,7 +51,8 @@ export const exercises = {
           return Promise.reject(err);
         });
     },
-    async updateOne({ commit }, exercise) {
+    // TODO: again any bc dont want to wipe fields, need testing
+    async updateOne({ commit }: any, exercise: any) {
       return ExerciseService.edit(exercise)
         .then(res => {
           commit("updateOne", exercise);
@@ -55,7 +62,7 @@ export const exercises = {
           return Promise.reject(err);
         });
     },
-    async deleteOne({ commit }, id) {
+    async deleteOne({ commit }: any, id: string) {
       return ExerciseService.delete(id)
         .then(res => {
           commit("deleteOne", id);
@@ -67,22 +74,24 @@ export const exercises = {
     }
   },
   mutations: {
-    storeAll(state, exercises) {
+    storeAll(state: ExerciseState, exercises: Exercise[]) {
       state.data = exercises;
       state.empty = false;
       // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
-    storeByWorkout(state, exercises) {
+    // EMMM idk whats happening here, looks the same as storeAlll
+    // TODO: find where it is used and figure out what its meant todo
+    storeByWorkout(state: ExerciseState, exercises: Exercise[]) {
       state.data = exercises;
       state.empty = false;
       // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
-    storeOne(state, exercise) {
+    storeOne(state: ExerciseState, exercise: Exercise) {
       state.data.push(exercise);
       state.empty = false;
       // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
-    updateOne(state, exercise) {
+    updateOne(state: ExerciseState, exercise: Exercise) {
       state.data.forEach((element, index) => {
         if (element.exercise_id == exercise.exercise_id) {
           state.data[index] = exercise;
@@ -90,7 +99,7 @@ export const exercises = {
       });
       // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
-    deleteOne(state, id) {
+    deleteOne(state: ExerciseState, id: string) {
       state.data.forEach((element, index) => {
         if (element.exercise_id == id) {
           state.data.splice(index, 1);
@@ -100,17 +109,19 @@ export const exercises = {
     }
   },
   getters: {
-    getAllByWorkoutId: state => workoutId => {
-      let result = [];
+    // TODO: maybe go back and use something like the filter method?
+    getAllByWorkoutId: (state: ExerciseState) => (workoutId: string): Exercise[] => {
+      const result: Exercise[] = [];
       state.data.forEach(element => {
-        if (element.workoutId == workoutId) {
+        if (element.workout_id == workoutId) {
           result.push(element);
         }
       });
       return result;
     },
-    getOneById: state => id => {
-      let result;
+    // TODO: maybe go back and use something like the filter method?
+    getOneById: (state: ExerciseState) => (id: string): Exercise => {
+      let result: Exercise = {} as Exercise;
       state.data.forEach(element => {
         if (element.exercise_id == id) {
           result = element;

@@ -1,7 +1,19 @@
+import { UserLoginDTO, UserRegisterDTO, UserStore } from "@/types/user";
 import AuthService from "../services/auth.service";
 
-const user = JSON.parse(localStorage.getItem("user"));
-const initialState = {
+
+// TODO: figure out how typescript works with vuex
+
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+export type AuthState = {
+  status: {
+    loggedIn: boolean,
+  },
+  user?: UserStore,
+}
+
+const initialState: AuthState = {
   status: {
     loggedIn: user ? true : false
   },
@@ -12,7 +24,7 @@ export const auth = {
   namespaced: true,
   state: initialState,
   actions: {
-    async login({ commit }, user) {
+    async login({ commit }: any, user: UserLoginDTO) {
       return AuthService.login(user)
         .then(res => {
           commit("loginSuccess", res.data);
@@ -23,12 +35,12 @@ export const auth = {
           return Promise.reject(err);
         });
     },
-    logout({ commit }) {
+    logout({ commit }: any) {
       commit("logout");
     },
 
     // TODO: this needs testing and possibly rework
-    async register({ commit }, user) {
+    async register({ commit }: any, user: UserRegisterDTO) {
       return AuthService.register(user).then(
         response => {
           commit("registerSuccess");
@@ -42,28 +54,28 @@ export const auth = {
     }
   },
   mutations: {
-    storeJwt(state, jwt) {
-      state.user.jwt = jwt;
+    storeJwt(state: AuthState, jwt: string) {
+      if (state.user) state.user.jwt = jwt;
       localStorage.setItem("user", JSON.stringify(state.user));
     },
-    loginSuccess(state, user) {
+    loginSuccess(state: AuthState, user: UserStore) {
       state.status.loggedIn = true;
       state.user = user;
       localStorage.setItem("user", JSON.stringify(user));
     },
-    loginFailure(state) {
+    loginFailure(state: AuthState) {
       state.status.loggedIn = false;
-      state.user = null;
+      state.user = undefined;
     },
-    logout(state) {
+    logout(state: AuthState) {
       state.status.loggedIn = false;
-      state.user = null;
+      state.user = undefined;
       localStorage.removeItem("user");
     },
-    registerSuccess(state) {
+    registerSuccess(state: any) {
       state.status.loggedIn = false;
     },
-    registerFailure(state) {
+    registerFailure(state: any) {
       state.status.loggedIn = false;
     }
   }

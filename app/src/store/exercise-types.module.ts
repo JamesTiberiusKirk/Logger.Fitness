@@ -1,10 +1,16 @@
+import { ExerciseType, ExerciseTypeMap } from "@/types/exercise-type";
 import ExerciseTypesService from "../services/exercise-types.service";
 
 // const EXERCISE_TYPE_STORE = "exercise_types";
 
-function getDefaultState() {
+export type ExerciseTypeState = {
+  data: ExerciseType[],
+  empty: boolean,
+}
+
+function getDefaultState(): ExerciseTypeState {
   // let data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE)) || []
-  let data = [];
+  const data: ExerciseType[] = [];
   return {
     data,
     empty: data.length == 0 ? false : true
@@ -15,7 +21,7 @@ export const exerciseTypes = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
-    async fetchAll({ commit }) {
+    async fetchAll({ commit }: any) {
       return ExerciseTypesService.getExerciseTypes()
         .then(res => {
           commit("storeAll", res.data);
@@ -25,7 +31,7 @@ export const exerciseTypes = {
           return Promise.reject(err);
         });
     },
-    async sendOne({ commit }, exerciseType) {
+    async sendOne({ commit }: any, exerciseType: ExerciseType) {
       return ExerciseTypesService.newExerciseType(exerciseType)
         .then(res => {
           commit("addOne", exerciseType);
@@ -35,7 +41,8 @@ export const exerciseTypes = {
           return Promise.reject(err);
         });
     },
-    async updateOne({ commit }, exerciseType) {
+    // TODO: this again is because the possibility of wiping all the other fields, need testing
+    async updateOne({ commit }: any, exerciseType: any) {
       return ExerciseTypesService.updateExerciseType(exerciseType)
         .then(res => {
           commit("updateOne", exerciseType);
@@ -45,7 +52,7 @@ export const exerciseTypes = {
           return Promise.reject(err);
         });
     },
-    async deleteOne({ commit }, id) {
+    async deleteOne({ commit }: any, id: string) {
       return ExerciseTypesService.deleteExerciseType(id)
         .then(res => {
           commit("deleteOne", id);
@@ -57,17 +64,17 @@ export const exerciseTypes = {
     }
   },
   mutations: {
-    storeAll(state, exerciseTypes) {
+    storeAll(state: ExerciseTypeState, exerciseTypes: ExerciseType[]) {
       state.data = exerciseTypes;
       state.empty = false;
       // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
-    addOne(state, exerciseType) {
+    addOne(state: ExerciseTypeState, exerciseType: ExerciseType) {
       state.data.push(exerciseType);
       state.empty = false;
       // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
-    updateOne(state, exerciseType) {
+    updateOne(state: ExerciseTypeState, exerciseType: ExerciseType) {
       state.data.forEach((element, index) => {
         if (element.exercise_type_id == exerciseType.exercise_type_id) {
           state.data[index] = exerciseType;
@@ -75,7 +82,7 @@ export const exerciseTypes = {
       });
       // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
-    deleteOne(state, id) {
+    deleteOne(state: ExerciseTypeState, id: string) {
       state.data.forEach((element, index) => {
         if (element.exercise_type_id == id) {
           state.data.splice(index, 1);
@@ -85,10 +92,10 @@ export const exerciseTypes = {
     }
   },
   getters: {
-    getAll: state => {
+    getAll: (state: ExerciseTypeState) => {
       return state;
     },
-    getOneById: state => id => {
+    getOneById: (state: ExerciseTypeState) => (id: string) => {
       let result;
       state.data.forEach(element => {
         if (element.exercise_type_id == id) {
@@ -97,8 +104,8 @@ export const exerciseTypes = {
       });
       return result;
     },
-    getAllAsMap: state => {
-      let result = new Map();
+    getAllAsMap: (state: ExerciseTypeState) => {
+      const result: ExerciseTypeMap = {};
       state.data.forEach(element => {
         result[element.exercise_type_id] = element;
       });

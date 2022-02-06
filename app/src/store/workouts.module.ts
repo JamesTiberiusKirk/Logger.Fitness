@@ -1,10 +1,16 @@
+import { Workout } from "@/types/workout";
 import WorkoutsService from "../services/workouts.service";
 
 // const WORKOUTS_STORE = "workouts";
 
-function getDefaultState() {
+export type WorkoutsState = {
+  data: Workout[],
+  empty: boolean,
+}
+
+function getDefaultState(): WorkoutsState {
   // let data = JSON.parse(localStorage.getItem(WORKOUTS_STORE))||[];
-  let data = [];
+  const data: Workout[] = [];
   return {
     data,
     empty: data.length == 0 ? false : true
@@ -15,7 +21,7 @@ export const workouts = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
-    async start({ commit }, workout) {
+    async start({ commit }: any, workout: Workout) {
       return WorkoutsService.start(workout)
         .then(res => {
           commit("storeOne", res.data);
@@ -25,7 +31,7 @@ export const workouts = {
           return Promise.reject(err);
         });
     },
-    async stop({ commit }, time) {
+    async stop({ commit }: any, time: string) {
       return WorkoutsService.stop(time)
         .then(res => {
           commit("updateOne", res.data);
@@ -35,7 +41,7 @@ export const workouts = {
           return Promise.reject(err);
         });
     },
-    async fetchAll({ commit }) {
+    async fetchAll({ commit }: any) {
       return WorkoutsService.getAll()
         .then(res => {
           commit("storeAll", res.data);
@@ -45,7 +51,7 @@ export const workouts = {
           return Promise.reject(err);
         });
     },
-    async updateOne({ commit }, workout) {
+    async updateOne({ commit }: any, workout: any) {
       return WorkoutsService.edit(workout)
         .then(res => {
           commit("updateOne", workout);
@@ -55,7 +61,7 @@ export const workouts = {
           return Promise.reject(err);
         });
     },
-    async deleteOne({ commit }, id) {
+    async deleteOne({ commit }: any, id: string) {
       return WorkoutsService.delete(id)
         .then(res => {
           commit("deleteOne", id);
@@ -67,17 +73,17 @@ export const workouts = {
     }
   },
   mutations: {
-    storeAll(state, workout) {
-      state.data = workout;
+    storeAll(state: WorkoutsState, workouts: Workout[]) {
+      state.data = workouts;
       state.empty = false;
       // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
-    storeOne(state, workout) {
+    storeOne(state: WorkoutsState, workout: Workout) {
       state.data.push(workout);
       state.empty = false;
       // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
-    updateOne(state, workout) {
+    updateOne(state: WorkoutsState, workout: Workout) {
       state.data.forEach((element, index) => {
         if (element.workout_id == workout.workout_id) {
           state.data[index] = workout;
@@ -85,9 +91,9 @@ export const workouts = {
       });
       // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
-    deleteOne(state, id) {
-      state.data.forEach((element, index) => {
-        if (element.workout_id == id) {
+    deleteOne(state: WorkoutsState, id: string) {
+      state.data.forEach((workout, index) => {
+        if (workout.workout_id == id) {
           state.data.splice(index, 1);
         }
       });
@@ -95,18 +101,18 @@ export const workouts = {
     }
   },
   getters: {
-    getAll: state => {
+    getAll: (state: WorkoutsState) => {
       return state;
     },
-    getAllInReverse: state => {
+    getAllInReverse: (state: WorkoutsState) => {
       if (!state.data) return [];
       return state.data.slice().reverse();
     },
-    getOneById: state => id => {
+    getOneById: (state: WorkoutsState) => (id: string) => {
       let result;
-      state.data.forEach(element => {
-        if (element.workout.workout_id == id) {
-          result = element;
+      state.data.forEach(workout => {
+        if (workout.workout_id == id) {
+          result = workout;
         }
       });
       return result;
