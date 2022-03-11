@@ -52,6 +52,7 @@ func (db *DbClient) AddUser(user models.User) error {
 	return nil
 }
 
+// NOTE: Unused code
 // GetUsersAll function to get all of the users for the DbClient class.
 func (db *DbClient) GetUsersAll() ([]models.User, error) {
 	dbc := db.Conn
@@ -86,5 +87,3 @@ func (db *DbClient) GetUserByEmail(lookupEmail string) (models.User, error) {
 		return u, findErr
 	}
 
-	return u, nil
-}

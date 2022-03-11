@@ -2,6 +2,9 @@ package server
 
 import (
 	"Logger.Fitness/backend/controllers"
+	"Logger.Fitness/backend/controllers/auth"
+	"Logger.Fitness/backend/controllers/exercise"
+	"Logger.Fitness/backend/controllers/exercise_type"
 	"Logger.Fitness/backend/db"
 	lfMiddleware "Logger.Fitness/go-libs/middleware"
 	"github.com/labstack/echo/v4"
@@ -24,7 +27,18 @@ func Run(dbClient *db.DbClient, port string) {
 		middleware.CORS(),
 	)
 
-	e = initRoutes("/api/v2", e)
+	userAuthMiddleware := lfMiddleware.Auth(lfMiddleware.UserRole)
+
+	g := e.Group("/api/v2")
+
+	authGroup := auth.NewAuthController(dbClient)
+	authGroup.Init(g)
+
+	exercioseGroup := exercise.NewExerciseController(dbClient, userAuthMiddleware)
+	exercioseGroup.Init(g)
+
+	exerciseTypeGroup := exercise_type.NewExerciseTypeController(dbClient, userAuthMiddleware)
+	exerciseTypeGroup.Init(g)
 
 	e.Logger.Fatal(e.Start(port))
 }
@@ -32,16 +46,14 @@ func Run(dbClient *db.DbClient, port string) {
 func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 	userAuth := lfMiddleware.Auth(lfMiddleware.UserRole)
 
-	e.GET(prefix+"/hw", controllers.HelloWorld)
+	//e.POST(prefix+"/auth/verify_me", controllers.VerifyMe)
+	//e.POST(prefix+"/auth/register", controllers.Register)
+	//e.POST(prefix+"/auth/login", controllers.Login)
 
-	e.POST(prefix+"/auth/verify_me", controllers.VerifyMe)
-	e.POST(prefix+"/auth/register", controllers.Register)
-	e.POST(prefix+"/auth/login", controllers.Login)
-
-	e.POST(prefix+"/exercise_type", controllers.NewExerciseType, userAuth)
-	e.GET(prefix+"/exercise_type", controllers.GetExerciseTypes, userAuth)
-	e.PUT(prefix+"/exercise_type", controllers.EditExerciseTypes, userAuth)
-	e.DELETE(prefix+"/exercise_type", controllers.DeleteExerciseType, userAuth)
+	//e.POST(prefix+"/exercise_type", controllers.NewExerciseType, userAuth)
+	//e.GET(prefix+"/exercise_type", controllers.GetExerciseTypes, userAuth)
+	//e.PUT(prefix+"/exercise_type", controllers.EditExerciseTypes, userAuth)
+	//e.DELETE(prefix+"/exercise_type", controllers.DeleteExerciseType, userAuth)
 
 	e.POST(prefix+"/workouts/start", controllers.StartNewWorkout, userAuth)
 	e.POST(prefix+"/workouts/stop", controllers.StopWorkout, userAuth)
@@ -50,10 +62,10 @@ func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 	e.PUT(prefix+"/workouts", controllers.EditWorkout, userAuth)
 	e.DELETE(prefix+"/workouts", controllers.DeleteWorkout, userAuth)
 
-	e.GET(prefix+"/exercises", controllers.GetExercise, userAuth)
-	e.POST(prefix+"/exercises", controllers.PostExercise, userAuth)
-	e.PUT(prefix+"/exercises", controllers.PutExercise, userAuth)
-	e.DELETE(prefix+"/exercises", controllers.DeleteExercise, userAuth)
+	//e.GET(prefix+"/exercises", controllers.GetExercise, userAuth)
+	//e.POST(prefix+"/exercises", controllers.PostExercise, userAuth)
+	//e.PUT(prefix+"/exercises", controllers.PutExercise, userAuth)
+	//e.DELETE(prefix+"/exercises", controllers.DeleteExercise, userAuth)
 
 	return e
 }

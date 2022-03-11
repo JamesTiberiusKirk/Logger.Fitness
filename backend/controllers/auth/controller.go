@@ -1,4 +1,5 @@
-package controllers
+//go:generate mockgen -package auth -destination controller_mock.go -source lambda.go
+package auth
 
 import (
 	"net/http"
@@ -7,15 +8,44 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"Logger.Fitness/backend/db"
 	"Logger.Fitness/go-libs/auth"
 	res "Logger.Fitness/go-libs/responses"
 	"Logger.Fitness/go-libs/types"
+	models "Logger.Fitness/go-libs/types"
 )
 
+const path = "/auth"
+
+// DatabaseInterface database dependency interface
+type DatabaseInterface interface {
+	AddUser(user models.User) error
+	CheckUserBasedOnEmail(lookupEmail string) (bool, error)
+	GetUserByEmail(lookupEmail string) (models.User, error)
+}
+
+// AuthController struct for auth controller
+type AuthController struct {
+	database DatabaseInterface
+}
+
+// NewAuthController created new auth controller
+func NewAuthController(database DatabaseInterface) AuthController {
+	return AuthController{
+		database: database,
+	}
+}
+
+// Init the route
+func (ctrl AuthController) Init(g *echo.Group) {
+	group := g.Group(path)
+	group.POST("/register", ctrl.register)
+	group.POST("/login", ctrl.login)
+	group.POST("/verify_me", ctrl.verifyMe)
+}
+
 // Register controller to user registration.
-func Register(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *AuthController) register(c echo.Context) error {
+	db := ctrl.database
 
 	// Struct binding
 	var newUser types.User
@@ -62,8 +92,8 @@ func Register(c echo.Context) error {
 }
 
 // Login controller to log in the user and return JWT token.
-func Login(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *AuthController) login(c echo.Context) error {
+	db := ctrl.database
 
 	// Struct binding
 	var userLogin types.UserLoginForm
@@ -116,7 +146,7 @@ func Login(c echo.Context) error {
 }
 
 // VerifyMe controller to verify the jwt tokens.
-func VerifyMe(c echo.Context) error {
+func (ctrl *AuthController) verifyMe(c echo.Context) error {
 	var userJwt types.JwtDto
 	if bindErr := c.Bind(&userJwt); bindErr != nil {
 		log.Info(bindErr)

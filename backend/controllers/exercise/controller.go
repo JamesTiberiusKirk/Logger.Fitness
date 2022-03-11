@@ -1,4 +1,4 @@
-package controllers
+package exercise
 
 import (
 	"net/http"
@@ -11,12 +11,46 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-/* Exercise */
+const path = "/exercises"
+
+// DatabaseInterface ...
+type DatabaseInterface interface {
+	InsertNewExercise(newExercise types.Exercise) (types.Exercise, error)
+	GetUserExercises(userID primitive.ObjectID) ([]types.Exercise, error)
+	GetUserExercisesByWorkout(userID, workoutID primitive.ObjectID) ([]types.Exercise, error)
+	EditExercise(exercise types.Exercise) error
+	DeleteExerciseByID(userID, exerciseID primitive.ObjectID) error
+}
+
+// ExerciseController ...
+type ExerciseController struct {
+	database       DatabaseInterface
+	authMiddleware echo.MiddlewareFunc
+}
+
+// NewExerciseController ...
+func NewExerciseController(database DatabaseInterface, authMiddleware echo.MiddlewareFunc) ExerciseController {
+	return ExerciseController{
+		database:       database,
+		authMiddleware: authMiddleware,
+	}
+}
+
+// Init ...
+func (ctrl *ExerciseController) Init(g *echo.Group) {
+	group := g.Group(path)
+
+	group.GET("", ctrl.GetExercise, ctrl.authMiddleware)
+	group.POST("", ctrl.PostExercise, ctrl.authMiddleware)
+	group.PUT("", ctrl.PutExercise, ctrl.authMiddleware)
+	group.DELETE("", ctrl.DeleteExercise, ctrl.authMiddleware)
+
+}
 
 // GetExercise GET endpoint.
 // @param workout_id - optional param
-func GetExercise(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *ExerciseController) GetExercise(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	// IF a workout id is provided it will return exercises in that workout
@@ -50,8 +84,8 @@ func GetExercise(c echo.Context) error {
 // PostExercise POST endpoint.
 // Starts new exercise.
 // @body - expected type types.Exercise
-func PostExercise(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *ExerciseController) PostExercise(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	var newExercise types.Exercise
@@ -74,8 +108,8 @@ func PostExercise(c echo.Context) error {
 // PutExercise PUT endpoint.
 // Deletes exercise.
 // TODO: BUG: this will accept either data type ignoring the set type
-func PutExercise(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *ExerciseController) PutExercise(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	var userUpdate types.Exercise
@@ -97,7 +131,7 @@ func PutExercise(c echo.Context) error {
 // DeleteExercise DELETE endpoint.
 // Deletes exercise.
 // @param - exercise_id
-func DeleteExercise(c echo.Context) error {
+func (ctrl *ExerciseController) DeleteExercise(c echo.Context) error {
 	db := c.Get("db").(*db.DbClient)
 	userClaim := c.Get("user").(*types.JwtClaim)
 
@@ -115,27 +149,3 @@ func DeleteExercise(c echo.Context) error {
 
 	return c.NoContent(http.StatusOK)
 }
-
-// AddSetInExercise POST endpoint.
-// Added new set in exercise.
-//func AddSetInExercise(c echo.Context) error {
-// db := c.Get("db").(*db.DbClient)
-// userClaim := c.Get("user").(*types.JwtClaim)
-//return nil
-//}
-
-// EditSetInExercise endpoint.
-// Edit an individual set in an exercise.
-//func EditSetInExercise(c echo.Context) error {
-// db := c.Get("db").(*db.DbClient)
-// userClaim := c.Get("user").(*types.JwtClaim)
-//return nil
-//}
-
-// DeleteSetInExercise DELETE endpoint.
-// Deletes set in exercise.
-//func DeleteSetInExercise(c echo.Context) error {
-// db := c.Get("db").(*db.DbClient)
-// userClaim := c.Get("user").(*types.JwtClaim)
-//return nil
-//}
