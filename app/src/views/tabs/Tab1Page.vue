@@ -3,6 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Tab 1</ion-title>
+        <ion-button @click="logout()">Logout</ion-button>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -11,17 +12,25 @@
           <ion-title size="large">Tab 1</ion-title>
         </ion-toolbar>
       </ion-header>
-    
+
       <ExploreContainer name="Tab 1 page" />
     </ion-content>
   </ion-page>
 </template>
 
-<script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+<script setup lang="ts">
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButton,
+} from "@ionic/vue";
+import ExploreContainer from "@/components/ExploreContainer.vue";
+import store from "@/store";
 
-export default  {
-  components: { ExploreContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage }
+function logout() {
+  store.dispatch("auth/logout");
 }
 </script>

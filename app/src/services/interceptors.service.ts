@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import store from "../store";
-import router from "../router";
+import store from "@/store";
+import router from "@/router";
 
 function handle401(err: any) {
   if (err.response.status !== 401) return;

@@ -1,7 +1,7 @@
 import { UserLoginDTO, UserRegisterDTO } from "@/types/user";
 import axios, { AxiosResponse } from "axios";
 
-const API_URL = "/api/auth";
+const API_URL = "/api/v2/auth";
 
 class AuthService {
   login(user: UserLoginDTO): Promise<AxiosResponse<any, any>> {
