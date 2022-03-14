@@ -87,3 +87,5 @@ func (db *DbClient) GetUserByEmail(lookupEmail string) (models.User, error) {
 		return u, findErr
 	}
 
+	return u, nil
+}

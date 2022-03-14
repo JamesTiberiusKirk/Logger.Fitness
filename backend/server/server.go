@@ -1,10 +1,10 @@
 package server
 
 import (
-	"Logger.Fitness/backend/controllers"
 	"Logger.Fitness/backend/controllers/auth"
 	"Logger.Fitness/backend/controllers/exercise"
 	"Logger.Fitness/backend/controllers/exercise_type"
+	"Logger.Fitness/backend/controllers/workout"
 	"Logger.Fitness/backend/db"
 	lfMiddleware "Logger.Fitness/go-libs/middleware"
 	"github.com/labstack/echo/v4"
@@ -40,11 +40,15 @@ func Run(dbClient *db.DbClient, port string) {
 	exerciseTypeGroup := exercise_type.NewExerciseTypeController(dbClient, userAuthMiddleware)
 	exerciseTypeGroup.Init(g)
 
+	// Need to create the workout controller
+	workoutGroup := workout.NewController(dbClient, userAuthMiddleware)
+	workoutGroup.Init(g)
+
 	e.Logger.Fatal(e.Start(port))
 }
 
 func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
-	userAuth := lfMiddleware.Auth(lfMiddleware.UserRole)
+	//userAuth := lfMiddleware.Auth(lfMiddleware.UserRole)
 
 	//e.POST(prefix+"/auth/verify_me", controllers.VerifyMe)
 	//e.POST(prefix+"/auth/register", controllers.Register)
@@ -55,12 +59,12 @@ func initRoutes(prefix string, e *echo.Echo) *echo.Echo {
 	//e.PUT(prefix+"/exercise_type", controllers.EditExerciseTypes, userAuth)
 	//e.DELETE(prefix+"/exercise_type", controllers.DeleteExerciseType, userAuth)
 
-	e.POST(prefix+"/workouts/start", controllers.StartNewWorkout, userAuth)
-	e.POST(prefix+"/workouts/stop", controllers.StopWorkout, userAuth)
-	e.GET(prefix+"/workouts/active", controllers.GetActiveWorkout, userAuth)
-	e.GET(prefix+"/workouts", controllers.GetWorkouts, userAuth)
-	e.PUT(prefix+"/workouts", controllers.EditWorkout, userAuth)
-	e.DELETE(prefix+"/workouts", controllers.DeleteWorkout, userAuth)
+	//e.POST(prefix+"/workouts/start", controllers.StartNewWorkout, userAuth)
+	//e.POST(prefix+"/workouts/stop", controllers.StopWorkout, userAuth)
+	//e.GET(prefix+"/workouts/active", controllers.GetActiveWorkout, userAuth)
+	//e.GET(prefix+"/workouts", controllers.GetWorkouts, userAuth)
+	//e.PUT(prefix+"/workouts", controllers.EditWorkout, userAuth)
+	//e.DELETE(prefix+"/workouts", controllers.DeleteWorkout, userAuth)
 
 	//e.GET(prefix+"/exercises", controllers.GetExercise, userAuth)
 	//e.POST(prefix+"/exercises", controllers.PostExercise, userAuth)

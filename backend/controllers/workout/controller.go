@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"Logger.Fitness/backend/db"
 	res "Logger.Fitness/go-libs/responses"
 	"Logger.Fitness/go-libs/types"
 	"github.com/labstack/echo/v4"
@@ -16,33 +15,39 @@ const path = "/workouts"
 
 // DatabaseInterface ...
 type DatabaseInterface interface {
+	GetUserAcitveWorkout(userID primitive.ObjectID) (types.Workout, error)
+	InsertNewWorkout(newWorkout types.Workout) error
+	GetUserWorkouts(userID primitive.ObjectID) ([]types.Workout, error)
+	GetUserExercisesByWorkout(userID, workoutID primitive.ObjectID) ([]types.Exercise, error)
+	DeleteWorkout(workoutID, userID primitive.ObjectID) error
+	EditWorkout(workout types.Workout) error
+	DeleteExerciseByWorkoutID(userID, workoutID primitive.ObjectID) error
 }
 
-// WorkoutController ...
-type WorkoutController struct {
+// Controller ...
+type Controller struct {
 	database       DatabaseInterface
 	authMiddleware echo.MiddlewareFunc
 }
 
-// NewWorkoutController ...
-func NewWorkoutController(database DatabaseInterface, authMiddleware echo.MiddlewareFunc) WorkoutController {
-	return WorkoutController{
+// NewController ...
+func NewController(database DatabaseInterface, authMiddleware echo.MiddlewareFunc) Controller {
+	return Controller{
 		database:       database,
 		authMiddleware: authMiddleware,
 	}
 }
 
 // Init ...
-func (ctrl *WorkoutController) Init(g *echo.Group) {
+func (ctrl *Controller) Init(g *echo.Group) {
 	group := g.Group(path)
 
-	group.GET("", ctrl.GetWorkouts)
-	group.DELETE("", ctrl.DeleteWorkout)
-
+	group.GET("", ctrl.GetWorkouts, ctrl.authMiddleware)
+	group.DELETE("", ctrl.DeleteWorkout, ctrl.authMiddleware)
 }
 
-// WorkoutDTO - workout & their exercises Data Transfer Object
-type WorkoutDTO struct {
+// DTO - workout & their exercises Data Transfer Object
+type DTO struct {
 	Workout   types.Workout    `json:"workout"`
 	Exercises []types.Exercise `json:"exercises"`
 }
@@ -54,8 +59,8 @@ type WorkoutDTO struct {
 //	be overwritten)
 // returns newly created record
 // TODO: validate start_time
-func (ctrl *WorkoutController) StartNewWorkout(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *Controller) StartNewWorkout(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	activeWorkout, err := db.GetUserAcitveWorkout(userClaim.ID)
@@ -99,8 +104,8 @@ func (ctrl *WorkoutController) StartNewWorkout(c echo.Context) error {
 // @param end_time - Unix timestamp
 // returns modified record
 // TODO: validate end_time
-func (ctrl *WorkoutController) StopWorkout(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *Controller) StopWorkout(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 	endTimeStamp, err := strconv.ParseInt(c.QueryParam("end_time"), 10, 64)
 	if err != nil {
@@ -127,9 +132,9 @@ func (ctrl *WorkoutController) StopWorkout(c echo.Context) error {
 // GetWorkouts GET endpoint..
 // Gets all user workouts.
 // Return
-// @body - []WorkoutDTO
-func (ctrl *WorkoutController) GetWorkouts(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+// @body - []DTO
+func (ctrl *Controller) GetWorkouts(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	workouts, err := db.GetUserWorkouts(userClaim.ID)
@@ -143,7 +148,7 @@ func (ctrl *WorkoutController) GetWorkouts(c echo.Context) error {
 		log.Error(err.Error())
 	}
 
-	var results []WorkoutDTO
+	var results []DTO
 	for i := 0; i < len(workouts); i++ {
 		exercises, err := db.GetUserExercisesByWorkout(userClaim.ID, workouts[i].ID)
 		if err != nil {
@@ -151,7 +156,7 @@ func (ctrl *WorkoutController) GetWorkouts(c echo.Context) error {
 			return c.String(http.StatusInternalServerError, res.DatabseError)
 		}
 
-		item := WorkoutDTO{
+		item := DTO{
 			Workout:   workouts[i],
 			Exercises: exercises,
 		}
@@ -163,8 +168,8 @@ func (ctrl *WorkoutController) GetWorkouts(c echo.Context) error {
 
 // GetActiveWorkout GET endpoint.
 // Gets the one active workout a user has
-func (ctrl *WorkoutController) GetActiveWorkout(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *Controller) GetActiveWorkout(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	result, err := db.GetUserAcitveWorkout(userClaim.ID)
@@ -179,8 +184,8 @@ func (ctrl *WorkoutController) GetActiveWorkout(c echo.Context) error {
 // DeleteWorkout DELETE endpoint.
 // Deletes a workout
 // @param workout_id - id of workout to delete
-func (ctrl *WorkoutController) DeleteWorkout(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *Controller) DeleteWorkout(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 	workoutID, err := primitive.ObjectIDFromHex(c.QueryParam("workout_id"))
 	if err != nil {
@@ -206,8 +211,8 @@ func (ctrl *WorkoutController) DeleteWorkout(c echo.Context) error {
 // EditWorkout PUT endpoint.
 // Re-writes a workout.
 // @body update - types.Workout
-func (ctrl *WorkoutController) EditWorkout(c echo.Context) error {
-	db := c.Get("db").(*db.DbClient)
+func (ctrl *Controller) EditWorkout(c echo.Context) error {
+	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
 	var update types.Workout
