@@ -10,8 +10,6 @@ import router from '@/router';
 //  properly...
 const rawUser = localStorage.getItem("user")
 const user = JSON.parse(rawUser || "{}");
-console.log(user);
-
 
 export type AuthState = {
   status: {
