@@ -5,7 +5,7 @@ import TabsPage from '@/views/TabsPage.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/tabs/workouts'
   },
   {
     path: '/login',
@@ -17,19 +17,19 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/tabs/workouts'
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/tabs/Tab1Page.vue')
+        path: 'exercise_list',
+        component: () => import('@/views/tabs/ExerciseListPage.vue')
       },
       {
         path: 'workouts',
         component: () => import('@/views/tabs/WorkoutsPage.vue')
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/tabs/Tab3Page.vue')
+        path: 'analytics',
+        component: () => import('@/views/tabs/AnalyticsPage.vue')
       }
     ]
   }
@@ -47,11 +47,7 @@ router.beforeEach((to, from, next) => {
 
   // trying to access a restricted page + not logged in
   // redirect to login page
-  if (authRequired && !loggedIn) {
-    next("/login");
-  } else {
-    next();
-  }
+  (authRequired && !loggedIn) ? next("/login") : next();
 });
 
 export default router

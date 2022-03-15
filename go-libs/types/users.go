@@ -24,7 +24,7 @@ func (u User) IsValid() error {
 // UserLoginForm is the input from user on login.
 type UserLoginForm struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=7,max=255"`
+	Password string `json:"password" validate:"required,min=3,max=255"`
 }
 
 // IsValid checks if instance of UserLoginForm is valid using the validator.

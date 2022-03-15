@@ -1,21 +1,59 @@
 <template>
+  <ion-menu side="start" content-id="main">
+    <ion-header>
+      <ion-toolbar translucent>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="menu-content">
+      <ion-list>
+        <ion-item>
+          <ion-label>Inbox</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>Outbox</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>Favorites</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>Archived</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>Trash</ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-button class="logout-btn" expand="block" @click="logout()">
+        Logout
+      </ion-button>
+    </ion-content>
+  </ion-menu>
+
   <ion-page>
     <ion-tabs>
-      <ion-router-outlet></ion-router-outlet>
-      <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="tab1" href="/tabs/tab1">
-          <ion-icon :icon="triangle" />
-          <ion-label>Tab 1</ion-label>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+          <ion-title>Logger.Fitness</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-router-outlet id="main"></ion-router-outlet>
+      <ion-tab-bar>
+        <ion-tab-button tab="exercise_list" href="/tabs/exercise_list">
+          <ion-icon :icon="create" />
+          <ion-label>Exercise List</ion-label>
         </ion-tab-button>
-          
-        <ion-tab-button tab="tab2" href="/tabs/tab2">
-          <ion-icon :icon="ellipse" />
-          <ion-label>Tab 2</ion-label>
+
+        <ion-tab-button tab="workouts" href="/tabs/workouts">
+          <ion-icon :icon="fileTrayFull" />
+          <ion-label>Workouts</ion-label>
         </ion-tab-button>
-        
-        <ion-tab-button tab="tab3" href="/tabs/tab3">
-          <ion-icon :icon="square" />
-          <ion-label>Tab 3</ion-label>
+
+        <ion-tab-button tab="analytics" href="/tabs/analytics">
+          <ion-icon :icon="analyticsOutline" />
+          <ion-label>Analytics</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -23,17 +61,68 @@
 </template>
 
 <script lang="ts">
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import {
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+  IonLabel,
+  IonIcon,
+  IonPage,
+  IonRouterOutlet,
+  IonContent,
+  IonMenu,
+  IonTitle,
+  IonToolbar,
+  IonHeader,
+  IonItem,
+  IonList,
+  IonButtons,
+  IonButton,
+  IonMenuButton,
+} from "@ionic/vue";
+import { create, fileTrayFull, analyticsOutline } from "ionicons/icons";
+import store from "@/store";
 
 export default {
-  components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet },
+  components: {
+    IonTabBar,
+    IonTabButton,
+    IonTabs,
+    IonPage,
+    IonRouterOutlet,
+
+    IonContent,
+    IonMenu,
+    IonTitle,
+    IonToolbar,
+    IonHeader,
+    IonItem,
+    IonList,
+
+    IonButtons,
+    IonButton,
+    IonMenuButton,
+    IonIcon,
+    IonLabel,
+  },
   setup() {
-    return {
-      ellipse, 
-      square, 
-      triangle,
+    function logout() {
+      // TODO: need to close menu pane on click
+      store.dispatch("auth/logout");
     }
-  }
-}
+    return {
+      logout,
+      create,
+      fileTrayFull,
+      analyticsOutline,
+    };
+  },
+};
 </script>
+
+<style scoped>
+.logout-btn {
+  padding-left: 1%;
+  padding-right: 1%;
+}
+</style>
