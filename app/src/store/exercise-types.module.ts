@@ -1,7 +1,7 @@
 import { ExerciseType, ExerciseTypeMap } from "@/types/exercise-type";
 import ExerciseTypesService from "../services/exercise-types.service";
 
-// const EXERCISE_TYPE_STORE = "exercise_types";
+const EXERCISE_TYPE_STORE = "exercise_types";
 
 export type ExerciseTypeState = {
   data: ExerciseType[],
@@ -9,8 +9,8 @@ export type ExerciseTypeState = {
 }
 
 function getDefaultState(): ExerciseTypeState {
-  // let data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE)) || []
-  const data: ExerciseType[] = [];
+  const data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE)||"[]")
+  // const data: ExerciseType[] = [];
   return {
     data,
     empty: data.length == 0 ? false : true
@@ -67,12 +67,12 @@ export const exerciseTypes = {
     storeAll(state: ExerciseTypeState, exerciseTypes: ExerciseType[]) {
       state.data = exerciseTypes;
       state.empty = false;
-      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
     addOne(state: ExerciseTypeState, exerciseType: ExerciseType) {
       state.data.push(exerciseType);
       state.empty = false;
-      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
     updateOne(state: ExerciseTypeState, exerciseType: ExerciseType) {
       state.data.forEach((element, index) => {
@@ -80,7 +80,7 @@ export const exerciseTypes = {
           state.data[index] = exerciseType;
         }
       });
-      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     },
     deleteOne(state: ExerciseTypeState, id: string) {
       state.data.forEach((element, index) => {
@@ -88,7 +88,7 @@ export const exerciseTypes = {
           state.data.splice(index, 1);
         }
       });
-      // localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_TYPE_STORE, JSON.stringify(state.data));
     }
   },
   getters: {

@@ -1,4 +1,4 @@
-import { createStore, Store } from "vuex";
+import { createStore } from "vuex";
 import { auth } from "./auth.module";
 import { exerciseTypes } from "./exercise-types.module";
 import { workouts } from "./workouts.module";

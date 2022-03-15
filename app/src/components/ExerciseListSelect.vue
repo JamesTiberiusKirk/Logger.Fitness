@@ -24,12 +24,7 @@
             <ion-card-title>{{ e.name }}</ion-card-title>
           </ion-card-header>
 
-          <ion-card-content>
-            <ion-item>
-              <ion-label>{{ e.description }}</ion-label>
-              <ion-icon :icon="create" slot="end" @click="edit()"></ion-icon>
-            </ion-item>
-          </ion-card-content>
+          <ion-card-content>{{ e.description }}</ion-card-content>
         </ion-card>
       </span>
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -42,9 +37,12 @@
 </template>
 
 <script setup lang="ts">
+// TODO: Actually come in and finish this
+// NOTE: This is an old version of the Exercise List Page...
 import { ExerciseType } from "@/types/exercise-type";
 import {
   IonPage,
+  IonTitle,
   IonContent,
   IonCard,
   IonCardContent,
@@ -58,9 +56,8 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
-  IonItem,
 } from "@ionic/vue";
-import { add, create } from "ionicons/icons";
+import { add } from "ionicons/icons";
 import { computed, ref } from "vue";
 import store from "@/store";
 import Validate from "@/common/validate";
@@ -103,12 +100,9 @@ const exerciseTypeListFilter = computed(() => {
   return exerciseTypeList.value;
 });
 
-function edit() {
-  console.log("edit");
-}
-
 function fabClick() {
   console.log("fab click");
   console.log(searchTerm.value);
 }
+
 </script>
