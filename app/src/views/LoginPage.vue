@@ -7,7 +7,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content fullscreen>
-      <ion-card>
+      <ion-card class="ion-align-items-center">
         <ion-card-header>
           <ion-card-title> Log In </ion-card-title>
         </ion-card-header>
@@ -29,13 +29,13 @@
               >
             </ion-item>
 
-            <ion-label v-if="metaData.message" color="danger">{{
-              metaData.message
+            <ion-label v-if="metaData.errMessage" color="danger">{{
+              metaData.errMessage
             }}</ion-label>
-            <ion-button @click="validateLoginSubmit()" expand="block"
-              >Login</ion-button
-            >
           </form>
+          <ion-button @click="validateLoginSubmit()" expand="block"
+            >Login</ion-button
+          >
         </ion-card-content>
       </ion-card>
 
@@ -62,12 +62,13 @@ import {
   IonToolbar,
   IonTitle,
   IonButton,
-  IonLoading
+  IonLoading,
 } from "@ionic/vue";
 import { UserLoginDTO } from "@/types/user";
 import store from "@/store";
-import { computed, Ref, ref } from "vue";
+import { Ref, ref } from "vue";
 import router from "@/router";
+import Validate from "@/common/validate";
 
 const user: Ref<UserLoginDTO> = ref<UserLoginDTO>({
   email: "",
@@ -80,108 +81,38 @@ const isValid = ref({
 });
 
 const metaData = ref({
-  message: "",
+  errMessage: "",
   successful: false,
   loading: false,
 });
 
-console.log(store.state.auth)
+console.log(store.state.auth);
 
-if (store.state.auth.status.loggedIn){
-  router.push('/tabs')
+if (store.state.auth.status.loggedIn) {
+  router.push("/tabs");
 }
 
 function validateLoginSubmit() {
-  
-  // TODO: Need to validate fields first
+  isValid.value.email = Validate.email(user.value.email);
+  isValid.value.password = !Validate.isEmpty(user.value.password);
+  if (!isValid.value.email || !isValid.value.password) return;
 
   metaData.value.loading = true;
   store.dispatch("auth/login", user.value).then(
     () => {
       metaData.value.loading = false;
       metaData.value.successful = true;
-      metaData.value.message = "Successful";
       router.push("/tabs");
     },
     (err: any) => {
       metaData.value.loading = false;
       metaData.value.successful = false;
-      metaData.value.message = err.request.responseText || err.data;
+      metaData.value.errMessage = err.request.responseText || err.data;
       if (err.request.status === 401)
-        metaData.value.message = "Wrong password or email";
+        metaData.value.errMessage = "Wrong password or email";
     }
   );
 }
-
-// export default {
-//   components: {
-//     IonCard,
-//     IonCardContent,
-//     IonCardHeader,
-//     IonCardTitle,
-//     IonItem,
-//     IonLabel,
-//     IonInput,
-//     IonHeader,
-//     IonPage,
-//     IonContent,
-//     IonToolbar,
-//     IonTitle,
-//     IonButton,
-//   },
-//   data() {
-//     const user: UserLoginDTO = {} as UserLoginDTO;
-//     const isValid = {
-//       email: true,
-//       password: true,
-//     };
-
-//     return {
-//       message: "",
-//       successful: false,
-//       loading: false,
-//       user,
-//       isValid,
-//     };
-//   },
-//   mounted() {
-//     console.log("mounted");
-//   },
-//   computed: {
-//     loggedIn(): boolean {
-//       // return store.state.auth.status.loggedIn;
-//       return true
-//     },
-//   },
-//   created() {
-//     console.log(store);
-
-//     if (this.loggedIn) {
-//       // this.$router.push("/profile");
-//       // Router push to a logged in page
-//       console.log("router push");
-//     }
-//   },
-//   methods: {
-//     handleLogin(user: UserLoginDTO) {
-//       this.loading = true;
-//       this.$store.dispatch("auth/login", user).then(
-//         () => {
-//           this.successful = true;
-//           this.message = "Successful";
-//           // this.$router.push("/workouts");
-//         },
-//         (err: any) => {
-//           this.loading = false;
-//           this.successful = false;
-//           this.message = err.request.responseText || err.data;
-//           if (err.request.status === 401)
-//             this.message = "Wrong password or email";
-//         }
-//       );
-//     },
-//   },
-// };
 </script>
 
 <style scoped>
