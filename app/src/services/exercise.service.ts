@@ -1,8 +1,9 @@
 import { Exercise } from "@/types/exercise";
 import axios, { AxiosResponse } from "axios";
 import authHeader from "./auth-header";
+import API_BASE_URL from "./config.service";
 
-const API_URL = "/api/exercises";
+const API_URL = API_BASE_URL+"/exercises";
 
 class ExerciseService {
   getAll(): Promise<AxiosResponse<Exercise[], any>> {

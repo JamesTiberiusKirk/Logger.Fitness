@@ -1,8 +1,9 @@
 import { Workout } from "@/types/workout";
 import axios, { AxiosResponse } from "axios";
 import authHeader from "./auth-header";
+import API_BASE_URL from "./config.service";
 
-const API_URL = "/api/workouts";
+const API_URL = API_BASE_URL+"/workouts";
 
 class WorkoutsService {
   start(workout: Workout): Promise<AxiosResponse<Workout, any>> {

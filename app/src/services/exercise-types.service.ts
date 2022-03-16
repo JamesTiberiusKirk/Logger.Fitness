@@ -1,8 +1,9 @@
 import { ExerciseType } from "@/types/exercise-type";
 import axios, { AxiosResponse } from "axios";
 import authHeader from "./auth-header";
+import API_BASE_URL from "./config.service";
 
-const API_URL = "/api/v2/exercise_types";
+const API_URL = API_BASE_URL+"/exercise_types";
 
 class ExerciseTypeService {
   getExerciseTypes(): Promise<AxiosResponse<ExerciseType[], Error>> {
