@@ -1,7 +1,7 @@
 import { Exercise } from "@/types/exercise";
 import ExerciseService from "../services/exercise.service";
 
-// const EXERCISE_STORE = "exercises";
+const EXERCISE_STORE = "exercises";
 
 export type ExerciseState = {
   data: Exercise[],
@@ -9,8 +9,8 @@ export type ExerciseState = {
 }
 
 function getDefaultState() {
-  // let data = JSON.parse(localStorage.getItem(EXERCISE_STORE)) || [];
-  const data: Exercise[] = [];
+  const data = JSON.parse(localStorage.getItem(EXERCISE_STORE) || "[]");
+  // const data: Exercise[] = [];
   return {
     data,
     empty: data.length == 0 ? false : true
@@ -77,19 +77,19 @@ export const exercises = {
     storeAll(state: ExerciseState, exercises: Exercise[]) {
       state.data = exercises;
       state.empty = false;
-      // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
     // EMMM idk whats happening here, looks the same as storeAlll
     // TODO: find where it is used and figure out what its meant todo
     storeByWorkout(state: ExerciseState, exercises: Exercise[]) {
       state.data = exercises;
       state.empty = false;
-      // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
     storeOne(state: ExerciseState, exercise: Exercise) {
       state.data.push(exercise);
       state.empty = false;
-      // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
     updateOne(state: ExerciseState, exercise: Exercise) {
       state.data.forEach((element, index) => {
@@ -97,7 +97,7 @@ export const exercises = {
           state.data[index] = exercise;
         }
       });
-      // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     },
     deleteOne(state: ExerciseState, id: string) {
       state.data.forEach((element, index) => {
@@ -105,7 +105,7 @@ export const exercises = {
           state.data.splice(index, 1);
         }
       });
-      // localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
+      localStorage.setItem(EXERCISE_STORE, JSON.stringify(state.data));
     }
   },
   getters: {

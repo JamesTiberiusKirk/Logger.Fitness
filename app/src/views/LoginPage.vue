@@ -112,6 +112,7 @@ function validateLoginSubmit() {
         metaData.value.errMessage = "Wrong password or email";
     }
   );
+  router.back();
 }
 </script>
 
