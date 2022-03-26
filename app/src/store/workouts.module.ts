@@ -1,16 +1,16 @@
-import { Workout } from "@/types/workout";
+import { Workout, WorkoutGroup } from "@/types/workout";
 import WorkoutsService from "../services/workouts.service";
 
-// const WORKOUTS_STORE = "workouts";
+const WORKOUTS_STORE = "workouts";
 
 export type WorkoutsState = {
-  data: Workout[],
+  data: WorkoutGroup[],
   empty: boolean,
 }
 
 function getDefaultState(): WorkoutsState {
-  // let data = JSON.parse(localStorage.getItem(WORKOUTS_STORE))||[];
-  const data: Workout[] = [];
+  const data = JSON.parse(localStorage.getItem(WORKOUTS_STORE) || "[]");
+  // const data: WorkoutGroup[] = [];
   return {
     data,
     empty: data.length == 0 ? false : true
@@ -73,31 +73,31 @@ export const workouts = {
     }
   },
   mutations: {
-    storeAll(state: WorkoutsState, workouts: Workout[]) {
+    storeAll(state: WorkoutsState, workouts: WorkoutGroup[]) {
       state.data = workouts;
       state.empty = false;
-      // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
+      localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
-    storeOne(state: WorkoutsState, workout: Workout) {
-      state.data.push(workout);
+    storeOne(state: WorkoutsState, workout_group: WorkoutGroup) {
+      state.data.push(workout_group);
       state.empty = false;
-      // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
+      localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
-    updateOne(state: WorkoutsState, workout: Workout) {
+    updateOne(state: WorkoutsState, workout_group: WorkoutGroup) {
       state.data.forEach((element, index) => {
-        if (element.workout_id == workout.workout_id) {
-          state.data[index] = workout;
+        if (element.workout.workout_id == workout_group.workout.workout_id) {
+          state.data[index] = workout_group;
         }
       });
-      // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
+      localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
     deleteOne(state: WorkoutsState, id: string) {
-      state.data.forEach((workout, index) => {
-        if (workout.workout_id == id) {
+      state.data.forEach((workout_group, index) => {
+        if (workout_group.workout.workout_id == id) {
           state.data.splice(index, 1);
         }
       });
-      // localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
+      localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     }
   },
   getters: {
@@ -110,9 +110,9 @@ export const workouts = {
     },
     getOneById: (state: WorkoutsState) => (id: string) => {
       let result;
-      state.data.forEach(workout => {
-        if (workout.workout_id == id) {
-          result = workout;
+      state.data.forEach(workout_group=> {
+        if (workout_group.workout.workout_id == id) {
+          result = workout_group;
         }
       });
       return result;
