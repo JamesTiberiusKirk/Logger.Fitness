@@ -1,25 +1,25 @@
 <template>
   <ion-page>
-    <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
-      <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
-    <ion-searchbar v-model="searchTerm"></ion-searchbar>
-    <ion-segment v-model="filter">
-      <ion-segment-button value="all">
-        <ion-label>All</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="sets">
-        <ion-label>Sets</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="single-value">
-        <ion-label>Single Values</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="custom">
-        <ion-label>Custom</ion-label>
-      </ion-segment-button>
-    </ion-segment>
     <ion-content>
-      <span v-for="(e, i) in exerciseTypeListFilter" :key="i">
+      <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+      <ion-searchbar v-model="searchTerm"></ion-searchbar>
+      <ion-segment v-model="filter">
+        <ion-segment-button value="all">
+          <ion-label>All</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="sets">
+          <ion-label>Sets</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="single-value">
+          <ion-label>Single Values</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="custom">
+          <ion-label>Custom</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <!-- <span v-for="(e, i) in exerciseTypeListFilter" :key="i">
         <ion-card>
           <ion-card-header>
             <ion-card-subtitle>Type: {{ e.data_type }}</ion-card-subtitle>
@@ -43,7 +43,51 @@
             </ion-item>
           </ion-card-content>
         </ion-card>
-      </span>
+      </span> -->
+
+      <ion-list>
+        <span v-for="(e, i) in exerciseTypeListFilter" :key="i">
+          <ion-item-sliding>
+            <!-- <ion-item-options side="start">
+              <ion-item-option @click="favorite(item)"
+                >Favorite</ion-item-option
+              >
+              <ion-item-option color="danger" @click="share(item)"
+                >Share</ion-item-option
+              >
+            </ion-item-options> -->
+            <ion-item>
+              <ion-label>
+                <h3>Type: {{ e.data_type }}</h3>
+                <h1>{{ e.name }}</h1>
+                <p>{{ e.description }}</p>
+              </ion-label>
+
+              <!-- <ion-icon
+                :icon="create"
+                slot="end"
+                @click="edit(e.exercise_type_id)"
+              ></ion-icon>
+
+              <ion-icon
+                :icon="trash"
+                slot="end"
+                @click="openDeleteModal(e.exercise_type_id)"
+              ></ion-icon> -->
+            </ion-item>
+
+            <ion-item-options side="end">
+              <ion-item-option @click="edit(e.exercise_type_id)"
+                >Edit</ion-item-option
+              >
+              <ion-item-option color="danger" @click="openDeleteModal(e.exercise_type_id)"
+                >Delete</ion-item-option
+              >
+            </ion-item-options>
+          </ion-item-sliding>
+        </span>
+      </ion-list>
+
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button @click="fabClick()">
           <ion-icon :icon="add"></ion-icon>
@@ -101,6 +145,10 @@ import {
   IonButton,
   IonLoading,
   IonRefresher,
+  IonList,
+  IonItemSliding,
+  IonItemOptions,
+  IonItemOption,
 } from "@ionic/vue";
 import { add, create, trash } from "ionicons/icons";
 import { computed, ref } from "vue";
