@@ -9,11 +9,14 @@
       <ion-list>
         <span v-for="(w, i) in workoutsListFilter" :key="i">
           <ion-item-sliding>
-            <ion-item button @click="workoutClick(w)">
+            <ion-item button @click="workoutClick(w.workout.workout_id)">
               <ion-label>
+                <h3 v-if="hasEnded(w.workout)" class="active-workout">Active</h3>
                 <h3>
                   {{
-                    moment(w.workout.start_time).format("MMMM Do YYYY, h:mm a")
+                    moment(w.workout.start_time).format(
+                      "dddd, MMMM Do YYYY, h:mm a"
+                    )
                   }}
                 </h3>
                 <h1>{{ w.workout.title }}</h1>
@@ -22,18 +25,24 @@
             </ion-item>
 
             <ion-item-options side="end">
-              <ion-item-option @click="edit(w.workout.workout_id)"
+              <ion-item-option @click="workoutEditClick(w.workout.workout_id)"
                 >View</ion-item-option
               >
               <ion-item-option
                 color="danger"
-                @click="openDeleteModal(w.workout.workout_id)"
+                @click="workoutDeleteClick(w.workout.workout_id)"
                 >Delete</ion-item-option
               >
             </ion-item-options>
           </ion-item-sliding>
         </span>
       </ion-list>
+
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button @click="fabClick()">
+          <ion-icon :icon="add"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
     </ion-content>
 
     <ion-loading :is-open="metaData.loading" message="Loading please wait..." />
@@ -53,10 +62,15 @@ import {
   IonItemOptions,
   IonItem,
   IonLabel,
+  IonIcon,
+  IonFab,
+  IonFabButton,
   IonSearchbar,
+  
 } from "@ionic/vue";
+import { add } from "ionicons/icons";
 import { ref, computed } from "vue";
-import { Workouts } from "@/types/workout";
+import { WorkoutGroup, Workouts } from "@/types/workout";
 import store from "@/store/index";
 import moment from "moment";
 import notYetImplementedToast from "@/common/notYetImplementedToast";
@@ -90,16 +104,20 @@ getData();
 const workoutsListFilter = computed(() => {
   if (Validate.isEmpty(searchTerm.value)) return workoutsList.value;
   const st = searchTerm.value.toLowerCase();
-  return workoutsList.value.filter((workout:any)=>{
+  return workoutsList.value.filter((workout_group: WorkoutGroup) => {
     return (
-      workout.workout.title.toLowerCase().includes(st) ||
-      workout.workout.notes.toLowerCase().includes(st)
-    )
+      workout_group.workout.title.toLowerCase().includes(st) ||
+      workout_group.workout.notes.toLowerCase().includes(st)
+    );
   });
 });
 
-function workoutClick(w: any) {
-  console.log(w);
+const hasEnded = computed((workout: Worker) => {
+  return (!workout.end_time)
+  });
+
+function workoutClick(id: string) {
+  console.log(id);
   notYetImplementedToast();
 }
 
@@ -108,4 +126,25 @@ function doRefresh(event: CustomEvent) {
     event.target.complete();
   });
 }
+
+function workoutEditClick(id: string) {
+  console.log(id);
+  notYetImplementedToast();
+}
+
+function workoutDeleteClick(id: string) {
+  console.log(id);
+  notYetImplementedToast();
+}
+
+function fabClick() {
+  notYetImplementedToast();
+}
 </script>
+
+<style scoped>
+.active-workout{
+  text-decoration-color: red;
+
+}
+</style>
