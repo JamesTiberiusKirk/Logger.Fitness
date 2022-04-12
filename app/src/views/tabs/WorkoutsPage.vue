@@ -85,12 +85,10 @@ const metaData = ref({
 });
 
 function getData() {
-  console.log("workouts");
   return new Promise((resolve, reject) => {
     store
       .dispatch("workouts/fetchAll")
       .then((data: Workout[]) => {
-        console.log("data: ", data);
         workoutsList.value = data.reverse();
         resolve(data);
       })
