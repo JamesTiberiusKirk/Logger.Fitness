@@ -11,7 +11,9 @@
           <ion-item-sliding>
             <ion-item button @click="workoutClick(w.workout.workout_id)">
               <ion-label>
-                <h3 v-if="hasEnded(w.workout)" class="active-workout">Active</h3>
+                <h3 v-if="hasEnded(w.workout)" class="active-workout">
+                  Active
+                </h3>
                 <h3>
                   {{
                     moment(w.workout.start_time).format(
@@ -66,17 +68,16 @@ import {
   IonFab,
   IonFabButton,
   IonSearchbar,
-  
 } from "@ionic/vue";
 import { add } from "ionicons/icons";
 import { ref, computed } from "vue";
-import { WorkoutGroup, Workouts } from "@/types/workout";
+import { WorkoutGroup, Workout } from "@/types/workout";
 import store from "@/store/index";
 import moment from "moment";
 import notYetImplementedToast from "@/common/notYetImplementedToast";
 import Validate from "@/common/validate";
 
-const workoutsList = ref({} as Workouts[]);
+const workoutsList = ref({} as Workout[]);
 const searchTerm = ref("");
 const metaData = ref({
   loading: false,
@@ -88,7 +89,7 @@ function getData() {
   return new Promise((resolve, reject) => {
     store
       .dispatch("workouts/fetchAll")
-      .then((data: Workouts[]) => {
+      .then((data: Workout[]) => {
         console.log("data: ", data);
         workoutsList.value = data.reverse();
         resolve(data);
@@ -112,9 +113,9 @@ const workoutsListFilter = computed(() => {
   });
 });
 
-const hasEnded = computed((workout: Worker) => {
-  return (!workout.end_time)
-  });
+function hasEnded(workout: Workout) {
+  return !workout.end_time;
+}
 
 function workoutClick(id: string) {
   console.log(id);
@@ -143,8 +144,7 @@ function fabClick() {
 </script>
 
 <style scoped>
-.active-workout{
+.active-workout {
   text-decoration-color: red;
-
 }
 </style>
