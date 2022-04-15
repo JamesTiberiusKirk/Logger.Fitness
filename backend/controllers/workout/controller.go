@@ -42,6 +42,7 @@ func NewController(database DatabaseInterface, authMiddleware echo.MiddlewareFun
 func (ctrl *Controller) Init(g *echo.Group) {
 	group := g.Group(path)
 
+	group.PUT("", ctrl.EditWorkout, ctrl.authMiddleware)
 	group.GET("", ctrl.GetWorkouts, ctrl.authMiddleware)
 	group.DELETE("", ctrl.DeleteWorkout, ctrl.authMiddleware)
 }

@@ -15,7 +15,10 @@
 
             <ion-item>
               <ion-label position="floating">Description:</ion-label>
-              <ion-textarea v-model="exerciseType.description"></ion-textarea>
+              <ion-textarea
+                auto-grow="true"
+                v-model="exerciseType.description"
+              ></ion-textarea>
               <!-- <ion-label color="warning">Input is not valid</ion-label> -->
             </ion-item>
 
@@ -83,7 +86,7 @@ import { ref } from "vue";
 import { ExerciseType } from "@/types/exercise-type";
 import { useRoute } from "vue-router";
 import store from "@/store";
-import router from '@/router'
+import router from "@/router";
 
 const metaData = ref({
   loading: false,
@@ -111,7 +114,7 @@ function submit() {
       .dispatch("exerciseTypes/updateOne", exerciseType.value)
       .then(() => {
         metaData.value.loading = false;
-        router.back()
+        router.back();
       })
       .catch((err) => {
         metaData.value.errMessage = err.message;
@@ -121,7 +124,7 @@ function submit() {
       .dispatch("exerciseTypes/sendOne", exerciseType.value)
       .then(() => {
         metaData.value.loading = false;
-        router.back()
+        router.back();
       })
       .catch((err) => {
         metaData.value.errMessage = err.message;

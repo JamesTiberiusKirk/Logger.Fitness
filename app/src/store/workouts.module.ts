@@ -51,10 +51,10 @@ export const workouts = {
           return Promise.reject(err);
         });
     },
-    async updateOne({ commit }: any, workout: any) {
+    async updateOneWorkout({ commit }: any, workout: Workout) {
       return WorkoutsService.edit(workout)
         .then(res => {
-          commit("updateOne", workout);
+          commit("updateOneWorkout", workout);
           return Promise.resolve(res.data);
         })
         .catch(err => {
@@ -83,10 +83,18 @@ export const workouts = {
       state.empty = false;
       localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
     },
-    updateOne(state: WorkoutsState, workout_group: WorkoutGroup) {
+    updateOneGroup(state: WorkoutsState, workout_group: WorkoutGroup) {
       state.data.forEach((element, index) => {
         if (element.workout.workout_id == workout_group.workout.workout_id) {
           state.data[index] = workout_group;
+        }
+      });
+      localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
+    },
+    updateOneWorkout(state: WorkoutsState, workout: Workout) {
+      state.data.forEach((element, index) => {
+        if (element.workout.workout_id == workout.workout_id) {
+          state.data[index].workout = workout;
         }
       });
       localStorage.setItem(WORKOUTS_STORE, JSON.stringify(state.data));
@@ -108,11 +116,20 @@ export const workouts = {
       if (!state.data) return [];
       return state.data.slice().reverse();
     },
-    getOneById: (state: WorkoutsState) => (id: string) => {
-      let result;
-      state.data.forEach(workout_group=> {
+    getOneWorkoutGroupById: (state: WorkoutsState) => (id: string): WorkoutGroup => {
+      let result: WorkoutGroup = {} as WorkoutGroup;
+      state.data.forEach((workout_group: WorkoutGroup) => {
         if (workout_group.workout.workout_id == id) {
           result = workout_group;
+        }
+      });
+      return result;
+    },
+    getOneWorkoutById: (state: WorkoutsState) => (id: string): Workout => {
+      let result: Workout = {} as Workout;
+      state.data.forEach((workout_group: WorkoutGroup) => {
+        if (workout_group.workout.workout_id == id) {
+          result = workout_group.workout;
         }
       });
       return result;

@@ -42,12 +42,12 @@
         </ion-header>
         <ion-router-outlet id="main"></ion-router-outlet>
         <ion-tab-bar>
-          <ion-tab-button tab="exercise_list" href="/tabs/exercise_list">
+          <ion-tab-button tab="exercise_list" href="/tabs/exercise/list">
             <ion-icon :icon="create" />
             <ion-label>Exercise List</ion-label>
           </ion-tab-button>
 
-          <ion-tab-button tab="workouts" href="/tabs/workouts">
+          <ion-tab-button tab="workouts" href="/tabs/workouts/list">
             <ion-icon :icon="fileTrayFull" />
             <ion-label>Workouts</ion-label>
           </ion-tab-button>

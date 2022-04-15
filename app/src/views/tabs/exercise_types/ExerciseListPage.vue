@@ -149,9 +149,7 @@ function getData() {
   });
 }
 
-onMounted(async () => {
-  await getData();
-});
+onMounted(async () => await getData());
 
 const exerciseTypeListFilter = computed(() => {
   if (!Validate.isEmpty(searchTerm.value)) {
@@ -184,7 +182,7 @@ function doRefresh(event: CustomEvent) {
 }
 
 function edit(id: string) {
-  router.push(`/tabs/exercise?id=${id}`);
+  router.push(`/tabs/exercise/add?id=${id}`);
 }
 
 function deleteExercise() {

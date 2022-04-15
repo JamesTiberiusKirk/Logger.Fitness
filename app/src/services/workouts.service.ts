@@ -31,8 +31,6 @@ class WorkoutsService {
     return axios.delete(`${API_URL}?workout_id=${id}`, options);
   }
 
-  // If I set the param type as Exercise it might sent the rest of the fields as empty which would wipe them on the server side.
-  // TODO: need to experiment with the above
   edit(update: object): Promise<AxiosResponse<Workout, Error>> {
     const options = { headers: authHeader() };
     return axios.put(API_URL, update, options);

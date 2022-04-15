@@ -28,7 +28,7 @@
 
             <ion-item-options side="end">
               <ion-item-option @click="workoutEditClick(w.workout.workout_id)"
-                >View</ion-item-option
+                >Edit</ion-item-option
               >
               <ion-item-option
                 color="danger"
@@ -76,6 +76,7 @@ import store from "@/store/index";
 import moment from "moment";
 import notYetImplementedToast from "@/common/notYetImplementedToast";
 import Validate from "@/common/validate";
+import router from "@/router";
 
 const workoutsList = ref({} as Workout[]);
 const searchTerm = ref("");
@@ -127,8 +128,9 @@ function doRefresh(event: CustomEvent) {
 }
 
 function workoutEditClick(id: string) {
-  console.log(id);
-  notYetImplementedToast();
+  // console.log(id);
+  // notYetImplementedToast();
+  router.push(`/tabs/workouts/add?id=${id}`);
 }
 
 function workoutDeleteClick(id: string) {

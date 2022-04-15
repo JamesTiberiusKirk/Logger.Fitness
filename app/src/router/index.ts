@@ -20,20 +20,24 @@ const routes: Array<RouteRecordRaw> = [
         redirect: '/tabs/workouts'
       },
       {
-        path: 'exercise_list',
-        component: () => import('@/views/tabs/ExerciseListPage.vue')
+        path: 'exercise/list',
+        component: () => import('@/views/tabs/exercise_types/ExerciseListPage.vue')
       },
       {
-        path: 'exercise',
-        component: () => import('@/views/tabs/ExercisePage.vue')
+        path: 'exercise/add',
+        component: () => import('@/views/tabs/exercise_types/ExercisePage.vue')
       },
       {
-        path: 'workouts',
-        component: () => import('@/views/tabs/WorkoutsPage.vue')
+        path: 'workouts/list',
+        component: () => import('@/views/tabs/workouts/WorkoutListPage.vue')
+      },
+      {
+        path: 'workouts/add',
+        component: () => import('@/views/tabs/workouts/WorkoutEditPage.vue')
       },
       {
         path: 'analytics',
-        component: () => import('@/views/tabs/AnalyticsPage.vue')
+        component: () => import('@/views/tabs/analytics/AnalyticsPage.vue')
       }
     ]
   }
