@@ -102,7 +102,7 @@ function validateLoginSubmit() {
     () => {
       metaData.value.loading = false;
       metaData.value.successful = true;
-      router.push("/tabs");
+      router.push("/tabs/workouts/list");
     },
     (err: any) => {
       metaData.value.loading = false;
