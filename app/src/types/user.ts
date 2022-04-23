@@ -3,7 +3,9 @@ export type UserStore = {
     jwt: string,
     username: string,
     email: string,
-    avatar: string,
+    profile_picture: string,
+    provider: string,
+    provider_id: string,
 }
 
 export type UserLoginDTO = {

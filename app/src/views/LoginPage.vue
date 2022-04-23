@@ -36,6 +36,10 @@
           <ion-button @click="validateLoginSubmit()" expand="block"
             >Login</ion-button
           >
+
+          <ion-button href="/api/v2/auth/google/login" expand="block"
+            >Login with Google</ion-button
+          >
         </ion-card-content>
       </ion-card>
 

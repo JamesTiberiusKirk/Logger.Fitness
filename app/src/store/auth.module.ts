@@ -59,9 +59,25 @@ export const auth = {
           return Promise.reject(error);
         }
       );
+    },
+    async oauthCallback({ commit }: any, state: string) {
+      return AuthService.oauthCallback(state).then(
+        response => {
+          commit("setUser", response.data)
+          return Promise.resolve(response.data)
+        },
+        error => {
+          commit("registerFailure");
+          return Promise.reject(error);
+        }
+      );
     }
   },
   mutations: {
+    setUser(state: AuthState, user: UserStore) {
+      state.user = user
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
     storeJwt(state: AuthState, jwt: string) {
       if (state.user) state.user.jwt = jwt;
       localStorage.setItem("user", JSON.stringify(state.user));
@@ -89,5 +105,6 @@ export const auth = {
   },
   getters: {
     statusLoggedIn(state: AuthState) { return state.status.loggedIn },
+    getUser(state: AuthState) { return state.user },
   }
 };

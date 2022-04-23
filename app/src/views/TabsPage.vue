@@ -27,6 +27,9 @@
         <ion-button class="logout-btn" expand="block" @click="logout()">
           Logout
         </ion-button>
+        <ion-avatar v-if="user">
+          <img :src="user.claim.profile_picture" />
+        </ion-avatar>
       </ion-content>
     </ion-menu>
 
@@ -62,7 +65,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {
   IonTabBar,
   IonTabButton,
@@ -82,46 +85,20 @@ import {
   IonButton,
   IonMenuButton,
   menuController,
+  IonAvatar,
 } from "@ionic/vue";
 import { create, fileTrayFull, analyticsOutline } from "ionicons/icons";
 import store from "@/store";
+import { ref, onMounted } from "@vue/runtime-core";
 
-export default {
-  components: {
-    IonTabBar,
-    IonTabButton,
-    IonTabs,
-    IonPage,
-    IonRouterOutlet,
+function logout() {
+  // TODO: need to close menu pane on click
+  store.dispatch("auth/logout");
+  menuController.close();
+}
 
-    IonContent,
-    IonMenu,
-    IonTitle,
-    IonToolbar,
-    IonHeader,
-    IonItem,
-    IonList,
-
-    IonButtons,
-    IonButton,
-    IonMenuButton,
-    IonIcon,
-    IonLabel,
-  },
-  setup() {
-    function logout() {
-      // TODO: need to close menu pane on click
-      store.dispatch("auth/logout");
-      menuController.close();
-    }
-    return {
-      logout,
-      create,
-      fileTrayFull,
-      analyticsOutline,
-    };
-  },
-};
+const user = ref(JSON.parse(localStorage.getItem("user") as string));
+console.log(user.value);
 </script>
 
 <style scoped>

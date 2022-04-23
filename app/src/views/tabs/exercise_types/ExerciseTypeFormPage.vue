@@ -117,6 +117,7 @@ function submit() {
         router.back();
       })
       .catch((err) => {
+        metaData.value.loading = false;
         metaData.value.errMessage = err.message;
       });
   } else {
@@ -127,6 +128,7 @@ function submit() {
         router.back();
       })
       .catch((err) => {
+        metaData.value.loading = false;
         metaData.value.errMessage = err.message;
       });
   }

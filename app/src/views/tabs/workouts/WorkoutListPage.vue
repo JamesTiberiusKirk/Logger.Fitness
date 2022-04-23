@@ -128,9 +128,7 @@ function doRefresh(event: CustomEvent) {
 }
 
 function workoutEditClick(id: string) {
-  // console.log(id);
-  // notYetImplementedToast();
-  router.push(`/tabs/workouts/add?id=${id}`);
+  router.push(`/tabs/workouts/form?id=${id}`);
 }
 
 function workoutDeleteClick(id: string) {
@@ -139,7 +137,7 @@ function workoutDeleteClick(id: string) {
 }
 
 function fabClick() {
-  notYetImplementedToast();
+  router.push(`/tabs/workouts/form`);
 }
 </script>
 

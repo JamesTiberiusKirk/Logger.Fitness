@@ -15,7 +15,10 @@
 
             <ion-item>
               <ion-label position="floating">Notes:</ion-label>
-              <ion-textarea v-model="workout.notes"></ion-textarea>
+              <ion-textarea
+                auto-grow="true"
+                v-model="workout.notes"
+              ></ion-textarea>
             </ion-item>
 
             <ion-label color="danger">{{ metaData.errMessage }}</ion-label>
@@ -23,25 +26,51 @@
 
           <span v-if="isEdit">
             <ion-item>
-              <ion-label position="floating">Start time:</ion-label>
-              <ion-button id="open-modal">Open Datetime Modal</ion-button>
-              <ion-modal trigger="open-modal">
-                <ion-content>
-                  <ion-datetime></ion-datetime>
-                </ion-content>
-              </ion-modal>
-            </ion-item>
-
-            <!-- Datetime in popover with input -->
-            <ion-item>
-              <ion-input :value="date" />
-              <ion-button fill="clear" id="open-date-input-2">
-                <ion-icon icon="calendar" />
+              <ion-label
+                >Start: {{ parseUnixDateTime(workout.start_time) }}</ion-label
+              >
+              <ion-button
+                class="input-btn"
+                fill="clear"
+                slot="end"
+                id="open-start-date-input"
+              >
+                Select
               </ion-button>
-              <ion-popover trigger="open-date-input-2" :show-backdrop="false">
+
+              <ion-popover
+                trigger="open-start-date-input"
+                alignment="end"
+                :dismiss-on-select="false"
+              >
                 <ion-datetime
-                  presentation="date"
-                  @ionChange="(ev: DatetimeCustomEvent) => date = formatDate(ev.detail.value)"
+                  presentation="date-time"
+                  @ionChange="(ev: DatetimeCustomEvent) => saveDateTimeCustomEvent(ev, 'start')"
+                />
+              </ion-popover>
+            </ion-item>
+            <ion-item>
+              <ion-label
+                >End:
+                {{ parseUnixDateTime(workout.end_time * 1000) }}</ion-label
+              >
+              <ion-button
+                class="input-btn"
+                fill="clear"
+                slot="end"
+                id="open-end-date-input"
+              >
+                Select
+              </ion-button>
+
+              <ion-popover
+                trigger="open-end-date-input"
+                alignment="end"
+                :dismiss-on-select="false"
+              >
+                <ion-datetime
+                  presentation="date-time"
+                  @ionChange="(ev: DatetimeCustomEvent) => saveDateTimeCustomEvent(ev, 'end')"
                 />
               </ion-popover>
             </ion-item>
@@ -77,17 +106,18 @@ import {
   IonItem,
   IonButton,
   IonDatetime,
-  IonModal,
   IonPopover,
-  IonIcon,
+  DatetimeCustomEvent,
 } from "@ionic/vue";
-import { calendar } from "ionicons/icons";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import store from "@/store";
 import router from "@/router";
 import { Workout } from "@/types/workout";
-import { format, parseISO } from "date-fns";
+import {
+  parseHumanReadableDateTimeToUnixEpoch,
+  parseUnixDateTime,
+} from "@/common/date";
 
 const metaData = ref({
   loading: false,
@@ -95,10 +125,8 @@ const metaData = ref({
 });
 
 const workout = ref({} as Workout);
-const date = ref("");
 
 const route = useRoute();
-
 const isEdit = computed(() => route.query["id"]);
 
 if (isEdit.value) {
@@ -107,8 +135,16 @@ if (isEdit.value) {
   );
 }
 
-function formatDate (value: string) {
-  return format(parseISO(value), "MMM dd yyyy");
+function saveDateTimeCustomEvent(date: DatetimeCustomEvent, type: string) {
+  if (type === "start")
+    workout.value.start_time = parseHumanReadableDateTimeToUnixEpoch(
+      date.detail.value
+    );
+
+  if (type === "end")
+    workout.value.end_time = parseHumanReadableDateTimeToUnixEpoch(
+      date.detail.value
+    );
 }
 
 function submit() {

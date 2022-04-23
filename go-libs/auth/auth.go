@@ -31,10 +31,7 @@ func getJwtSecretFromEnv() string {
 // GenerateJWTFromDbUser function wrapper around GenerateJWTFromClaim.
 func GenerateJWTFromDbUser(user types.User) (string, error) {
 	claims := &types.JwtClaim{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Roles:    user.Roles,
+		User: user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(JWTExpirationHours)).Unix(),
 			Issuer:    Issuer,
@@ -47,7 +44,11 @@ func GenerateJWTFromDbUser(user types.User) (string, error) {
 
 // GenerateJWTFromClaim function to generate JWT token from a previous claim.
 func GenerateJWTFromClaim(claims types.JwtClaim) (string, error) {
-	claims.StandardClaims.ExpiresAt = time.Now().Local().Add(time.Hour * time.Duration(JWTExpirationHours)).Unix()
+	claims.StandardClaims.ExpiresAt = time.
+		Now().
+		Local().
+		Add(time.Hour * time.Duration(JWTExpirationHours)).
+		Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 

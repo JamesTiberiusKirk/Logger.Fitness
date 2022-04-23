@@ -164,6 +164,11 @@ func (ctrl *Controller) GetWorkouts(c echo.Context) error {
 		results = append(results, item)
 	}
 
+	// FIX, if 0 items, returns null
+	if len(workouts) == 0 {
+		return c.JSON(http.StatusOK, []DTO{})
+	}
+
 	return c.JSON(http.StatusOK, results)
 }
 

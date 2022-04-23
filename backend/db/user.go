@@ -36,11 +36,6 @@ func (db *DbClient) AddUser(user models.User) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
-	// Input validation
-	if inputErr := user.IsValid(); inputErr != nil {
-		return inputErr
-	}
-
 	// Manually generating an _id
 	user.ID = primitive.NewObjectID()
 
@@ -81,6 +76,23 @@ func (db *DbClient) GetUserByEmail(lookupEmail string) (models.User, error) {
 	// Query db for user
 	var u models.User
 	filter := bson.M{"email": lookupEmail}
+	findErr := collection.FindOne(context.TODO(), filter).Decode(&u)
+
+	if findErr != nil {
+		return u, findErr
+	}
+
+	return u, nil
+}
+
+// GetUserByID function to get a document by the email.
+func (db *DbClient) GetUserByID(id primitive.ObjectID) (models.User, error) {
+	dbc := db.Conn
+	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
+
+	// Query db for user
+	var u models.User
+	filter := bson.M{"_id": id}
 	findErr := collection.FindOne(context.TODO(), filter).Decode(&u)
 
 	if findErr != nil {

@@ -1,4 +1,3 @@
-//go:generate mockgen -package auth -destination controller_mock.go -source lambda.go
 package auth
 
 import (
@@ -6,44 +5,51 @@ import (
 
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/oauth2"
 
 	"Logger.Fitness/go-libs/auth"
+	"Logger.Fitness/go-libs/auth/providers"
 	res "Logger.Fitness/go-libs/responses"
 	"Logger.Fitness/go-libs/types"
-	models "Logger.Fitness/go-libs/types"
 )
 
 const path = "/auth"
 
 // DatabaseInterface database dependency interface
 type DatabaseInterface interface {
-	AddUser(user models.User) error
+	AddUser(user types.User) error
 	CheckUserBasedOnEmail(lookupEmail string) (bool, error)
-	GetUserByEmail(lookupEmail string) (models.User, error)
+	GetUserByEmail(lookupEmail string) (types.User, error)
+	GetUserByID(id primitive.ObjectID) (types.User, error)
 }
 
 // AuthController struct for auth controller
 type AuthController struct {
-	database DatabaseInterface
+	database          DatabaseInterface
+	googleOauthConfig *oauth2.Config
 }
 
 // NewAuthController created new auth controller
-func NewAuthController(database DatabaseInterface) AuthController {
+func NewAuthController(database DatabaseInterface, googleOauthConfig *oauth2.Config) AuthController {
 	return AuthController{
-		database: database,
+		database:          database,
+		googleOauthConfig: googleOauthConfig,
 	}
 }
 
 // Init the route
 func (ctrl AuthController) Init(g *echo.Group) {
 	group := g.Group(path)
+	group.GET("/google/login", ctrl.googleLogin)
+	group.GET("/google/callback", ctrl.googleCallback)
 	group.POST("/register", ctrl.register)
 	group.POST("/login", ctrl.login)
 	group.POST("/verify_me", ctrl.verifyMe)
 }
 
-// Register controller to user registration.
+// register controller to user registration.
 func (ctrl *AuthController) register(c echo.Context) error {
 	db := ctrl.database
 
@@ -82,6 +88,11 @@ func (ctrl *AuthController) register(c echo.Context) error {
 	}
 	newUser.Password = hashedPass
 
+	// Input validation
+	if inputErr := newUser.IsValid(); inputErr != nil {
+		return inputErr
+	}
+
 	// Database insertion
 	if dbErr := db.AddUser(newUser); dbErr != nil {
 		log.Warn(dbErr)
@@ -91,7 +102,7 @@ func (ctrl *AuthController) register(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// Login controller to log in the user and return JWT token.
+// login controller to log in the user and return JWT token.
 func (ctrl *AuthController) login(c echo.Context) error {
 	db := ctrl.database
 
@@ -145,7 +156,7 @@ func (ctrl *AuthController) login(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
-// VerifyMe controller to verify the jwt tokens.
+// verifyMe controller to verify the jwt tokens.
 func (ctrl *AuthController) verifyMe(c echo.Context) error {
 	var userJwt types.JwtDto
 	if bindErr := c.Bind(&userJwt); bindErr != nil {
@@ -166,4 +177,63 @@ func (ctrl *AuthController) verifyMe(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusOK)
+}
+
+func (ctrl *AuthController) googleLogin(c echo.Context) error {
+	// TODO: look up what state is meant to be and change it
+	// NOTE: this needs to be a random string, it protects against CSRF attacks
+	//	see https://datatracker.ietf.org/doc/html/rfc6749#section-10.12
+	loginURL := ctrl.googleOauthConfig.AuthCodeURL("state")
+	return c.Redirect(http.StatusTemporaryRedirect, loginURL)
+}
+
+func (ctrl *AuthController) googleCallback(c echo.Context) error {
+	db := ctrl.database
+	state := c.FormValue("state")
+	code := c.FormValue("code")
+
+	googleUser, err := providers.GetUserFromGoogle(state, code, ctrl.googleOauthConfig)
+	if err != nil {
+		log.Printf("Error getting user info from provider: %v", err.Error())
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
+	}
+
+	_, err = db.GetUserByID(googleUser.ID)
+	if err != nil && err != mongo.ErrNoDocuments {
+
+		log.Info(err.Error())
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	if err == mongo.ErrNoDocuments {
+		// TODO: need an "add or update" function
+		err = db.AddUser(googleUser)
+		if err != nil {
+
+			log.Info(err.Error())
+			return c.NoContent(http.StatusInternalServerError)
+		}
+	}
+
+	// Generating JWT
+	userJwt, err := auth.GenerateJWTFromDbUser(googleUser)
+	if err != nil {
+
+		log.Info(err.Error())
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	// Get user claim and return it
+	jwtClaim, err := auth.ValidateJWTToken(userJwt)
+	if err != nil {
+		log.Info(err.Error())
+		return c.String(http.StatusInternalServerError, res.JwtError)
+	}
+
+	resp := types.LoginResponseDto{
+		Jwt:   userJwt,
+		Claim: *jwtClaim,
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }

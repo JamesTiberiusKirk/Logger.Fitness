@@ -12,6 +12,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/LoginPage.vue')
   },
   {
+    path: '/oauth/redirect',
+    component: () => import('@/views/OauthRedirect.vue')
+  },
+  {
     path: '/tabs/',
     component: TabsPage,
     children: [
@@ -24,16 +28,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/tabs/exercise_types/ExerciseListPage.vue')
       },
       {
-        path: 'exercise/add',
-        component: () => import('@/views/tabs/exercise_types/ExercisePage.vue')
+        path: 'exercise/form',
+        component: () => import('@/views/tabs/exercise_types/ExerciseTypeFormPage.vue')
       },
       {
         path: 'workouts/list',
         component: () => import('@/views/tabs/workouts/WorkoutListPage.vue')
       },
       {
-        path: 'workouts/add',
-        component: () => import('@/views/tabs/workouts/WorkoutEditPage.vue')
+        path: 'workouts/form',
+        component: () => import('@/views/tabs/workouts/WorkoutFormPage.vue')
       },
       {
         path: 'analytics',
@@ -49,7 +53,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ["/login", "/register", "/"];
+  const publicPages = ["/login", "/register", "/", "/oauth/redirect"];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user");
 
