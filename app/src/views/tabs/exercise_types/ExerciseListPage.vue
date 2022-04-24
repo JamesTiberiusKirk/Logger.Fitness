@@ -100,7 +100,7 @@ const metaData = ref({
 
 const modal = ref({
   isOpen: false,
-  toDelete: -1,
+  toDelete: "-1",
   buttons: [
     {
       text: "Delete",
@@ -121,6 +121,7 @@ const modal = ref({
 
 // BUG: So theres a bug here where the toDelete id does not get set if you're trying to delete the exercise type right after creating it
 // let exerciseTypeID = -1;
+// NOTE: this big might have been smth todo with the fact that toDelete was a number and exercise_type_id looks to be a string?
 function setModalState(state: boolean, exerciseId: ExerciseType) {
   // exerciseTypeID = exerciseId.exercise_type_id;
   modal.value.toDelete = exerciseId.exercise_type_id;
@@ -182,11 +183,11 @@ function doRefresh(event: CustomEvent) {
 }
 
 function edit(id: string) {
-  router.push(`/tabs/exercise/add?id=${id}`);
+  router.push(`/tabs/exercise/form?id=${id}`);
 }
 
 function deleteExercise() {
-  if (modal.value.toDelete === -1 || !modal.value.toDelete)
+  if (modal.value.toDelete === "-1" || !modal.value.toDelete)
     return console.log("nope");
 
   metaData.value.loading = true;
@@ -204,6 +205,6 @@ function deleteExercise() {
 }
 
 function fabClick() {
-  router.push(`/tabs/exercise`);
+  router.push(`/tabs/exercise/form`);
 }
 </script>

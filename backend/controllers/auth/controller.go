@@ -42,11 +42,15 @@ func NewAuthController(database DatabaseInterface, googleOauthConfig *oauth2.Con
 // Init the route
 func (ctrl AuthController) Init(g *echo.Group) {
 	group := g.Group(path)
-	group.GET("/google/login", ctrl.googleLogin)
-	group.GET("/google/callback", ctrl.googleCallback)
 	group.POST("/register", ctrl.register)
 	group.POST("/login", ctrl.login)
 	group.POST("/verify_me", ctrl.verifyMe)
+	ctrl.setupOauthProviders(g)
+}
+
+func (ctrl *AuthController) setupOauthProviders(g *echo.Group) {
+	g.GET("/google/login", ctrl.oauth2Login)
+	g.GET("/google/callback", ctrl.oauth2Callback)
 }
 
 // register controller to user registration.
@@ -179,7 +183,7 @@ func (ctrl *AuthController) verifyMe(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func (ctrl *AuthController) googleLogin(c echo.Context) error {
+func (ctrl *AuthController) oauth2Login(c echo.Context) error {
 	// TODO: look up what state is meant to be and change it
 	// NOTE: this needs to be a random string, it protects against CSRF attacks
 	//	see https://datatracker.ietf.org/doc/html/rfc6749#section-10.12
@@ -187,7 +191,7 @@ func (ctrl *AuthController) googleLogin(c echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, loginURL)
 }
 
-func (ctrl *AuthController) googleCallback(c echo.Context) error {
+func (ctrl *AuthController) oauth2Callback(c echo.Context) error {
 	db := ctrl.database
 	state := c.FormValue("state")
 	code := c.FormValue("code")
