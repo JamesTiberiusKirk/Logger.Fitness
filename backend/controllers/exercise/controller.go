@@ -78,6 +78,10 @@ func (ctrl *ExerciseController) GetExercise(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, res.DatabseError)
 	}
 
+	if len(results) == 0 {
+		return c.JSON(http.StatusOK, []types.Exercise{})
+	}
+
 	return c.JSON(http.StatusOK, results)
 }
 

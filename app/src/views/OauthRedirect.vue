@@ -9,6 +9,7 @@
 import { IonPage } from "@ionic/vue";
 import store from "@/store";
 import { useRoute } from "vue-router";
+import router from "@/router";
 import { onMounted, ref } from "vue";
 
 const metaData = ref({
@@ -18,11 +19,21 @@ const metaData = ref({
 
 onMounted(() => {
   const route = useRoute();
-  store.dispatch("auth/oauthCallback", route.query).then(
+
+  const params = {
+    state: route.query["state"],
+    code: route.query["code"],
+    scope: route.query["scope"],
+    authUser: route.query["authuser"],
+    prompt: route.query["prompt"],
+  }
+
+  store.dispatch("auth/oauthCallback", params).then(
     (data) => {
       console.log(data);
       metaData.value.success = true;
       metaData.value.message = data;
+      router.push("/tabs")
     },
     (error) => {
       console.log(error);

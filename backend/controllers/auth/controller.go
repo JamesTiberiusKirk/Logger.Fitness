@@ -192,6 +192,9 @@ func (ctrl *AuthController) googleCallback(c echo.Context) error {
 	state := c.FormValue("state")
 	code := c.FormValue("code")
 
+	log.Printf("state= %s", state)
+	log.Printf("code= %s", code)
+
 	googleUser, err := providers.GetUserFromGoogle(state, code, ctrl.googleOauthConfig)
 	if err != nil {
 		log.Printf("Error getting user info from provider: %v", err.Error())

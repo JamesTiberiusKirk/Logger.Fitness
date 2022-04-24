@@ -16,30 +16,30 @@
             <ion-item>
               <ion-label>Email:</ion-label>
               <ion-input v-model="user.email"></ion-input>
-              <ion-label v-if="!isValid.email" color="warning"
-                >Input is not valid</ion-label
-              >
+              <ion-label v-if="!isValid.email" color="warning">
+                Input is not valid
+              </ion-label>
             </ion-item>
 
             <ion-item>
               <ion-label>Password:</ion-label>
               <ion-input v-model="user.password" type="password"></ion-input>
-              <ion-label v-if="!isValid.password" color="warning"
-                >Input is not valid</ion-label
-              >
+              <ion-label v-if="!isValid.password" color="warning">
+                Input is not valid
+              </ion-label>
             </ion-item>
 
-            <ion-label v-if="metaData.errMessage" color="danger">{{
-              metaData.errMessage
-            }}</ion-label>
+            <ion-label v-if="metaData.errMessage" color="danger">
+              {{ metaData.errMessage }}
+            </ion-label>
           </form>
-          <ion-button @click="validateLoginSubmit()" expand="block"
-            >Login</ion-button
-          >
+          <ion-button @click="validateLoginSubmit()" expand="block">
+            Login
+          </ion-button>
 
-          <ion-button href="/api/v2/auth/google/login" expand="block"
-            >Login with Google</ion-button
-          >
+          <ion-button href="/api/v2/auth/google/login" expand="block">
+            Login with Google
+          </ion-button>
         </ion-card-content>
       </ion-card>
 
@@ -89,8 +89,6 @@ const metaData = ref({
   successful: false,
   loading: false,
 });
-
-console.log(store.state.auth);
 
 if (store.state.auth.status.loggedIn) {
   router.push("/tabs");

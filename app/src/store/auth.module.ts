@@ -60,8 +60,8 @@ export const auth = {
         }
       );
     },
-    async oauthCallback({ commit }: any, state: string) {
-      return AuthService.oauthCallback(state).then(
+    async oauthCallback({ commit }: any, params: any) {
+      return AuthService.oauthCallback(params).then(
         response => {
           commit("setUser", response.data)
           return Promise.resolve(response.data)

@@ -1,5 +1,5 @@
 import { UserLoginDTO, UserRegisterDTO, UserStore } from "@/types/user";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import API_BASE_URL from "@/services/config.service";
 
 const API_URL = API_BASE_URL+"/auth";
@@ -13,9 +13,9 @@ class AuthService {
     return axios.post(API_URL + "/register", user);
   }
 
-  oauthCallback({state, code, scope, authUser, prompt}:any): Promise<AxiosResponse<UserStore, any>> {
-    const uri = API_URL + `/google/callback?state=${state}&code=${code}&scope=${scope}&authuser=${authUser}&prompt=${prompt}`
-    return axios.get(encodeURI(uri));
+  oauthCallback({state, code, scope, authUser, prompt}:any): Promise<AxiosResponse<UserStore, AxiosError>> {
+    const uri = API_URL + `/google/callback?state=${encodeURI(state)}&code=${encodeURI(code)}&scope=${encodeURI(scope)}&authuser=${encodeURI(authUser)}&prompt=${encodeURI(prompt)}`
+    return axios.get(uri);
   }
 }
 
