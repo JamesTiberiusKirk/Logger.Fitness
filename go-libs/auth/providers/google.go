@@ -22,6 +22,8 @@ type googleContents struct {
 	Locale          string `json:"locale"`
 }
 
+// TODO: create a struct for this to have it mockable on the controller side?
+
 // SetupGogoleConfig - ...
 func SetupGogoleConfig(clientID, clientSecret string) *oauth2.Config {
 	return &oauth2.Config{

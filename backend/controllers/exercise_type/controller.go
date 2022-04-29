@@ -1,3 +1,4 @@
+//go:generate mockgen -package exercise_type -destination controller_mock.go -source controller.go
 package exercise_type
 
 import (
