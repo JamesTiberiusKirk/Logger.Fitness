@@ -89,7 +89,7 @@ import {
 } from "@ionic/vue";
 import { create, fileTrayFull, analyticsOutline } from "ionicons/icons";
 import store from "@/store";
-import { ref, onMounted } from "@vue/runtime-core";
+import { ref } from "@vue/runtime-core";
 
 function logout() {
   // TODO: need to close menu pane on click

@@ -45,7 +45,9 @@ func (ctrl AuthController) Init(g *echo.Group) {
 	group.POST("/register", ctrl.register)
 	group.POST("/login", ctrl.login)
 	group.POST("/verify_me", ctrl.verifyMe)
-	ctrl.setupOauthProviders(g)
+	//ctrl.setupOauthProviders(g)
+	group.GET("/google/login", ctrl.oauth2Login)
+	group.GET("/google/callback", ctrl.oauth2Callback)
 }
 
 func (ctrl *AuthController) setupOauthProviders(g *echo.Group) {
@@ -183,12 +185,13 @@ func (ctrl *AuthController) verifyMe(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// TODO: need to fiund a way to decouple the oauth2 functions from the specific providers
 func (ctrl *AuthController) oauth2Login(c echo.Context) error {
 	// TODO: look up what state is meant to be and change it
-	// NOTE: this needs to be a random string, it protects against CSRF attacks
+	// NOTE: this needs to be a random string, it protects against CSRF attacks, but need to read more about it
 	//	see https://datatracker.ietf.org/doc/html/rfc6749#section-10.12
 	loginURL := ctrl.googleOauthConfig.AuthCodeURL("state")
-	return c.Redirect(http.StatusTemporaryRedirect, loginURL)
+	return c.String(http.StatusOK, loginURL)
 }
 
 func (ctrl *AuthController) oauth2Callback(c echo.Context) error {

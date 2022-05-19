@@ -37,7 +37,7 @@
             Login
           </ion-button>
 
-          <ion-button href="/api/v2/auth/google/login" expand="block">
+          <ion-button @click="googleOauthLogin()" expand="block">
             Login with Google
           </ion-button>
         </ion-card-content>
@@ -73,6 +73,8 @@ import store from "@/store";
 import { Ref, ref } from "vue";
 import router from "@/router";
 import Validate from "@/common/validate";
+import AuthService from "@/services/auth.service";
+import { navigateToURL } from "@/common/oauth";
 
 const user: Ref<UserLoginDTO> = ref<UserLoginDTO>({
   email: "",
@@ -114,6 +116,21 @@ function validateLoginSubmit() {
         metaData.value.errMessage = "Wrong password or email";
     }
   );
+}
+
+async function googleOauthLogin() {
+  const { data, err } = await AuthService.googleOauth2Login();
+  if (err) {
+    console.log("error from api");
+    console.log(err);
+  }
+  if (!data) return console.log("No data");
+
+  console.log("should be no err");
+  console.log("redirect link: ", data);
+  console.log("err: ", err);
+
+  navigateToURL(data);
 }
 </script>
 
