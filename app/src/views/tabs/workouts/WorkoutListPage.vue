@@ -118,7 +118,7 @@ function hasEnded(workout: Workout) {
 
 function workoutClick(id: string) {
   console.log(id);
-  notYetImplementedToast();
+  router.push(`/tabs/workout?id=${id}`);
 }
 
 function doRefresh(event: CustomEvent) {

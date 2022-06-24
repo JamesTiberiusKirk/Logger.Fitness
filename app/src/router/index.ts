@@ -40,6 +40,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/tabs/workouts/WorkoutFormPage.vue')
       },
       {
+        path: 'workout',
+        component: () => import('@/views/tabs/workouts/WorkoutPage.vue')
+      },
+      {
         path: 'analytics',
         component: () => import('@/views/tabs/analytics/AnalyticsPage.vue')
       }

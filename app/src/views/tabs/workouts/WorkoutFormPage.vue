@@ -163,11 +163,18 @@ function submit() {
         console.log(err);
       });
   } else {
+    workout.value.start_time = Date.now();
     store
       .dispatch("workouts/start", workout.value)
-      .then(() => {
+      .then((workout: Workout) => {
         metaData.value.loading = false;
-        router.back();
+        console.log(workout.workout_id);
+        
+        
+        // router.back();
+        // TODO: here forward to the workout page
+        // get the new workout id, then 
+        router.push(`/tabs/workout?id=${workout.workout_id}`);
       })
       .catch((err) => {
         metaData.value.loading = false;
