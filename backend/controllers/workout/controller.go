@@ -45,6 +45,9 @@ func (ctrl *Controller) Init(g *echo.Group) {
 	group.PUT("", ctrl.EditWorkout, ctrl.authMiddleware)
 	group.GET("", ctrl.GetWorkouts, ctrl.authMiddleware)
 	group.DELETE("", ctrl.DeleteWorkout, ctrl.authMiddleware)
+	group.POST("/start", ctrl.StartNewWorkout, ctrl.authMiddleware)
+	group.POST("/stop", ctrl.StopWorkout, ctrl.authMiddleware)
+
 }
 
 // DTO - workout & their exercises Data Transfer Object
