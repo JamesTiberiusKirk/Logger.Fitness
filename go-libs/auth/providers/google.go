@@ -23,11 +23,11 @@ type googleContents struct {
 }
 
 // TODO: create a struct for this to have it mockable on the controller side?
-
+// TODO: have vars for this config coming from the env
 // SetupGogoleConfig - ...
 func SetupGogoleConfig(clientID, clientSecret string) *oauth2.Config {
 	return &oauth2.Config{
-		RedirectURL:  "http://127.0.0.1:8100/oauth/redirect",
+		RedirectURL:  "http://dev.logger.fitness:8100/oauth/redirect",
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
 		Scopes: []string{

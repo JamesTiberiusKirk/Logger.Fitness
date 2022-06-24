@@ -23,6 +23,7 @@ type DatabaseInterface interface {
 	CheckUserBasedOnEmail(lookupEmail string) (bool, error)
 	GetUserByEmail(lookupEmail string) (types.User, error)
 	GetUserByID(id primitive.ObjectID) (types.User, error)
+	GetUserByProviderID(id string) (types.User, error)
 }
 
 // AuthController struct for auth controller
@@ -194,13 +195,11 @@ func (ctrl *AuthController) oauth2Login(c echo.Context) error {
 	return c.String(http.StatusOK, loginURL)
 }
 
+// TODO: this creates a new user for every login
 func (ctrl *AuthController) oauth2Callback(c echo.Context) error {
 	db := ctrl.database
 	state := c.FormValue("state")
 	code := c.FormValue("code")
-
-	log.Printf("state= %s", state)
-	log.Printf("code= %s", code)
 
 	googleUser, err := providers.GetUserFromGoogle(state, code, ctrl.googleOauthConfig)
 	if err != nil {
@@ -208,22 +207,28 @@ func (ctrl *AuthController) oauth2Callback(c echo.Context) error {
 		return c.Redirect(http.StatusTemporaryRedirect, "/")
 	}
 
-	_, err = db.GetUserByID(googleUser.ID)
+	dbUser, err := db.GetUserByProviderID(googleUser.ProviderID)
 	if err != nil && err != mongo.ErrNoDocuments {
-
 		log.Info(err.Error())
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
 	if err == mongo.ErrNoDocuments {
-		// TODO: need an "add or update" function
+		// TODO: need an "add or update" function in case google profile has updated since last login
 		err = db.AddUser(googleUser)
 		if err != nil {
+			log.Info(err.Error())
+			return c.NoContent(http.StatusInternalServerError)
+		}
 
+		dbUser, err = db.GetUserByProviderID(googleUser.ProviderID)
+		if err != nil {
 			log.Info(err.Error())
 			return c.NoContent(http.StatusInternalServerError)
 		}
 	}
+
+	googleUser.ID = dbUser.ID
 
 	// Generating JWT
 	userJwt, err := auth.GenerateJWTFromDbUser(googleUser)
