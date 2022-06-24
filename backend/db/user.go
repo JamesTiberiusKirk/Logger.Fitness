@@ -85,7 +85,7 @@ func (db *DbClient) GetUserByEmail(lookupEmail string) (models.User, error) {
 	return u, nil
 }
 
-// GetUserByID function to get a document by the email.
+// GetUserByID function to get a document by the ID.
 func (db *DbClient) GetUserByID(id primitive.ObjectID) (models.User, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
@@ -93,6 +93,23 @@ func (db *DbClient) GetUserByID(id primitive.ObjectID) (models.User, error) {
 	// Query db for user
 	var u models.User
 	filter := bson.M{"_id": id}
+	findErr := collection.FindOne(context.TODO(), filter).Decode(&u)
+
+	if findErr != nil {
+		return u, findErr
+	}
+
+	return u, nil
+}
+
+// GetUserByProviderID function to get a document by the provider ID.
+func (db *DbClient) GetUserByProviderID(id string) (models.User, error) {
+	dbc := db.Conn
+	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
+
+	// Query db for user
+	var u models.User
+	filter := bson.M{"provider_id": id}
 	findErr := collection.FindOne(context.TODO(), filter).Decode(&u)
 
 	if findErr != nil {
