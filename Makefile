@@ -2,6 +2,14 @@
 
 COV_CUTOVER = 0
 
+## Bring up dev server
+dev-backend-run:
+	go run ./backend
+
+## Bring up docker database
+db-up:
+	docker-compose -f ./docker/docker-compose.yml --env-file .env up 
+
 install: 
 	go get -u ./...
 
