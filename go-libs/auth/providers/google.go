@@ -27,7 +27,7 @@ type googleContents struct {
 // SetupGogoleConfig - ...
 func SetupGogoleConfig(clientID, clientSecret string) *oauth2.Config {
 	return &oauth2.Config{
-		RedirectURL:  "http://dev.logger.fitness:8100/oauth/redirect",
+		RedirectURL:  "http://localhost:8100/oauth/redirect",
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
 		Scopes: []string{

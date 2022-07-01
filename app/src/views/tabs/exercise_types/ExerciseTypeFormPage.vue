@@ -82,55 +82,39 @@ import {
   IonSelect,
   IonSelectOption,
 } from "@ionic/vue";
-import { ref } from "vue";
+import { defineProps, defineEmits, ref, onMounted } from "vue";
 import { ExerciseType } from "@/types/exercise-type";
-import { useRoute } from "vue-router";
 import store from "@/store";
-import router from "@/router";
 
 const metaData = ref({
+  type: "",
   loading: false,
   errMessage: "",
 });
 
 const exerciseType = ref({} as ExerciseType);
 
-const route = useRoute();
-console.log(route.query);
-if (route.query["id"]) {
-  exerciseType.value = store.getters["exerciseTypes/getOneById"](
-    route.query["id"]
-  );
-}
+const props = defineProps<{
+  exerciseTypeName?: string;
+}>();
+
+const emit = defineEmits<{
+  (e: "new", exerciseType: ExerciseType): void;
+  (e: "update", exerciseType: ExerciseType): void;
+}>();
+
+onMounted(() => {
+  console.log("forms page",props);
+
+  if (props.exerciseTypeName) {
+    exerciseType.value = store.getters["exerciseTypes/getOneByName"](props.exerciseTypeName);
+    metaData.value.type = "update";
+  } else {
+    metaData.value.type = "new";
+  }
+});
 
 function submit() {
-  // Should validate the exercise type
-
-  metaData.value.loading = true;
-  console.log(exerciseType.value);
-
-  if (route.query["id"]) {
-    store
-      .dispatch("exerciseTypes/updateOne", exerciseType.value)
-      .then(() => {
-        metaData.value.loading = false;
-        router.back();
-      })
-      .catch((err) => {
-        metaData.value.loading = false;
-        metaData.value.errMessage = err.message;
-      });
-  } else {
-    store
-      .dispatch("exerciseTypes/sendOne", exerciseType.value)
-      .then(() => {
-        metaData.value.loading = false;
-        router.back();
-      })
-      .catch((err) => {
-        metaData.value.loading = false;
-        metaData.value.errMessage = err.message;
-      });
-  }
+  console.log("submit",props);
 }
 </script>

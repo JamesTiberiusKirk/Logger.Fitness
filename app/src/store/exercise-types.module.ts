@@ -5,14 +5,18 @@ const EXERCISE_TYPE_STORE = "exercise_types";
 
 export type ExerciseTypeState = {
   data: ExerciseType[],
+  lastUpdated: number,
+  lastSynced: number,
   empty: boolean,
 }
 
 function getDefaultState(): ExerciseTypeState {
-  const data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE)||"[]")
+  const data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE) || "[]")
   // const data: ExerciseType[] = [];
   return {
     data,
+    lastUpdated: -1,
+    lastSynced: -1,
     empty: data.length == 0 ? false : true
   };
 }
@@ -21,10 +25,20 @@ export const exerciseTypes = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
+    async syncChanges({ state }: any) {
+      return ExerciseTypesService.syncAll(state.data)
+        .then(() => {
+          return Promise.resolve()
+        })
+        .catch(err => {
+          return Promise.reject(err)
+        })
+    },
     async fetchAll({ commit }: any) {
       return ExerciseTypesService.getExerciseTypes()
         .then(res => {
           commit("storeAll", res.data);
+          commit("updateLastUpdated");
           return Promise.resolve(res.data);
         })
         .catch(err => {
@@ -32,30 +46,31 @@ export const exerciseTypes = {
         });
     },
     async sendOne({ commit }: any, exerciseType: ExerciseType) {
+      commit("addOne", exerciseType);
       return ExerciseTypesService.newExerciseType(exerciseType)
         .then(res => {
-          commit("addOne", exerciseType);
+          commit("updateLastUpdated");
           return Promise.resolve(res.data);
         })
         .catch(err => {
           return Promise.reject(err);
         });
     },
-    // TODO: this again is because the possibility of wiping all the other fields, need testing
     async updateOne({ commit }: any, exerciseType: any) {
+      commit("updateOne", exerciseType);
       return ExerciseTypesService.updateExerciseType(exerciseType)
         .then(res => {
-          commit("updateOne", exerciseType);
+          commit("updateLastUpdated");
           return Promise.resolve(res.data);
         })
         .catch(err => {
           return Promise.reject(err);
         });
     },
-    async deleteOne({ commit }: any, id: string) {
-      return ExerciseTypesService.deleteExerciseType(id)
+    async deleteOne({ commit }: any, name: string) {
+      commit("deleteOne", name);
+      return ExerciseTypesService.deleteExerciseType(name)
         .then(res => {
-          commit("deleteOne", id);
           return Promise.resolve(res);
         })
         .catch(err => {
@@ -64,6 +79,12 @@ export const exerciseTypes = {
     }
   },
   mutations: {
+    updateLastUpdated(state: ExerciseTypeState) {
+      state.lastUpdated = Date.now();
+    },
+    updateLastSynced(state: ExerciseTypeState) {
+      state.lastUpdated = Date.now();
+    },
     storeAll(state: ExerciseTypeState, exerciseTypes: ExerciseType[]) {
       state.data = exerciseTypes;
       state.empty = false;
@@ -76,7 +97,7 @@ export const exerciseTypes = {
     },
     updateOne(state: ExerciseTypeState, exerciseType: ExerciseType) {
       state.data.forEach((element, index) => {
-        if (element.exercise_type_id == exerciseType.exercise_type_id) {
+        if (element.name == exerciseType.name) {
           state.data[index] = exerciseType;
         }
       });
@@ -110,6 +131,23 @@ export const exerciseTypes = {
         result[element.exercise_type_id] = element;
       });
       return result;
-    }
+    },
+    getAllAsMapByName: (state: ExerciseTypeState) => {
+      const result: ExerciseTypeMap = {};
+      state.data.forEach(element => {
+        result[element.name] = element;
+      });
+      return result;
+    },
+    getOneByName: (state: ExerciseTypeState) => (name: string) => {
+      let result = {} as ExerciseType;
+      state.data.forEach(element => {
+        if (element.name == name) {
+          result = element;
+        }
+      });
+      return result;
+    },
+
   }
 };

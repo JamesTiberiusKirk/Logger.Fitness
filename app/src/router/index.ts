@@ -29,6 +29,8 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'exercise/form',
+        name: 'exercise_type_form',
+        props: true,
         component: () => import('@/views/tabs/exercise_types/ExerciseTypeFormPage.vue')
       },
       {

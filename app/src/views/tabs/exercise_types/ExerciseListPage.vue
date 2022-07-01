@@ -31,9 +31,7 @@
             </ion-item>
 
             <ion-item-options side="end">
-              <ion-item-option @click="edit(e.exercise_type_id)"
-                >Edit</ion-item-option
-              >
+              <ion-item-option @click="edit(e)">Edit</ion-item-option>
               <ion-item-option color="danger" @click="setModalState(true, e)"
                 >Delete</ion-item-option
               >
@@ -182,8 +180,20 @@ function doRefresh(event: CustomEvent) {
   });
 }
 
-function edit(id: string) {
-  router.push(`/tabs/exercise/form?id=${id}`);
+// TODO: get rid of routing and just make it a sub component with data binding
+function edit(et: ExerciseType) {
+  // console.log(et);
+
+  router.push({
+    name: "exercise_type_form",
+    params: {
+      exerciseType: {...et},
+    },
+  });
+}
+
+function fabClick() {
+  router.push(`/tabs/exercise/form`);
 }
 
 function deleteExercise() {
@@ -202,9 +212,5 @@ function deleteExercise() {
       modal.value.isOpen = false;
       metaData.value.loading = false;
     });
-}
-
-function fabClick() {
-  router.push(`/tabs/exercise/form`);
 }
 </script>
