@@ -4,6 +4,7 @@ package exercise_type
 import (
 	"net/http"
 
+	"Logger.Fitness/go-libs/common"
 	res "Logger.Fitness/go-libs/responses"
 	"Logger.Fitness/go-libs/types"
 	"github.com/labstack/echo/v4"
@@ -18,7 +19,7 @@ type DatabaseInterface interface {
 	InsertNewExerciseType(exerciseType types.ExerciseType) error
 	GetExerciseTypesByUserID(userID primitive.ObjectID) ([]types.ExerciseType, error)
 	UpdateExerciseType(userID primitive.ObjectID, exerciseType types.ExerciseType) error
-	DeleteExerciseTypeByID(exerciseTypeID, userID primitive.ObjectID) error
+	DeleteExerciseTypeByName(exerciseTypeName string, userID primitive.ObjectID) error
 }
 
 // ExerciseTypeController ...
@@ -43,6 +44,7 @@ func (ctrl *ExerciseTypeController) Init(g *echo.Group) {
 	group.POST("", ctrl.NewExerciseType, ctrl.authMiddleware)
 	group.PUT("", ctrl.EditExerciseTypes, ctrl.authMiddleware)
 	group.DELETE("", ctrl.DeleteExerciseType, ctrl.authMiddleware)
+	group.POST("/sync", ctrl.SyncAll, ctrl.authMiddleware)
 
 }
 
@@ -121,21 +123,112 @@ func (ctrl *ExerciseTypeController) DeleteExerciseType(c echo.Context) error {
 	db := ctrl.database
 	userClaim := c.Get("user").(*types.JwtClaim)
 
-	exerciseTypesID := c.QueryParam("id")
+	exerciseTypeName := c.QueryParam("name")
 
-	if exerciseTypesID == "" {
+	if exerciseTypeName == "" {
 		return c.String(http.StatusBadRequest, res.MissingID)
 	}
 
-	exerciseTypesObjID, err := primitive.ObjectIDFromHex(exerciseTypesID)
-	if err != nil {
-		return c.String(http.StatusBadRequest, res.InternalServerError)
-	}
-
-	err = db.DeleteExerciseTypeByID(exerciseTypesObjID, userClaim.ID)
+	err := db.DeleteExerciseTypeByName(exerciseTypeName, userClaim.ID)
 	if err != nil {
 		return c.String(http.StatusBadRequest, res.DatabseError)
 
 	}
 	return c.NoContent(http.StatusOK)
+}
+
+// SyncAll POST endpoint
+// Syncs users local collection with remote (backend)
+// @body []ExerciseType
+func (ctrl *ExerciseTypeController) SyncAll(c echo.Context) error {
+	db := ctrl.database
+	userClaim := c.Get("user").(*types.JwtClaim)
+
+	log.Infof("ExerciseType SyncAll %s", userClaim.ID.Hex())
+
+	var userData []types.ExerciseType
+	if err := c.Bind(&userData); err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	serverData, err := db.GetExerciseTypesByUserID(userClaim.ID)
+	if err != nil {
+		return c.String(http.StatusBadRequest, res.DatabseError)
+	}
+
+	updates, toDelete := extrapolateChanges(userData, serverData)
+
+	log.Infof("Updates: %+v", updates)
+	log.Infof("To delete: %+v", toDelete)
+
+	err = ctrl.insertUpdatesOrNew(updates, userClaim.ID)
+	if err != nil {
+		log.Error(err)
+		return c.String(http.StatusBadRequest, res.DatabseError)
+	}
+
+	err = ctrl.deleteToDelete(toDelete, userClaim.ID)
+	if err != nil {
+		log.Error(err)
+		return c.String(http.StatusBadRequest, res.DatabseError)
+	}
+
+	return c.NoContent(http.StatusOK)
+}
+
+func extrapolateChanges(userData, serverData []types.ExerciseType) ([]types.ExerciseType,
+	[]string) {
+
+	var updates []types.ExerciseType
+	var toDelete []string
+
+	for _, userItem := range userData {
+		found := false
+		for _, serverItem := range serverData {
+			if serverItem.Name == userItem.Name {
+				found = true
+				if !common.CompareExerciseTypes(userItem, serverItem) {
+					updates = append(updates, userItem)
+				}
+			}
+		}
+
+		if !found {
+			toDelete = append(toDelete, userItem.Name)
+		}
+	}
+
+	return updates, toDelete
+}
+
+func (ctrl *ExerciseTypeController) insertUpdatesOrNew(updates []types.ExerciseType, userID primitive.ObjectID) error {
+	db := ctrl.database
+
+	for _, u := range updates {
+		if u.ID.Hex() == "" {
+			err := db.InsertNewExerciseType(u)
+			if err != nil {
+				return err
+			}
+		} else {
+			err := db.UpdateExerciseType(userID, u)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (ctrl *ExerciseTypeController) deleteToDelete(toDelete []string, userID primitive.ObjectID) error {
+	db := ctrl.database
+
+	for _, d := range toDelete {
+		err := db.DeleteExerciseTypeByName(d, userID)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
