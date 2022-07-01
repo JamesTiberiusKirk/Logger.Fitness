@@ -1,4 +1,3 @@
-//go:generate mockgen -package exercise_type -destination controller_mock.go -source controller.go
 package exercise_type
 
 import (
@@ -29,7 +28,8 @@ type ExerciseTypeController struct {
 }
 
 // NewExerciseTypeController ...
-func NewExerciseTypeController(database DatabaseInterface, authMiddleware echo.MiddlewareFunc) ExerciseTypeController {
+func NewExerciseTypeController(database DatabaseInterface, authMiddleware
+echo.MiddlewareFunc) ExerciseTypeController {
 	return ExerciseTypeController{
 		database:       database,
 		authMiddleware: authMiddleware,
@@ -202,7 +202,8 @@ func extrapolateChanges(userData, serverData []types.ExerciseType) ([]types.Exer
 	return updates, toDelete
 }
 
-func (ctrl *ExerciseTypeController) insertUpdatesOrNew(updates []types.ExerciseType, userID primitive.ObjectID) error {
+func (ctrl *ExerciseTypeController) insertUpdatesOrNew(updates []types.ExerciseType,
+	userID primitive.ObjectID) error {
 	db := ctrl.database
 
 	for _, u := range updates {
@@ -221,7 +222,8 @@ func (ctrl *ExerciseTypeController) insertUpdatesOrNew(updates []types.ExerciseT
 	return nil
 }
 
-func (ctrl *ExerciseTypeController) deleteToDelete(toDelete []string, userID primitive.ObjectID) error {
+func (ctrl *ExerciseTypeController) deleteToDelete(toDelete []string,
+	userID primitive.ObjectID) error {
 	db := ctrl.database
 
 	for _, d := range toDelete {
