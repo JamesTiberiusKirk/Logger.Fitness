@@ -2,22 +2,28 @@ import { ExerciseType, ExerciseTypeMap } from "@/types/exercise-type";
 import ExerciseTypesService from "../services/exercise-types.service";
 
 const EXERCISE_TYPE_STORE = "exercise_types";
+const EXERCISE_TYPE_STORE_TX = "exercise_types_tx";
+
+// Transactions are for keeping a list of transactions to be ran on the data
+//  this helps with decoupling frontend from server
+type ExerciseTypeTransaction = {
+  type: string,
+  data: ExerciseType,
+}
 
 export type ExerciseTypeState = {
   data: ExerciseType[],
-  lastUpdated: number,
-  lastSynced: number,
   empty: boolean,
+  transactions: ExerciseTypeTransaction[],
 }
 
 function getDefaultState(): ExerciseTypeState {
   const data = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE) || "[]")
-  // const data: ExerciseType[] = [];
+  const transactions = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE_TX) || "[]")
   return {
     data,
-    lastUpdated: -1,
-    lastSynced: -1,
-    empty: data.length == 0 ? false : true
+    empty: data.length == 0 ? false : true,
+    transactions: transactions as ExerciseTypeTransaction[],
   };
 }
 
@@ -25,20 +31,39 @@ export const exerciseTypes = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
-    async syncChanges({ state }: any) {
-      return ExerciseTypesService.syncAll(state.data)
-        .then(() => {
-          return Promise.resolve()
-        })
-        .catch(err => {
-          return Promise.reject(err)
-        })
+    async syncTx({ commit, state }: any) {
+      console.log("Exercise type transaction sync");
+      console.log(state.transactions);
+
+      for (let i = 0; i++; i < state.transaction.length) {
+
+        try {
+
+        switch (state.transaction[i].type) {
+          case "add": {
+            await ExerciseTypesService.newExerciseType(state.transaction[i].data)
+            break;
+          }
+          case "update": {
+            break;
+          }
+          case "delete": {
+            break;
+          }
+        }
+
+        } catch (e){
+          return Promise.reject(e)
+        } finally {
+          commit("deleteTx", state.transaction[i].data.name)
+        }
+      }
+
     },
     async fetchAll({ commit }: any) {
       return ExerciseTypesService.getExerciseTypes()
         .then(res => {
           commit("storeAll", res.data);
-          commit("updateLastUpdated");
           return Promise.resolve(res.data);
         })
         .catch(err => {
@@ -47,9 +72,10 @@ export const exerciseTypes = {
     },
     async sendOne({ commit }: any, exerciseType: ExerciseType) {
       commit("addOne", exerciseType);
+      commit("addTx", "add", exerciseType)
       return ExerciseTypesService.newExerciseType(exerciseType)
         .then(res => {
-          commit("updateLastUpdated");
+          commit("deleteTx", exerciseType.name)
           return Promise.resolve(res.data);
         })
         .catch(err => {
@@ -58,9 +84,10 @@ export const exerciseTypes = {
     },
     async updateOne({ commit }: any, exerciseType: any) {
       commit("updateOne", exerciseType);
+      commit("addTx", "update", exerciseType)
       return ExerciseTypesService.updateExerciseType(exerciseType)
         .then(res => {
-          commit("updateLastUpdated");
+          commit("deleteTx", exerciseType.name)
           return Promise.resolve(res.data);
         })
         .catch(err => {
@@ -69,8 +96,10 @@ export const exerciseTypes = {
     },
     async deleteOne({ commit }: any, name: string) {
       commit("deleteOne", name);
+      commit("addTx", "delete", { name })
       return ExerciseTypesService.deleteExerciseType(name)
         .then(res => {
+          commit("deleteTx", { name })
           return Promise.resolve(res);
         })
         .catch(err => {
@@ -79,11 +108,18 @@ export const exerciseTypes = {
     }
   },
   mutations: {
-    updateLastUpdated(state: ExerciseTypeState) {
-      state.lastUpdated = Date.now();
+    deleteTx(state: ExerciseTypeState, exerciseTypeName: string) {
+      state.transactions = state.transactions.filter((tx: ExerciseTypeTransaction) => {
+        return tx.data.name === exerciseTypeName
+      })
+      localStorage.setItem(EXERCISE_TYPE_STORE_TX, JSON.stringify(state.transactions))
     },
-    updateLastSynced(state: ExerciseTypeState) {
-      state.lastUpdated = Date.now();
+    addTx(state: ExerciseTypeState, type: string, exerciseType: ExerciseType) {
+      state.transactions.push({
+        type,
+        data: exerciseType,
+      } as ExerciseTypeTransaction)
+      localStorage.setItem(EXERCISE_TYPE_STORE_TX, JSON.stringify(state.transactions))
     },
     storeAll(state: ExerciseTypeState, exerciseTypes: ExerciseType[]) {
       state.data = exerciseTypes;
