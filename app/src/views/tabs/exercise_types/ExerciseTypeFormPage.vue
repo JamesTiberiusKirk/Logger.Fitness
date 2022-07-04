@@ -82,9 +82,11 @@ import {
   IonSelect,
   IonSelectOption,
 } from "@ionic/vue";
-import { defineProps, defineEmits, ref, onMounted } from "vue";
+import { ref } from "vue";
 import { ExerciseType } from "@/types/exercise-type";
 import store from "@/store";
+import router from "@/router";
+import { useRoute } from "vue-router";
 
 const metaData = ref({
   type: "",
@@ -94,27 +96,32 @@ const metaData = ref({
 
 const exerciseType = ref({} as ExerciseType);
 
-const props = defineProps<{
-  exerciseTypeName?: string;
-}>();
+const route = useRoute();
+const exerciseTypeName = route.query.exerciseTypeName;
 
-const emit = defineEmits<{
-  (e: "new", exerciseType: ExerciseType): void;
-  (e: "update", exerciseType: ExerciseType): void;
-}>();
+function getData() {
+  // NOTE: props across routes just dont work smh, use query only
+  console.log("props: ", route.query);
 
-onMounted(() => {
-  console.log("forms page",props);
-
-  if (props.exerciseTypeName) {
-    exerciseType.value = store.getters["exerciseTypes/getOneByName"](props.exerciseTypeName);
+  if (exerciseTypeName) {
+    exerciseType.value =
+      store.getters["exerciseTypes/getOneByName"](exerciseTypeName);
     metaData.value.type = "update";
   } else {
     metaData.value.type = "new";
   }
-});
+}
 
-function submit() {
-  console.log("submit",props);
+getData();
+
+async function submit() {
+  metaData.value.loading = true;
+  let dispatchRoute =
+    metaData.value.type == "update"
+      ? "exerciseTypes/updateOne"
+      : "exerciseTypes/sendOne";
+  await store.dispatch(dispatchRoute, exerciseType.value);
+  metaData.value.loading = false;
+  router.back();
 }
 </script>

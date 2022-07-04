@@ -36,29 +36,28 @@ export const exerciseTypes = {
       console.log(state.transactions);
 
       for (let i = 0; i++; i < state.transaction.length) {
-
         try {
-
-        switch (state.transaction[i].type) {
-          case "add": {
-            await ExerciseTypesService.newExerciseType(state.transaction[i].data)
-            break;
+          switch (state.transaction[i].type) {
+            case "add": {
+              await ExerciseTypesService.newExerciseType(state.transaction[i].data)
+              break;
+            }
+            case "update": {
+              await ExerciseTypesService.updateExerciseType(state.transaction[i].data)
+              break;
+            }
+            case "delete": {
+              await ExerciseTypesService.deleteExerciseType(state.transaction[i].data.name)
+              break;
+            }
           }
-          case "update": {
-            break;
-          }
-          case "delete": {
-            break;
-          }
-        }
-
-        } catch (e){
+        } catch (e) {
           return Promise.reject(e)
         } finally {
           commit("deleteTx", state.transaction[i].data.name)
         }
       }
-
+      return Promise.resolve()
     },
     async fetchAll({ commit }: any) {
       return ExerciseTypesService.getExerciseTypes()
@@ -72,7 +71,8 @@ export const exerciseTypes = {
     },
     async sendOne({ commit }: any, exerciseType: ExerciseType) {
       commit("addOne", exerciseType);
-      commit("addTx", "add", exerciseType)
+      const tx = { type: "add", data: exerciseType } as ExerciseTypeTransaction;
+      commit("addTx", tx)
       return ExerciseTypesService.newExerciseType(exerciseType)
         .then(res => {
           commit("deleteTx", exerciseType.name)
@@ -82,9 +82,12 @@ export const exerciseTypes = {
           return Promise.reject(err);
         });
     },
-    async updateOne({ commit }: any, exerciseType: any) {
+    async updateOne({ commit }: any, exerciseType: ExerciseType) {
       commit("updateOne", exerciseType);
-      commit("addTx", "update", exerciseType)
+
+      const tx = { type: "update", data: exerciseType } as ExerciseTypeTransaction;
+      commit("addTx", tx)
+
       return ExerciseTypesService.updateExerciseType(exerciseType)
         .then(res => {
           commit("deleteTx", exerciseType.name)
@@ -96,7 +99,10 @@ export const exerciseTypes = {
     },
     async deleteOne({ commit }: any, name: string) {
       commit("deleteOne", name);
-      commit("addTx", "delete", { name })
+
+      const tx = { type: "delete", data: { name } } as ExerciseTypeTransaction
+      commit("addTx", tx)
+
       return ExerciseTypesService.deleteExerciseType(name)
         .then(res => {
           commit("deleteTx", { name })
@@ -108,17 +114,28 @@ export const exerciseTypes = {
     }
   },
   mutations: {
-    deleteTx(state: ExerciseTypeState, exerciseTypeName: string) {
-      state.transactions = state.transactions.filter((tx: ExerciseTypeTransaction) => {
-        return tx.data.name === exerciseTypeName
-      })
+    deleteTx(state: ExerciseTypeState, name: string) {
+      console.log("deleting tx with name", name);
+
+      let toDelete = -1
+      for (let i = 0; i < state.transactions.length; i++) {
+        if (state.transactions[i].data.name === name) {
+          toDelete = i
+        }
+      }
+
+      if (toDelete != -1) {
+        state.transactions.splice(toDelete, 1);
+      } else {
+        console.log("nothing to delete");
+      }
+
       localStorage.setItem(EXERCISE_TYPE_STORE_TX, JSON.stringify(state.transactions))
     },
-    addTx(state: ExerciseTypeState, type: string, exerciseType: ExerciseType) {
-      state.transactions.push({
-        type,
-        data: exerciseType,
-      } as ExerciseTypeTransaction)
+    addTx(state: ExerciseTypeState, tx: ExerciseTypeTransaction) {
+      console.log("adding tx", tx);
+
+      state.transactions.push(tx)
       localStorage.setItem(EXERCISE_TYPE_STORE_TX, JSON.stringify(state.transactions))
     },
     storeAll(state: ExerciseTypeState, exerciseTypes: ExerciseType[]) {

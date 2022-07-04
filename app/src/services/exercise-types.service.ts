@@ -25,10 +25,6 @@ class ExerciseTypeService {
     const options = { headers: authHeader() };
     return axios.delete(`${API_URL}?id=${id}`, options);
   }
-
-  syncAll(exerciseTypes: ExerciseType[]): Promise<AxiosResponse<void>> {
-    return axios.post(`${API_URL}/sync`, exerciseTypes)
-  }
 }
 
 export default new ExerciseTypeService();
