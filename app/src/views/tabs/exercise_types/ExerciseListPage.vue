@@ -35,7 +35,7 @@
 
           <ion-item-options side="end">
             <ion-item-option @click="edit(e.name)">Edit</ion-item-option>
-            <ion-item-option color="danger" @click="setModalState(true, e)"
+            <ion-item-option color="danger" @click="setModalState(true, e.name)"
               >Delete</ion-item-option
             >
           </ion-item-options>
@@ -120,20 +120,25 @@ const modal = ref({
   ],
 });
 
+// TODO: Another problem. If theres no exercise types in local storage/state then the page
+//  is empty on navigatio
+//  Should probs figure out a way to quietly refhesh data in the backrgound.
+
 // TODO: Trying to figure out how to sort out the problem of closing the ion-item-slide.
 //  was trying to get the ref of each one of the items, but keeps coming back undefined...
 //  https://vuejs.org/guide/essentials/template-refs.html#refs-inside-v-for
 
+// TODO: Need todo ocassional sync job
+//  Plan for now is to check every couple of seconds if there are any transactions
+//  if there are, send a "sync" job and somehow display a sync loader
+
 // BUG: So theres a bug here where the toDelete id does not get set if you're trying to delete the exercise type right after creating it
 // let exerciseTypeID = -1;
 // NOTE: this big might have been smth todo with the fact that toDelete was a number and exercise_type_id looks to be a string?
-function setModalState(state: boolean, exerciseId: ExerciseType) {
-  // exerciseTypeID = exerciseId.exercise_type_id;
-  modal.value.toDelete = exerciseId.exercise_type_id;
+// NOTE: This might be fixed now that its a name that im deleting with
+function setModalState(state: boolean, exerciseTypeName: string) {
+  modal.value.toDelete = exerciseTypeName;
   modal.value.isOpen = state;
-  // console.log(exerciseTypeID);
-  // console.log(modal.value.toDelete);
-  // console.log(exerciseId);
 }
 
 function getData() {
