@@ -13,7 +13,7 @@ type User struct {
 	Password       string             `json:"password" bson:"password" validate:"required,min=7,max=255"`
 	Active         bool               `bson:"active"`
 	Roles          map[string]string  `json:"roles,omitempty" bson:"roles"`
-	ProfilePicture string             `json:"profile_picture,omitempty" bson:"profile_picture"`
+	ProfilePicture string             `json:"profilePicture,omitempty" bson:"profile_picture"`
 	Provider       string             `bson:"provider"`
 	ProviderID     string             `bson:"provider_id"`
 }

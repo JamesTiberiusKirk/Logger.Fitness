@@ -30,6 +30,9 @@ func getJwtSecretFromEnv() string {
 
 // GenerateJWTFromDbUser function wrapper around GenerateJWTFromClaim.
 func GenerateJWTFromDbUser(user types.User) (string, error) {
+	// This  is done because otherwise the password would be sent
+	// TODO: should really just have transformer to a sanitised type and not send types.User
+	user.Password = ""
 	claims := &types.JwtClaim{
 		User: user,
 		StandardClaims: jwt.StandardClaims{
