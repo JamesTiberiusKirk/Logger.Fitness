@@ -21,13 +21,9 @@ class ExerciseTypeService {
     return axios.put(API_URL, exerciseType, options);
   }
 
-  deleteExerciseType(id: string): Promise<AxiosResponse<void>> {
+  deleteExerciseType(name: string): Promise<AxiosResponse<void>> {
     const options = { headers: authHeader() };
-    return axios.delete(`${API_URL}?id=${id}`, options);
-  }
-
-  syncAll(exerciseTypes: ExerciseType[]): Promise<AxiosResponse<void>> {
-    return axios.post(`${API_URL}/sync`, exerciseTypes)
+    return axios.delete(`${API_URL}?name=${name}`, options);
   }
 }
 

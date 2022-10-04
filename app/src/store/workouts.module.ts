@@ -2,18 +2,26 @@ import { Workout, WorkoutGroup } from "@/types/workout";
 import WorkoutsService from "../services/workouts.service";
 
 const WORKOUTS_STORE = "workouts";
+const EXERCISE_TYPE_STORE_TX = "workouts_types_tx";
+
+type WorkoutGroupTransaction = {
+  type: string,
+  data: WorkoutGroup,
+}
 
 export type WorkoutsState = {
   data: WorkoutGroup[],
   empty: boolean,
+  transactions: WorkoutGroupTransaction[],
 }
 
 function getDefaultState(): WorkoutsState {
   const data = JSON.parse(localStorage.getItem(WORKOUTS_STORE) || "[]");
-  // const data: WorkoutGroup[] = [];
+  const transactions = JSON.parse(localStorage.getItem(EXERCISE_TYPE_STORE_TX) || "[]")
   return {
     data,
-    empty: data.length == 0 ? false : true
+    empty: data.length == 0 ? false : true,
+    transactions: transactions as WorkoutGroupTransaction[],
   };
 }
 
@@ -21,6 +29,35 @@ export const workouts = {
   namespaced: true,
   state: getDefaultState(),
   actions: {
+    async syncTx({ commit, state }: any) {
+      console.log("Workout state transaction sync");
+      console.log(state.transactions);
+
+      for (let i = 0; i++; i < state.transaction.length) {
+        try {
+          switch (state.transaction[i].type) {
+            case "start": {
+              await WorkoutsService.start(state.transaction[i].data)
+              break;
+            }
+            case "stop": {
+              await WorkoutsService.stop(state.transaction[i].data.end_time)
+              break;
+            }
+            // TODO: Need to finish the rest of the operations of the workout service
+            //case "delete": {
+              //await WorkoutsService.update(state.transaction[i].data.name)
+              //break;
+            //}
+          }
+        } catch (e) {
+          return Promise.reject(e)
+        } finally {
+          commit("deleteTx", state.transaction[i].data.name)
+        }
+      }
+      return Promise.resolve()
+    },
     async start({ commit }: any, workout: Workout) {
       return WorkoutsService.start(workout)
         .then(res => {
@@ -73,6 +110,30 @@ export const workouts = {
     }
   },
   mutations: {
+    deleteTx(state: WorkoutsState, start_time: string) {
+      console.log("deleting tx with name", start_time);
+
+      let toDelete = -1
+      for (let i = 0; i < state.transactions.length; i++) {
+        if (state.transactions[i].data.workout.start_time === start_time) {
+          toDelete = i
+        }
+      }
+
+      if (toDelete != -1) {
+        state.transactions.splice(toDelete, 1);
+      } else {
+        console.log("nothing to delete");
+      }
+
+      localStorage.setItem(EXERCISE_TYPE_STORE_TX, JSON.stringify(state.transactions))
+    },
+    addTx(state: WorkoutsState, tx: WorkoutGroupTransaction) {
+      console.log("adding tx", tx);
+
+      state.transactions.push(tx)
+      localStorage.setItem(EXERCISE_TYPE_STORE_TX, JSON.stringify(state.transactions))
+    },
     storeAll(state: WorkoutsState, workouts: WorkoutGroup[]) {
       state.data = workouts;
       state.empty = false;

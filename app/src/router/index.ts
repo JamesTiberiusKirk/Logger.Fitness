@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import TabsPage from '@/views/TabsPage.vue'
+// import ExerciseTypesFormPage from '@/views/tabs/exercise_types/ExerciseTypeFormPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -32,6 +33,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'exercise_type_form',
         props: true,
         component: () => import('@/views/tabs/exercise_types/ExerciseTypeFormPage.vue')
+        // component: ExerciseTypesFormPage
       },
       {
         path: 'workouts/list',

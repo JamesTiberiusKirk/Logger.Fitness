@@ -9,26 +9,17 @@
       <ion-content class="menu-content">
         <ion-list>
           <ion-item>
-            <ion-label>Inbox</ion-label>
+            <ion-label @click="syncData">Sync Data</ion-label>
           </ion-item>
           <ion-item>
-            <ion-label>Outbox</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Favorites</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Archived</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Trash</ion-label>
+            <ion-label>Transactions: {{txAmount}}</ion-label>
           </ion-item>
         </ion-list>
         <ion-button class="logout-btn" expand="block" @click="logout()">
           Logout
         </ion-button>
         <ion-avatar v-if="user">
-          <img :src="user.claim.profile_picture" />
+          <img v-if="user.claim.profile_picture" :src="user.claim.profile_picture" />
         </ion-avatar>
       </ion-content>
     </ion-menu>
@@ -86,10 +77,13 @@ import {
   IonMenuButton,
   menuController,
   IonAvatar,
+  toastController,
 } from "@ionic/vue";
 import { create, fileTrayFull, analyticsOutline } from "ionicons/icons";
 import store from "@/store";
-import { ref } from "@vue/runtime-core";
+import { ref, computed } from "@vue/runtime-core";
+
+const txAmount = computed(()=>  store.getters["exerciseTypes/txAmount"])
 
 function logout() {
   // TODO: need to close menu pane on click
@@ -98,7 +92,41 @@ function logout() {
 }
 
 const user = ref(JSON.parse(localStorage.getItem("user") as string));
-console.log(user.value);
+
+async function syncData(manual: boolean){
+  const errorToast = await toastController.create({
+    message: "Error syncig",
+    duration: 2000
+  });
+
+  const nothingToSyncToast = await toastController.create({
+    message: "Nothing to Sync",
+    duration: 2000
+  });
+  const manualToast = await toastController.create({
+    message: "Manual Sync",
+    duration: 1000
+  });
+
+  if (manual) manualToast.present()
+
+  if (manual && !store.getters["exerciseTypes/needToSync"]){
+    nothingToSyncToast.present()
+  }
+
+  if (store.getters["exerciseTypes/needToSync"]){
+    store.dispatch("exerciseTypes/syncTx")
+    .then(()=>{
+      if (manual) manualToast.dismiss()
+    })
+    .catch(()=>{
+      if (manual) errorToast.present()
+    });
+  }
+}
+
+/*setInterval(syncData, 3000)*/
+
 </script>
 
 <style scoped>

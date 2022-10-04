@@ -115,8 +115,8 @@ func (ctrl *ExerciseTypeController) EditExerciseTypes(c echo.Context) error {
 }
 
 // DeleteExerciseType DELETE endpoint
-// Delete an exercise type
-// @params exercise_type_id
+// Delete an exercise type by name
+// @params name
 // TODO: either disable deletion if type has been used or offer to delete the
 // 	typedata also????
 func (ctrl *ExerciseTypeController) DeleteExerciseType(c echo.Context) error {

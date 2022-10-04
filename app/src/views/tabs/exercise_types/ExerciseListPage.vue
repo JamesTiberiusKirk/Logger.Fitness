@@ -20,24 +20,26 @@
         </ion-segment-button>
       </ion-segment>
       <ion-list>
-        <span v-for="(e, i) in exerciseTypeListFilter" :key="i">
-          <ion-item-sliding>
-            <ion-item>
-              <ion-label>
-                <h3>Type: {{ e.data_type }}</h3>
-                <h1>{{ e.name }}</h1>
-                <p>{{ e.description }}</p>
-              </ion-label>
-            </ion-item>
+        <ion-item-sliding
+          v-for="(e, i) in exerciseTypeListFilter"
+          :key="i"
+          :ref="listItemRefs"
+        >
+          <ion-item>
+            <ion-label>
+              <h3>Type: {{ e.data_type }}</h3>
+              <h1>{{ e.name }}</h1>
+              <p>{{ e.description }}</p>
+            </ion-label>
+          </ion-item>
 
-            <ion-item-options side="end">
-              <ion-item-option @click="edit(e)">Edit</ion-item-option>
-              <ion-item-option color="danger" @click="setModalState(true, e)"
-                >Delete</ion-item-option
-              >
-            </ion-item-options>
-          </ion-item-sliding>
-        </span>
+          <ion-item-options side="end">
+            <ion-item-option @click="edit(e.name)">Edit</ion-item-option>
+            <ion-item-option color="danger" @click="setModalState(true, e.name)"
+              >Delete</ion-item-option
+            >
+          </ion-item-options>
+        </ion-item-sliding>
       </ion-list>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -88,13 +90,14 @@ import store from "@/store";
 import Validate from "@/common/validate";
 import router from "@/router";
 
-const exerciseTypeList = ref({} as ExerciseType[]);
+const exerciseTypeList = ref([] as ExerciseType[]);
 const searchTerm = ref("");
 const filter = ref("all");
 const metaData = ref({
   loading: false,
   errMessage: "",
 });
+const listItemRefs = ref([]);
 
 const modal = ref({
   isOpen: false,
@@ -117,16 +120,25 @@ const modal = ref({
   ],
 });
 
+// TODO: Another problem. If theres no exercise types in local storage/state then the page
+//  is empty on navigatio
+//  Should probs figure out a way to quietly refhesh data in the backrgound.
+
+// TODO: Trying to figure out how to sort out the problem of closing the ion-item-slide.
+//  was trying to get the ref of each one of the items, but keeps coming back undefined...
+//  https://vuejs.org/guide/essentials/template-refs.html#refs-inside-v-for
+
+// TODO: Need todo ocassional sync job
+//  Plan for now is to check every couple of seconds if there are any transactions
+//  if there are, send a "sync" job and somehow display a sync loader
+
 // BUG: So theres a bug here where the toDelete id does not get set if you're trying to delete the exercise type right after creating it
 // let exerciseTypeID = -1;
 // NOTE: this big might have been smth todo with the fact that toDelete was a number and exercise_type_id looks to be a string?
-function setModalState(state: boolean, exerciseId: ExerciseType) {
-  // exerciseTypeID = exerciseId.exercise_type_id;
-  modal.value.toDelete = exerciseId.exercise_type_id;
+// NOTE: This might be fixed now that its a name that im deleting with
+function setModalState(state: boolean, exerciseTypeName: string) {
+  modal.value.toDelete = exerciseTypeName;
   modal.value.isOpen = state;
-  // console.log(exerciseTypeID);
-  // console.log(modal.value.toDelete);
-  // console.log(exerciseId);
 }
 
 function getData() {
@@ -135,7 +147,6 @@ function getData() {
     store.dispatch("exerciseTypes/fetchAll").then(
       (data: ExerciseType[]) => {
         metaData.value.loading = false;
-        console.log(data);
         exerciseTypeList.value = data;
         resolve(data);
       },
@@ -180,20 +191,21 @@ function doRefresh(event: CustomEvent) {
   });
 }
 
-// TODO: get rid of routing and just make it a sub component with data binding
-function edit(et: ExerciseType) {
-  // console.log(et);
+onMounted(() => console.log("itemRefs:", listItemRefs.value));
 
+function edit(name: string) {
   router.push({
     name: "exercise_type_form",
-    params: {
-      exerciseType: {...et},
+    query: {
+      exerciseTypeName: name,
     },
   });
 }
 
 function fabClick() {
-  router.push(`/tabs/exercise/form`);
+  router.push({
+    name: "exercise_type_form",
+  });
 }
 
 function deleteExercise() {
