@@ -2,12 +2,16 @@
 
 COV_CUTOVER = 0
 
+## Add test user
+devtools-add-test-user:
+	go run devtools/add-user.go
+
 ## Bring up dev server
 dev-backend-run:
 	go run ./backend
 
 ## Bring up docker database
-db-up:
+dev-db-up:
 	docker-compose -f ./docker/docker-compose.yml --env-file .env up 
 
 install: 
