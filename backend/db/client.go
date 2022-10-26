@@ -1,52 +1,65 @@
 package db
 
 import (
-	"context"
+	"database/sql"
+	"fmt"
+	"path"
 
+	"github.com/nleof/goyesql"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-const DB_NAME = "logger_fitness_db"
+const (
+	dbName      = "logger_fitness_db"
+	queriesRoot = "bacend/db/queries"
+	driverName  = "postgres"
+)
+
+var (
+	queryFiles = []string{}
+)
 
 // Client contains the mongo connection and custom functions.
-type DbClient struct {
-	Conn *mongo.Client
+type Db struct {
+	Queries goyesql.Queries
+	Client  *sql.DB
 }
 
 type DbConfigOpts struct {
-	Url    string
 	User   string
 	Pass   string
 	Port   string
+	Host   string
 	DbName string
 }
 
+// TODO: Check if schema is present, if not create???
+
 // Connect for connecting to the mongo serer.
-func Connect(creds DbConfigOpts) (*DbClient, error) {
-	mongoURI := "mongodb://" + creds.Url + ":" + creds.Port + "/"
-	log.Infof("Connecting to %s", mongoURI)
-
-	credential := options.Credential{
-		AuthSource: "logger_fitness_db",
-		Username:   "logger_fitness",
-		Password:   "lfPass",
-	}
-	clientOpts := options.Client().ApplyURI(mongoURI).SetAuth(credential)
-	client, err := mongo.Connect(context.TODO(), clientOpts)
+func Connect(creds DbConfigOpts) (*Db, error) {
+	db, err := sql.Open(driverName, fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
+		creds.Host, creds.User, creds.Pass, creds.DbName))
 
 	if err != nil {
-		panic(err)
+		log.WithError(err).Fatal("failed to create database client")
 	}
 
-	// Ping our db connection
-	err = client.Ping(context.Background(), readpref.Primary())
-	if err != nil {
-		log.Fatal("Ping, mongoDB:", err)
+	// read sql queries in from file
+	queries := make(goyesql.Queries)
+	for _, file := range queryFiles {
+		qs, err := goyesql.ParseFile(path.Join(queriesRoot, file))
+		if err != nil {
+			return nil, errors.Wrap(err, fmt.Sprintf("failed to parse file: '%s'", path.Join(queriesRoot, file)))
+		}
+
+		for k, v := range qs {
+			queries[k] = v
+		}
 	}
 
-	log.Printf("Database connected!")
-	return &DbClient{Conn: client}, nil
+	return &Db{
+		Queries: queries,
+		Client:  db,
+	}, nil
 }

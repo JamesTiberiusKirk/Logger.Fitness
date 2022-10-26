@@ -30,7 +30,7 @@ func Run(dbClient *db.DbClient, port string, googleOauthConfig *oauth2.Config) {
 
 	userAuthMiddleware := lfMiddleware.Auth(lfMiddleware.UserRole)
 
-	g := e.Group("/api/v2")
+	g := e.Group("/api/v3")
 
 	authGroup := auth.NewAuthController(dbClient, googleOauthConfig)
 	authGroup.Init(g)
@@ -49,6 +49,7 @@ func Run(dbClient *db.DbClient, port string, googleOauthConfig *oauth2.Config) {
 }
 
 // ContextObjects attaches backend clients to the API context to be
+//
 //	used inside controllers
 func createContext(contextParams ContextParams) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
