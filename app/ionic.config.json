@@ -1,7 +1,0 @@
-{
-  "name": "Logger.Fitness",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "vue"
-}

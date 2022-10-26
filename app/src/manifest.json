@@ -1,9 +1,0 @@
-{
-  "name": "Logger.Fitness",
-  "short_name": "Logger.Fitness",
-  "theme_color": "#000000",
-  "background_color": "#000000",
-  "display": "browser",
-  "scope": "/",
-  "start_url": "/"
-}
