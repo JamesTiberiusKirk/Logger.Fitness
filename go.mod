@@ -15,6 +15,7 @@ require (
 	go.mongodb.org/mongo-driver v1.10.3
 	golang.org/x/crypto v0.0.0-20221012134737-56aed061732a
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
+	gorm.io/gorm v1.24.0
 )
 
 require (
@@ -44,5 +45,4 @@ require (
 	golang.org/x/time v0.0.0-20220922220347-f3bd1da661af // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gorm.io/gorm v1.24.0 // indirect
 )

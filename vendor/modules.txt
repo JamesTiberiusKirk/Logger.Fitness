@@ -22,8 +22,10 @@ github.com/golang/protobuf/proto
 github.com/golang/snappy
 # github.com/jinzhu/inflection v1.0.0
 ## explicit
+github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.5
 ## explicit; go 1.12
+github.com/jinzhu/now
 # github.com/joho/godotenv v1.4.0
 ## explicit; go 1.12
 github.com/joho/godotenv
@@ -221,3 +223,8 @@ google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/descriptorpb
 # gorm.io/gorm v1.24.0
 ## explicit; go 1.16
+gorm.io/gorm
+gorm.io/gorm/clause
+gorm.io/gorm/logger
+gorm.io/gorm/schema
+gorm.io/gorm/utils

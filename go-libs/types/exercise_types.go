@@ -1,5 +1,7 @@
 package types
 
+import "gorm.io/gorm"
+
 // DataTypeLabel is the data type of the exercise type
 type DataTypeLabel string
 
@@ -13,10 +15,12 @@ const (
 
 // ExerciseType is for custom types of exercises
 type ExerciseType struct {
-	ID                  string                       `json:"id"`
+	gorm.Model
+	ID                  string                       `json:"id" gorm:"primaryKey"`
 	Name                string                       `json:"name"`
 	Description         string                       `json:"description"`
 	DataType            DataTypeLabel                `json:"data_type"`
 	CustomDataTypeShape map[string]CustomValueFields `json:"custom_data_type_shape"` // Only populated if DataType = "custom-value"
 	MeasurementType     string                       `json:"measurement_type"`
+	Tags                []string                     `json:"tags"`
 }

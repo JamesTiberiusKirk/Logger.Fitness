@@ -1,8 +1,14 @@
 package types
 
+import "gorm.io/gorm"
+
+// TODO: figure out how to store exercise type
+
 type WorkoutTemplate struct {
-	ID        string
-	Name      string
-	Exercises [][]ExerciseType
-	Notes     string
+	gorm.Model
+	ID        string           `json:"id" gorm:"primaryKey"`
+	Name      string           `json:"name"`
+	Exercises [][]ExerciseType `json:"exercises"`
+	Notes     string           `json:"notes"`
+	Tags      []string         `json:"tags"`
 }
